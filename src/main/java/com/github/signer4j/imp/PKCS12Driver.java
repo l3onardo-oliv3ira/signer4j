@@ -1,0 +1,123 @@
+package com.github.signer4j.imp;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.signer4j.ISlot;
+import com.github.signer4j.IToken;
+import com.github.signer4j.exception.DriverException;
+import com.github.signer4j.gui.utils.InvalidPinAlert;
+import com.github.signer4j.imp.exception.InvalidPinException;
+import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.LoginCanceledException;
+
+class PKCS12Driver extends AbstractDriver {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(PKCS12Driver.class);
+  
+  private static final PKCS12Driver INSTANCE = new PKCS12Driver();
+
+  public static final PKCS12Driver getInstance() {
+    return INSTANCE;
+  }
+  
+  private final List<Path> certPaths = new ArrayList<>();
+  
+  private final Map<String, char[]> passwords = new HashMap<>();
+
+  private PKCS12Driver() {}
+  
+  @Override
+  public final String getId() {
+    return PKCS12Driver.class.getSimpleName();
+  }
+  
+  final boolean install(List<Path> paths) {
+    boolean refreshed = false;
+    if (!Containers.isEmpty(paths)) {
+      for(Path path: paths) {
+        if (!certPaths.stream().anyMatch(p -> Streams.isSame(p, path))) {
+          certPaths.add(path);
+          refreshed = true;
+        }
+      }
+      if (isLoaded()) {
+        reload();
+      }
+    }
+    return refreshed;
+  }
+  
+  final void uninstall() {
+    passwords.clear();
+    certPaths.clear();
+    if (isLoaded()) {
+      unload();
+    }
+  }
+  
+  final boolean uninstall(List<Path> paths) {
+    boolean refreshed = false;
+    if (!Containers.isEmpty(paths)) {
+      for(Path path: paths) {
+        if (certPaths.removeIf(p -> Streams.isSame(p, path))) {
+          refreshed = true;
+        }
+      }
+      if (isLoaded()) {
+        reload();
+      }
+    }
+    return refreshed;
+  }
+  
+  @Override
+  protected void doLoad(List<ISlot> output) throws DriverException {
+    for(Path path: certPaths) {
+      try{
+        ISlot slot = new PKCS12Slot(path);
+        String key = slot.getSerial();
+        IToken token = slot.getToken();
+        do {
+          char[] password = passwords.get(key);
+          try {
+            LOGGER.info("Logando no DRIVER");
+            if (password != null) {
+              LOGGER.info("Logando em modo LITERAL");
+              token.login(password);
+            } else {
+              LOGGER.info("Logando em modo DIALOG");
+              char[][] success = new char[1][1];
+              token.login(p -> {success[0] = p;});
+              password = success[0];
+            }
+            LOGGER.info("Logado com sucesso: " + token.isAuthenticated());
+            token.logout();
+            LOGGER.info("Deslogado - Leitura de certificado OK");
+            passwords.put(key, password);
+            output.add(slot);
+            addDevice(slot.toDevice());
+            break;
+          } catch (LoginCanceledException e) {
+            break;
+          } catch(InvalidPinException e) {
+            passwords.remove(key);
+            if (!InvalidPinAlert.display(0)) //TODO confirmar se este código deve ou não ser executado em SwingTools.invokeAndWait
+              break;
+          } catch (KeyStoreAccessException e) {
+            LOGGER.error("Falha na tentativa de autenticação em PKCS12 Driver: " + path.toString(), e);
+            break;
+          }
+        }while(true);
+      }catch(DriverException e) {
+        handleException(e);
+      }
+    }
+  }
+}
