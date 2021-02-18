@@ -19,16 +19,16 @@ abstract class OIDSocial extends OIDBasic {
     }
   }
   
-	protected OIDSocial(String oid, String content) {
+  protected OIDSocial(String oid, String content) {
     super(oid, content);
   }
-	 
-	@Override
-	protected void setup() {
-		super.setup(Fields.values());
-	}
+   
+  @Override
+  protected void setup() {
+    super.setup(Fields.values());
+  }
 
-	public Optional<String> getCEI() {
-		return get(Fields.CEI);
-	}
+  public Optional<String> getCEI() {
+    return get(Fields.CEI);
+  }
 }

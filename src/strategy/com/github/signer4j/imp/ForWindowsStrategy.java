@@ -22,7 +22,6 @@ class ForWindowsStrategy extends PreloadedStrategy {
     load(winRoot.concat("/System32/Watchdata/Watchdata Brazil CSP v1.0/WDPKCS.dll"));
     load(winRoot.concat("/System32/SerproPkcs11.dll"));
     load(winRoot.concat("/System32/OcsCryptoki.dll"));
-    //icpbravo libraries!
     load(winRoot.concat("/System32/opensc-pkcs11.dll"));
     load(winRoot.concat("/System32/axaltocm.dll"));
     load(winRoot.concat("/System32/usbr38.dll"));
@@ -46,7 +45,6 @@ class ForWindowsStrategy extends PreloadedStrategy {
     load(winRoot.concat("/System32/asepkcs.dll"));
     //Gemalto x86
     load("C:/Program Files (x86)/Gemalto/IDGo 800 PKCS11/IDPrimePKCS11.dll");
-    
     //64BITS: 
     /*
      load("C:/Program Files/Gemalto/IDGo 800 PKCS11/IDPrimePKCS1164.dll");
