@@ -1,0 +1,39 @@
+package com.github.signer4j.imp;
+
+import com.github.signer4j.IDevice;
+import com.github.signer4j.ISlot;
+
+abstract class AbstractSlot extends ExceptionExpert implements ISlot {
+
+  private final long number;
+  
+  protected DefaultDevice device;
+
+  protected AbstractSlot(long number) {
+    this.number = number;
+  }
+
+  @Override
+  public final long getNumber() {
+    return number;
+  }
+  
+  @Override
+  public final IDevice toDevice() {
+    return device;
+  }
+
+  @Override
+  public final String getSerial() {
+    return getToken().getSerialNumber();
+  }
+  
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + " [description=" + getDescription()
+        + ", manufacturerId=" + getManufacturerId() + ", hardwareVersion=" + getHardwareVersion()
+        + ", firmewareVersion=" + getFirmewareVersion() + ", number="
+        + getNumber() + "]";
+  }
+
+}
