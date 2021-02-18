@@ -43,7 +43,7 @@ class BrazilianCertificate implements ICertificate {
   private ISubjectAlternativeNames subjectAlternativeNames = null;
 
   public BrazilianCertificate(InputStream is) throws CertificateException {
-    this.certificate = Certificates.create(is);
+    this(Certificates.create(is));
   }
 
   public BrazilianCertificate(X509Certificate certificate) {

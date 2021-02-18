@@ -10,7 +10,7 @@ public final class OID_2_16_76_1_3_8 extends OIDBasic {
     super(OID, content);
   }
   
-	public Optional<String> getName() {
-		return Optional.of(super.getContent());
-	}
+  public Optional<String> getName() {
+    return Optional.of(super.getContent());
+  }
 }

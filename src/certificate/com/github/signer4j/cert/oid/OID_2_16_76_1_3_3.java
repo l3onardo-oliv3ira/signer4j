@@ -10,7 +10,7 @@ public final class OID_2_16_76_1_3_3 extends OIDBasic {
     super(OID, content);
   }
   
-	public Optional<String> getCNPJ() {
-		return Optional.of(super.getContent());
-	}
+  public Optional<String> getCNPJ() {
+    return Optional.of(super.getContent());
+  }
 }
