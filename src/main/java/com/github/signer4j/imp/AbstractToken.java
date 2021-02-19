@@ -92,7 +92,8 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
 
   @Override
   public void login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
-    requireNonNull(callback, "Unabled to login with null callback");
+    if (callback == null)
+      callback = passwordCallback;
     if (!isAuthenticated()) {
       try {
         doLogin(this.keyStore = getKeyStore(callback, DISPOSE_ACTION));
@@ -157,7 +158,6 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
 
   protected abstract IKeyStore getKeyStore(IPasswordCallbackHandler callback, Runnable dispose) throws KeyStoreAccessException;
-  
   
   static abstract class Builder<S extends ISlot, T extends IToken> {
     private S slot;

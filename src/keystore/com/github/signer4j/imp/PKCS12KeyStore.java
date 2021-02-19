@@ -39,5 +39,6 @@ class PKCS12KeyStore extends AbstractKeyStore {
   protected void doClose() throws Exception {
     privateKey = null;
     password = null;
+    super.doClose();
   }
 }
