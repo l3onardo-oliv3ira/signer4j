@@ -33,8 +33,8 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
   PKCS11Slot(PKCS11Driver driver, long number) throws DriverException {
     super(number);
     this.driver = requireNonNull(driver, "Unabled to create slot with null driver instance");
-	  this.setup();
-	}
+    this.setup();
+  }
   
   final PKCS11 getPK() {
     return this.driver.getPK();
