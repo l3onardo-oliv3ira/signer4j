@@ -11,13 +11,12 @@ import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSProcessableByteRangeArray;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
-import org.bouncycastle.util.Arrays;
 
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICMSSignerBuilder;
@@ -43,13 +42,10 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   
   @Override
   public ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException {
-    return process(Arrays.copyOfRange(content, offset, offset + length));
-  }
-  
-  @Override
-  public ISignedData process(byte[] content) throws KeyStoreAccessException {
-    Args.requireNonEmpty(content, "content is null");
-    return process(new CMSProcessableByteArray(content), content.length);
+    Args.requireNonNull(content, "content is null");
+    Args.requireZeroPositive(offset, "offset is negative");
+    Args.requirePositive(length, "length is not positive");
+    return process(new CMSProcessableByteRangeArray(content, offset, length), length);
   }
   
   @Override
@@ -73,13 +69,23 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
           )
       );
       generator.addCertificates(new JcaCertStore(choice.getCertificateChain()));
+
       CMSSignedData data = generator.generate(
         content, 
         SignatureType.ATTACHED.equals(signatureType)
       );
 
       /**
-       * Se o tamanho é aceitável, calcula em memória
+       * Nesta instância 'data' acima pode ter pendurado um byte[]/ContentInfo bem grande. Se invocado data.getEncoded() um segundo
+       * volume de byte[] será criado, duplicando o consumo de espaço no Heap da JVM ainda que por um período 
+       * curto de tempo. A idéia básica aqui é que se escrevermos no disco o que já se tem em memmória seguido da liberação 
+       * da referencia data para a coleta de lixo, poderemos usar a memória em um único volume ao invés de dois, o que 
+       * diminuirá as chances de se alcançar OutOfMemoryError. Neste cenário um OutOfMemory só será alcançado se um 
+       * ÚNICO arquivo (e NÃO um lote deles) já for maior do que o todo o Heap da JVM. 
+       */
+
+      /**
+       * Se o tamanho é aceitável, calcula em memória mesmo deixando "duplicar" temporariamente
        */
       if (length <= memoryLimit) { 
         return SignedData.from(
@@ -92,14 +98,14 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
        * Se o tamanho não é aceitável
        * 1. grava o que se tem até agora em disco, 
        * 2. livra-se dos recursos que estão sendo consumidos
-       * 3. Lê do disco usando apenas um volume de memória ao invés de dois em encode
+       * 3. Lê do disco usando apenas um único volume de memória ao invés de dois
        */
       File tmp = Files.createTempFile("pje_office_tmp", ".pjeoffice").toFile();
       try {
-        try(OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp))) {
+        try(OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp), 32 * 1024)) {
           data.toASN1Structure().encodeTo(out);
         } finally {
-          data = null;
+          data = null; //this is very important!
           generator = null;
         }
         return SignedData.from(
