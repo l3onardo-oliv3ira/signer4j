@@ -1,8 +1,8 @@
-# signer4j
+# Signer4j
 
 A simpler way to perform digital signature operations with A1 and A3 certificates.
 
-## Listing All Detected Devices
+## Listing detected devices
 ```java
 IDeviceManager dm = new DeviceManager();
 
@@ -15,7 +15,7 @@ dm.getDevices().stream().forEach(d -> {
   System.out.println("Serial: " + device.getSerialNumber());
 });
 ```
-#### Device Manager Interface
+#### Device manager interface
 ```java
 public interface IDeviceManager {
   List<IDevice> getDevices();
@@ -40,7 +40,7 @@ public interface IDeviceManager {
   void close();
 }
 ```
-#### Device Interface
+#### Device interface
 ```java
 public interface IGadget {
   String getLabel();
@@ -56,7 +56,7 @@ public interface IDevice extends IGadget {
 }
 ```
 
-## Access To The First Device and Certificate Listing
+## Access to the first device and certificate listing
 ```java
 IDevice device = dm.firstDevice().get();
 System.out.println("Certificates");
@@ -79,7 +79,7 @@ device.getCertificates().stream().forEach(c -> {
   }
 });
 ```
-#### Certificate Interface
+#### Certificate interface
 ```java
 public interface ICertificate {
   Date getAfterDate();
@@ -106,7 +106,7 @@ public interface ICertificate {
   boolean hasCertificatePJ();
 }
 ```
-## Show Slot Informations
+## Show slot informations
 ```java
 ISlot slot = device.getSlot();
 
@@ -118,7 +118,7 @@ System.out.println("ManufacturerId: " + slot.getManufacturerId());
 System.out.println("Number: " + slot.getNumber());
 System.out.println("Serial: " + slot.getSerial());
 ```
-#### Slot Interface
+#### Slot interface
 ```java
 public interface ISlot {
   long getNumber();
@@ -131,7 +131,7 @@ public interface ISlot {
   String getSerial();
 }
 ```
-## Token Abstraction For a Slot
+## Token abstraction for a slot
 ```java
 IToken token = slot.getToken();
 
@@ -159,7 +159,7 @@ try {
   token.logout(); 
 }
 ```
-#### SignedData Interface
+#### Signed data interface
 ```java
 public interface IPersonalData {  
   PrivateKey getPrivateKey();
@@ -175,7 +175,7 @@ public interface ISignedData extends IPersonalData {
   String getCertificateChain64() throws CertificateException;
 }
 ```
-#### Token Interface
+#### Token interface
 ```java
 public interface IToken extends IGadget{
   IToken login() throws KeyStoreAccessException;
@@ -187,6 +187,7 @@ public interface IToken extends IGadget{
 
   long getMinPinLen();
   long getMaxPinLen();
+  
   String getManufacture();
   boolean isAuthenticated();
   
@@ -204,7 +205,7 @@ public interface IToken extends IGadget{
 }
 ```
 
-## Signing File to .p7s Output
+## Signing file to .p7s output
 ```java
 try {
   token.login();
@@ -238,7 +239,7 @@ try {
 }
 ```
 
-#### Byte Processor Interface
+#### Byte processor interface
 ```java
 public interface IByteProcessor {
   ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException;
