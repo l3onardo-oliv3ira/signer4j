@@ -23,7 +23,7 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
   public final ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException {
     Args.requireNonEmpty(content, "content is null");
     Args.requireZeroPositive(offset, "offset is negative");
-    Args.requireZeroPositive(length, "length is negative");
+    Args.requirePositive(length, "length is not positive");
     return invoke(() -> {
       IChoice choice = choose();
       Signature signature = Signature.getInstance(algorithm.getName());
