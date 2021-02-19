@@ -203,3 +203,60 @@ public interface IToken extends IGadget{
   ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory);
 }
 ```
+
+## Signing File to .p7s Output
+```java
+try {
+  token.login();
+
+  ICMSSigner cmsSigner = token.cmsSignerBuilder()
+      .usingAlgorigthm(SignatureAlgorithm.SHA1withRSA)
+      .usingAttributes(true)
+      .usingMemoryLimit(50 * 1024 * 1025)
+      .usingSignatureType(SignatureType.ATTACHED)
+      .build();
+
+  ISignedData data = cmsSigner.process(new File("./input.pdf"));
+
+  try(OutputStream out = new FileOutputStream(new File("./input.pdf.p7s"))) {
+    data.writeTo(out);
+  }
+} catch (TokenLockedException e) {
+  System.out.println("Your token is blocked");
+} catch (InvalidPinException e) {
+  System.out.println("Your password is incorrect!");
+} catch (NoTokenPresentException e) {
+  System.out.println("Your token is not connected to USB");
+} catch (LoginCanceledException e) {
+  System.out.println("Authentication canceled by user");
+} catch (KeyStoreAccessException e) {
+  System.out.println(e.getMessage());
+} catch (IOException e) {
+  System.out.println("Unabled to read input file");
+} finally {
+  token.logout(); 
+}
+```
+
+#### Byte Processor Interface
+```java
+public interface IByteProcessor {
+  ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException;
+  ISignedData process(byte[] content) throws KeyStoreAccessException;
+  ISignedData process(File content) throws KeyStoreAccessException, IOException;
+  ISignedData process(String content) throws KeyStoreAccessException;
+  ISignedData process(String content, Charset charset) throws KeyStoreAccessException;
+  byte[] processRaw(byte[] content) throws KeyStoreAccessException;
+  byte[] processRaw(String content) throws KeyStoreAccessException;
+  byte[] processRaw(String content, Charset charset) throws KeyStoreAccessException;
+  String process64(byte[] content) throws KeyStoreAccessException;
+  String process64(String content) throws KeyStoreAccessException;
+  String process64(String content, Charset charset) throws KeyStoreAccessException;
+  String process64(File input) throws KeyStoreAccessException, IOException;
+}
+
+public interface ISimpleSigner extends IByteProcessor{
+}
+public interface ICMSSigner extends IByteProcessor {
+}
+```
