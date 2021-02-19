@@ -6,7 +6,6 @@ A simpler way to perform digital signature operations with A1 and A3 certificate
 ```java
 IDeviceManager dm = new DeviceManager();
 
-System.out.println("**************************");
 System.out.println("Device info");
 dm.getDevices().stream().forEach(d -> {
   IDevice device = d;
@@ -33,26 +32,24 @@ public interface IDevice extends IGadget {
 }
 ```
 
-## Accessing The First Device and Listing Certificates
+## Access To The First Device and Certificate Listing
 ```java
 IDevice device = dm.firstDevice().get();
-System.out.println("**************************");
 System.out.println("Certificates");
 device.getCertificates().stream().forEach(c -> {
-  ICertificate certificate = c;
   System.out.println("---------");
-  System.out.println("Name: " + certificate.getName());
-  System.out.println("After date: " + certificate.getAfterDate());
-  System.out.println("Before date: " + certificate.getBeforeDate());
-  System.out.println("Email: " + certificate.getEmail().orElse("Unknown"));
-  //.... certificate.get*
+  System.out.println("Name: " + c.getName());
+  System.out.println("After date: " + c.getAfterDate());
+  System.out.println("Before date: " + c.getBeforeDate());
+  System.out.println("Email: " + c.getEmail().orElse("Unknown"));
+  //.... c.get*
   if (certificate.hasCertificatePF()) {
-    ICertificatePF pf = certificate.getCertificatePF().get();
+    ICertificatePF pf = c.getCertificatePF().get();
     System.out.println("CPF: " + pf.getCPF().get());
     //.... pf.get*
   }
   if (certificate.hasCertificatePJ()) {
-    ICertificatePJ pj = certificate.getCertificatePJ().get();
+    ICertificatePJ pj = c.getCertificatePJ().get();
     System.out.println("CNPJ: " + pj.getCNPJ().get());
     //.... pj.get*
   }
@@ -89,7 +86,6 @@ public interface ICertificate {
 ```java
 ISlot slot = device.getSlot();
 
-System.out.println("**************************");
 System.out.println("Slot information");
 System.out.println("Description: " + slot.getDescription());
 System.out.println("FirmewareVersion: " + slot.getFirmewareVersion());
@@ -139,30 +135,35 @@ try {
   token.logout(); 
 }
 ```
+#### SignedData Interface
+```java
+public interface IPersonalData {  
+  PrivateKey getPrivateKey();
+  Certificate getCertificate();
+  List<Certificate> getCertificateChain();
+  int chainSize();
+}
+public interface ISignedData extends IPersonalData {
+  byte[] getSignature();
+  void writeTo(OutputStream out) throws IOException;
+  String getSignature64();
+  String getCertificate64() throws CertificateException;
+  String getCertificateChain64() throws CertificateException;
+}
+```
 #### Token Interface
 ```java
 public interface IToken extends IGadget{
-  default IToken login() throws KeyStoreAccessException { 
-    return login(p -> {});
-  }
-  
-  default IToken login(IPasswordCollector collector) throws KeyStoreAccessException {
-    login(new JDialogPasswordCallbackHandler(this, collector));
-    return this;
-  }
-  
-  default IToken login(char[] password) throws KeyStoreAccessException {
-    login(new LiteralPasswordCallbackHandler(password));
-    return this;
-  }
+  IToken login() throws KeyStoreAccessException;
+  IToken login(IPasswordCollector collector) throws KeyStoreAccessException;
+  IToken login(char[] password) throws KeyStoreAccessException;
 
   void login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
+  void logout();
 
-  String getManufacture();
-  
   long getMinPinLen();
   long getMaxPinLen();
-  
+  String getManufacture();
   boolean isAuthenticated();
   
   TokenType getType();
@@ -176,7 +177,5 @@ public interface IToken extends IGadget{
   
   ICMSSignerBuilder cmsSignerBuilder();
   ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory);
-  
-  void logout();
 }
 ```
