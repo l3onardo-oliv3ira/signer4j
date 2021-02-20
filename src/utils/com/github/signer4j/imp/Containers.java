@@ -35,13 +35,13 @@ public class Containers {
     return Strings.text(values.iterator().next());
   }
 
-	public static boolean isEmpty(Enumeration<?> e) {
-		return e == null || !e.hasMoreElements();
-	}
+  public static boolean isEmpty(Enumeration<?> e) {
+    return e == null || !e.hasMoreElements();
+  }
 
-	public static boolean isEmpty(Object[] value) {
-		return value == null || value.length == 0;		
-	}
+  public static boolean isEmpty(Object[] value) {
+    return value == null || value.length == 0;    
+  }
 
   public static boolean isEmpty(Number[] value) {
     return value == null || value.length == 0;    

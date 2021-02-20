@@ -2466,7 +2466,7 @@ public final class Strings {
 
   public static String toString(String[] value, char sep) {
     if (Containers.isEmpty(value))
-      return EMPTY;		
+      return EMPTY;    
     StringBuilder b = new StringBuilder(value.length * 5);
     for(int i = 0; i < value.length; i++) {
       if (b.length() > 0)
@@ -2539,8 +2539,7 @@ public final class Strings {
       final Set<String> replacementSet = new HashSet<>(Arrays.asList(replacementList));
       searchSet.retainAll(replacementSet);
       if (searchSet.size() > 0) {
-        throw new IllegalStateException("Aborting to protect against StackOverflowError - " +
-            "output of one loop is the input of another");
+        throw new IllegalStateException("Aborting to protect against StackOverflowError - output of one loop is the input of another");
       }
     }
 
@@ -2569,8 +2568,6 @@ public final class Strings {
         continue;
       }
       tempIndex = text.indexOf(searchList[i]);
-
-      // see if we need to keep searching for this
       if (tempIndex == -1) {
         noMoreMatchesForReplIndex[i] = true;
       } else {
@@ -2586,7 +2583,6 @@ public final class Strings {
     }
 
     int start = 0;
-
     int increase = 0;
 
     for (int i = 0; i < searchList.length; i++) {
@@ -2643,7 +2639,7 @@ public final class Strings {
   }
 
 
-  public static String replaceEachRepeatedly(final String text, final String[] searchList, final String[] replacementList) {
+  public static String replaceEach(final String text, final String[] searchList, final String[] replacementList) {
     final int timeToLive = searchList == null ? 0 : searchList.length;
     return replaceEach(text, searchList, replacementList, true, timeToLive);
   }

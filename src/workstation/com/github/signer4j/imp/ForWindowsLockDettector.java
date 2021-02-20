@@ -1,5 +1,8 @@
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.imp.Throwables.tryCall;
+import static com.sun.jna.platform.win32.Kernel32Util.formatMessage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,115 +36,6 @@ class ForWindowsLockDettector implements IWindowLockDettector {
     }
     return this;
   }
-  
-  private class WorkStation implements WinUser.WindowProc, Runnable {
-
-    private final String windowClass = "WorkStationClass_" + System.currentTimeMillis();
-    
-    private WinDef.HWND windowHandle;
-
-    private boolean fail = false;
-    
-    private WorkStation() {
-      error("Falha em GetModuleHandle");
-      WinUser.WNDCLASSEX wClass = new WinUser.WNDCLASSEX();
-      wClass.hInstance = null;
-      wClass.lpfnWndProc = this;
-      wClass.lpszClassName = windowClass;
-      User32.INSTANCE.RegisterClassEx(wClass);
-      error("Falha em RegisterClassEx");
-    }
-    
-    public void info(String message) {
-      LOGGER.info(message);
-    }
-
-    public int error(String message) {
-      int rc = Kernel32.INSTANCE.GetLastError();
-      if (rc != 0) {
-        message += ". Codigo: " + rc;
-        LOGGER.error(message);
-      }
-      return rc;
-    }
-
-    public WinDef.LRESULT callback(WinDef.HWND hwnd, int uMsg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
-      switch (uMsg) {
-      case 2:
-        User32.INSTANCE.PostQuitMessage(0);
-        return new WinDef.LRESULT(0L);
-      case WinUser.WM_SESSION_CHANGE:
-        onSessionChange(wParam, lParam);
-        return new WinDef.LRESULT(0L);
-      } 
-      WinDef.LRESULT r = User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
-      error("Falha em DefWindowProc");
-      return r;
-    }
-
-    protected void onSessionChange(WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
-      switch (wParam.intValue()) {
-      case Wtsapi32.WTS_CONSOLE_DISCONNECT:
-      case Wtsapi32.WTS_SESSION_LOGOFF:
-      case  Wtsapi32.WTS_SESSION_LOCK:
-        synchronized(listeners) {
-          Throwables.tryRun(() -> listeners.forEach(l -> l.onMachineLocked(lParam.intValue())));
-        }
-        break;
-      case Wtsapi32.NOTIFY_FOR_ALL_SESSIONS:
-      case Wtsapi32.WTS_SESSION_LOGON:
-      case Wtsapi32.WTS_SESSION_UNLOCK:
-        synchronized(listeners) {
-          Throwables.tryRun(() -> listeners.forEach(l -> l.onMachineUnlocked(lParam.intValue())));
-        }
-        break;
-      } 
-    }
-
-    public void run() {
-      windowHandle = User32.INSTANCE.CreateWindowEx(8, 
-        windowClass, 
-        "WorkstationLockListening", 
-        0, 0, 0, 0, 0, null, null, 
-        null, null
-      );
-      if (windowHandle == null) { 
-        fail = true;
-        error("Não foi possível a criação da janela de monitoração login/logout");
-        return;
-      }
-      info("Criada janela de monitoração login/logout. Handle: " + windowHandle.getPointer().toString());
-      Wtsapi32.INSTANCE.WTSRegisterSessionNotification(windowHandle, 0);
-      error("Não foi possível registrar notificação de sessão no SO");
-      info("Registrada notificação de sessão do SO");
-      WinUser.MSG msg = new WinUser.MSG();
-      while (User32.INSTANCE.GetMessage(msg, windowHandle, 0, 0) != 0) {
-        User32.INSTANCE.TranslateMessage(msg);
-        User32.INSTANCE.DispatchMessage(msg);
-      } 
-      Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(windowHandle);
-      error("Não foi possível desativar notificação de sessão do SO");
-      User32.INSTANCE.DestroyWindow(windowHandle);
-      error("Não foi possível a destruição da janela de monitoração login/logout");
-      info("Thread de monitoração log(in/off) finalizada");
-    }
-
-    public void interrupt(Thread thread) {
-      thread.interrupt();
-      if (windowHandle != null) {
-        User32.INSTANCE.PostMessage(windowHandle, WinUser.WM_QUIT, null, null);
-        try {
-          thread.join();
-        } catch (InterruptedException e) {
-          error("Não foi possível aguardar a finalização da thread de monitoração de logon. Exceção: " + e.getMessage());
-        } finally {
-          User32.INSTANCE.UnregisterClass(windowClass, null);
-          error("Não foi possível desregistrar classe de janela login/logout");
-        }
-      }
-    }
-  }
-
 
   @Override
   public void start() {
@@ -163,6 +57,111 @@ class ForWindowsLockDettector implements IWindowLockDettector {
           this.listeners.clear();
         }
         this.thread = null;
+      }
+    }
+  }
+  
+  private class WorkStation implements WinUser.WindowProc, Runnable {
+
+    private final String windowClass = "WorkStationClass_" + System.currentTimeMillis();
+    
+    private WinDef.HWND windowHandle;
+
+    private WorkStation() {
+      WinUser.WNDCLASSEX wClass = new WinUser.WNDCLASSEX();
+      wClass.hInstance = null;
+      wClass.lpfnWndProc = this;
+      wClass.lpszClassName = windowClass;
+      User32.INSTANCE.RegisterClassEx(wClass);
+      checkError("Falha em RegisterClassEx");
+    }
+    
+    private void info(String message) {
+      LOGGER.info(message);
+    }
+
+    private void checkError(String message) {
+      int code = Kernel32.INSTANCE.GetLastError();
+      if (code != 0) {
+        message += ". Error code: " + code + ". Description: " + tryCall(() -> formatMessage(code), "Unknown");
+        LOGGER.error(message);
+      }
+    }
+
+    @Override
+    public WinDef.LRESULT callback(WinDef.HWND hwnd, int uMsg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
+      switch (uMsg) {
+      case 2:
+        User32.INSTANCE.PostQuitMessage(0);
+        return new WinDef.LRESULT(0L);
+      case WinUser.WM_SESSION_CHANGE:
+        onSessionChange(wParam, lParam);
+        return new WinDef.LRESULT(0L);
+      } 
+      WinDef.LRESULT r = User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
+      checkError("Falha em DefWindowProc");
+      return r;
+    }
+
+    protected void onSessionChange(WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
+      switch (wParam.intValue()) {
+      case Wtsapi32.WTS_REMOTE_DISCONNECT:
+      case Wtsapi32.WTS_CONSOLE_DISCONNECT:
+      case Wtsapi32.WTS_SESSION_LOGOFF:
+      case  Wtsapi32.WTS_SESSION_LOCK:
+        synchronized(listeners) {
+          Throwables.tryRun(() -> listeners.forEach(l -> l.onMachineLocked(lParam.intValue())));
+        }
+        break;
+      case Wtsapi32.WTS_REMOTE_CONNECT:
+      case Wtsapi32.WTS_CONSOLE_CONNECT:
+      case Wtsapi32.WTS_SESSION_LOGON:
+      case Wtsapi32.WTS_SESSION_UNLOCK:
+        synchronized(listeners) {
+          Throwables.tryRun(() -> listeners.forEach(l -> l.onMachineUnlocked(lParam.intValue())));
+        }
+        break;
+      } 
+    }
+
+    public void run() {
+      windowHandle = User32.INSTANCE.CreateWindowEx(8, 
+        windowClass, 
+        "WorkstationLockListening", 
+        0, 0, 0, 0, 0, null, null, 
+        null, null
+      );
+      checkError("Não foi possível a criação da janela de monitoração login/logout");
+      if (windowHandle == null) {
+        return;
+      }
+      info("Criada janela de monitoração login/logout. Handle: " + windowHandle.getPointer().toString());
+      Wtsapi32.INSTANCE.WTSRegisterSessionNotification(windowHandle, 0);
+      checkError("Não foi possível registrar notificação de sessão no SO");
+      WinUser.MSG msg = new WinUser.MSG();
+      while (User32.INSTANCE.GetMessage(msg, windowHandle, 0, 0) != 0) {
+        User32.INSTANCE.TranslateMessage(msg);
+        User32.INSTANCE.DispatchMessage(msg);
+      } 
+      Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(windowHandle);
+      checkError("Não foi possível desativar notificação de sessão do SO");
+      User32.INSTANCE.DestroyWindow(windowHandle);
+      checkError("Não foi possível a destruição da janela de monitoração login/logout");
+      info("Thread de monitoração log(in/off) finalizada");
+    }
+
+    public void interrupt(Thread thread) {
+      thread.interrupt();
+      if (windowHandle != null) {
+        User32.INSTANCE.PostMessage(windowHandle, WinUser.WM_QUIT, null, null);
+      }
+      try {
+        thread.join();
+      } catch (InterruptedException e) {
+        LOGGER.error("Não foi possível aguardar a finalização da thread de monitoração de login/logout.", e);
+      } finally {
+        User32.INSTANCE.UnregisterClass(windowClass, null);
+        checkError("Falha em UnregisterClass");
       }
     }
   }

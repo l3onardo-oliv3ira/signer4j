@@ -21,20 +21,20 @@ public final class Retryable {
     this.executable = executable;
   }
 
-	private void execute(long delay, long interval, long timeout) throws RetryTimeoutException, Exception {
-		long start = System.currentTimeMillis();
-		if (delay > 0L)
-			Threads.sleep(delay);
-		do {
-			try {
-				executable.execute();
-				return;
-			} catch (TemporaryException e) {
-				if (System.currentTimeMillis() - start < timeout)
-					Threads.sleep(interval);
-				else
-					throw new RetryTimeoutException(e);
-			}
-		} while (true);
-	}
+  private void execute(long delay, long interval, long timeout) throws RetryTimeoutException, Exception {
+    long start = System.currentTimeMillis();
+    if (delay > 0L)
+      Threads.sleep(delay);
+    do {
+      try {
+        executable.execute();
+        return;
+      } catch (TemporaryException e) {
+        if (System.currentTimeMillis() - start < timeout)
+          Threads.sleep(interval);
+        else
+          throw new RetryTimeoutException(e);
+      }
+    } while (true);
+  }
 }

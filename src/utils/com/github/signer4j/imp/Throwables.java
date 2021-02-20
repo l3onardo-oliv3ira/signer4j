@@ -63,6 +63,15 @@ public class Throwables {
       return false;
     }
   }
+  
+  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, T defaultFail) {
+    try {
+      return procedure.call();
+    }catch(Throwable e) {
+      LOGGER.warn("tryCall exception", e);
+      return defaultFail;
+    }
+  }
 
   public static boolean hasCause(Throwable e, Class<?> clazz) {
     if (e == null)
