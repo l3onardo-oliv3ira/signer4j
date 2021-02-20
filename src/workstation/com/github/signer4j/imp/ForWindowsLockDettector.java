@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IWindowLockDettector;
 import com.github.signer4j.IWorkstationLockListener;
-import com.sun.jna.Callback;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
@@ -22,9 +21,8 @@ class ForWindowsLockDettector implements IWindowLockDettector {
   private final List<IWorkstationLockListener> listeners = new ArrayList<>();
 
   private Thread thread;
-  
-  public ForWindowsLockDettector() {
-  }
+
+  private WorkStation workstation;
   
   @Override
   public IWindowLockDettector notifyTo(IWorkstationLockListener listener) {
@@ -38,10 +36,31 @@ class ForWindowsLockDettector implements IWindowLockDettector {
   
   private class WorkStation implements WinUser.WindowProc, Runnable {
 
-    public int getLastError() {
+    private final String windowClass = "WorkStationClass_" + System.currentTimeMillis();
+    
+    private WinDef.HWND windowHandle;
+
+    private boolean fail = false;
+    
+    private WorkStation() {
+      error("Falha em GetModuleHandle");
+      WinUser.WNDCLASSEX wClass = new WinUser.WNDCLASSEX();
+      wClass.hInstance = null;
+      wClass.lpfnWndProc = this;
+      wClass.lpszClassName = windowClass;
+      User32.INSTANCE.RegisterClassEx(wClass);
+      error("Falha em RegisterClassEx");
+    }
+    
+    public void info(String message) {
+      LOGGER.info(message);
+    }
+
+    public int error(String message) {
       int rc = Kernel32.INSTANCE.GetLastError();
       if (rc != 0) {
-        LOGGER.warn("WorkStation dettector capture error: " + rc);
+        message += ". Codigo: " + rc;
+        LOGGER.error(message);
       }
       return rc;
     }
@@ -51,11 +70,13 @@ class ForWindowsLockDettector implements IWindowLockDettector {
       case 2:
         User32.INSTANCE.PostQuitMessage(0);
         return new WinDef.LRESULT(0L);
-      case 689:
+      case WinUser.WM_SESSION_CHANGE:
         onSessionChange(wParam, lParam);
         return new WinDef.LRESULT(0L);
       } 
-      return User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
+      WinDef.LRESULT r = User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
+      error("Falha em DefWindowProc");
+      return r;
     }
 
     protected void onSessionChange(WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
@@ -78,31 +99,46 @@ class ForWindowsLockDettector implements IWindowLockDettector {
     }
 
     public void run() {
-      String windowClass = "PjeWindowClass";
-      WinDef.HMODULE hInst = Kernel32.INSTANCE.GetModuleHandle("");
-      WinUser.WNDCLASSEX wClass = new WinUser.WNDCLASSEX();
-      wClass.hInstance = (WinDef.HINSTANCE)hInst;
-      wClass.lpfnWndProc = (Callback)this;
-      wClass.lpszClassName = windowClass;
-      User32.INSTANCE.RegisterClassEx(wClass);
-      getLastError();
-      WinDef.HWND hWnd = User32.INSTANCE.CreateWindowEx(8, 
+      windowHandle = User32.INSTANCE.CreateWindowEx(8, 
         windowClass, 
-        "PjeWorkstationLockListening", 
+        "WorkstationLockListening", 
         0, 0, 0, 0, 0, null, null, 
-        (WinDef.HINSTANCE)hInst, null
+        null, null
       );
-      getLastError();
-      LOGGER.warn("WorkStation dettector windows successfully created! window hwnd: " + hWnd.getPointer().toString());
-      Wtsapi32.INSTANCE.WTSRegisterSessionNotification(hWnd, 0);
+      if (windowHandle == null) { 
+        fail = true;
+        error("Não foi possível a criação da janela de monitoração login/logout");
+        return;
+      }
+      info("Criada janela de monitoração login/logout. Handle: " + windowHandle.getPointer().toString());
+      Wtsapi32.INSTANCE.WTSRegisterSessionNotification(windowHandle, 0);
+      error("Não foi possível registrar notificação de sessão no SO");
+      info("Registrada notificação de sessão do SO");
       WinUser.MSG msg = new WinUser.MSG();
-      while (!thread.isInterrupted() && User32.INSTANCE.GetMessage(msg, hWnd, 0, 0) != 0) {
+      while (User32.INSTANCE.GetMessage(msg, windowHandle, 0, 0) != 0) {
         User32.INSTANCE.TranslateMessage(msg);
         User32.INSTANCE.DispatchMessage(msg);
       } 
-      Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(hWnd);
-      User32.INSTANCE.UnregisterClass(windowClass, (WinDef.HINSTANCE)hInst);
-      User32.INSTANCE.DestroyWindow(hWnd);
+      Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(windowHandle);
+      error("Não foi possível desativar notificação de sessão do SO");
+      User32.INSTANCE.DestroyWindow(windowHandle);
+      error("Não foi possível a destruição da janela de monitoração login/logout");
+      info("Thread de monitoração log(in/off) finalizada");
+    }
+
+    public void interrupt(Thread thread) {
+      thread.interrupt();
+      if (windowHandle != null) {
+        User32.INSTANCE.PostMessage(windowHandle, WinUser.WM_QUIT, null, null);
+        try {
+          thread.join();
+        } catch (InterruptedException e) {
+          error("Não foi possível aguardar a finalização da thread de monitoração de logon. Exceção: " + e.getMessage());
+        } finally {
+          User32.INSTANCE.UnregisterClass(windowClass, null);
+          error("Não foi possível desregistrar classe de janela login/logout");
+        }
+      }
     }
   }
 
@@ -110,7 +146,7 @@ class ForWindowsLockDettector implements IWindowLockDettector {
   @Override
   public void start() {
     if (this.thread == null) {
-      this.thread = new Thread(new WorkStation());
+      this.thread = new Thread(workstation = new WorkStation());
       this.thread.start();
     }
   }
@@ -118,8 +154,16 @@ class ForWindowsLockDettector implements IWindowLockDettector {
   @Override
   public void stop() {
     if (this.thread != null) {
-      this.thread.interrupt();
-      this.thread = null;
+      LOGGER.debug("Interrompendo monitoração login/logoff");
+      try {
+        workstation.interrupt(this.thread);
+        LOGGER.debug("Interrompido com sucesso!");
+      }finally {
+        synchronized(this.listeners) {
+          this.listeners.clear();
+        }
+        this.thread = null;
+      }
     }
   }
 }

@@ -43,7 +43,7 @@ public class Providers {
     return provider;
   }
   
-  public static SunPKCS11 installSunPKCS11Provider(String providerName, InputStream config) {
+  public static AuthProvider installSunPKCS11Provider(String providerName, InputStream config) {
     Optional<Provider> p = ofNullable(getProvider("SunPKCS11-" + providerName));
     if (p.isPresent())
       return (SunPKCS11)p.get();

@@ -11,6 +11,7 @@ import static java.lang.String.format;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.AuthProvider;
 import java.security.KeyStore;
 import java.util.function.Supplier;
 
@@ -20,9 +21,6 @@ import com.github.signer4j.IParams;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
 
-import sun.security.pkcs11.SunPKCS11;
-
-@SuppressWarnings("restriction")
 class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   
   private final IPasswordCallbackHandler handler;
@@ -80,7 +78,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   }
   
   private IKeyStore getKeyStore(String providerName, long slot, InputStream config) throws KeyStoreAccessException {
-    final SunPKCS11 provider = Providers.installSunPKCS11Provider(providerName, config);
+    final AuthProvider provider = Providers.installSunPKCS11Provider(providerName, config);
     return INVOKER.invoke(
       () -> { //try
         provider.login(null, this.handler);

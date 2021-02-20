@@ -1,6 +1,7 @@
 package com.github.signer4j.imp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,13 +12,13 @@ import java.util.Optional;
 import java.util.Set;
 
 public final class Strings {
-	
+
   private static final String[] EMPTY_ARRAY = new String[0];
-  
+
   private static final String EMPTY = "";
-  
+
   private static final char SPACE = ' ';
-  
+
   private static final String SPACE_STRING = EMPTY + SPACE;
 
   public static final Comparator<String> LATIN_COMPARATOR = new LatinComparator();
@@ -39,27 +40,35 @@ public final class Strings {
       return Optional.ofNullable(defaultIfFail);
     }
   }
-  
+
   public static Optional<String> optional(String text) {
     return Optional.ofNullable(textOrNull(text));
   }
-  
+
   public static boolean isEmpty(String text) {
     return text == null || text.isEmpty();
   }
 
+  public static boolean isEmpty(String[] text) {
+    return text == null || text.length == 0;
+  }
+  
+  public static boolean isNotEmpty(String[] text) {
+    return !isEmpty(text);
+  }
+  
   public static String[] emptyArray() {
     return EMPTY_ARRAY;
   }
-  
+
   public static String empty() {
-  	return EMPTY;
+    return EMPTY;
   }
 
   public static String space() {
     return SPACE_STRING;
   }
-  
+
   public static Iterator<String> emptyIterator() {
     return Collections.emptyIterator();
   }
@@ -75,7 +84,7 @@ public final class Strings {
   public static String textOrNull(String text) {
     return needText(text, null);
   }
-  
+
   public static String needText(String text, String defaultIfNull) {
     return !hasText(text) ? defaultIfNull : trim(text);
   }
@@ -305,7 +314,7 @@ public final class Strings {
     return out.toString();
   }
 
-  
+
   public static String defaultLatin(String in) {
     return latinise(in, false, false, Integer.MAX_VALUE);
   }
@@ -440,7 +449,7 @@ public final class Strings {
       case '\u0102': // ? [LATIN CAPITAL LETTER A WITH BREVE]
       case '\u0104': // ? [LATIN CAPITAL LETTER A WITH OGONEK]
       case '\u018F': // ? http://en.wikipedia.org/wiki/Schwa [LATIN CAPITAL
-                     // LETTER SCHWA]
+        // LETTER SCHWA]
       case '\u01CD': // ? [LATIN CAPITAL LETTER A WITH CARON]
       case '\u01DE': // ? [LATIN CAPITAL LETTER A WITH DIAERESIS AND MACRON]
       case '\u01E0': // ? [LATIN CAPITAL LETTER A WITH DOT ABOVE AND MACRON]
@@ -456,7 +465,7 @@ public final class Strings {
       case '\u1EA4': // ? [LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND ACUTE]
       case '\u1EA6': // ? [LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND GRAVE]
       case '\u1EA8': // ? [LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND HOOK
-                     // ABOVE]
+        // ABOVE]
       case '\u1EAA': // ? [LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND TILDE]
       case '\u1EAC': // ? [LATIN CAPITAL LETTER A WITH CIRCUMFLEX AND DOT BELOW]
       case '\u1EAE': // ? [LATIN CAPITAL LETTER A WITH BREVE AND ACUTE]
@@ -714,7 +723,7 @@ public final class Strings {
         output[outputPos++] = 'Z';
         break;
       case '\u01C5': // ? [LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH
-                     // CARON]
+        // CARON]
       case '\u01F2': // ? [LATIN CAPITAL LETTER D WITH SMALL LETTER Z]
         output[outputPos++] = 'D';
         output[outputPos++] = 'z';
@@ -735,7 +744,7 @@ public final class Strings {
         output[outputPos++] = 'd';
         output[outputPos++] = 'z';
         break;
-      // case '\u00C8': // È [LATIN CAPITAL LETTER E WITH GRAVE]
+        // case '\u00C8': // È [LATIN CAPITAL LETTER E WITH GRAVE]
       case '\u00C9': // É [LATIN CAPITAL LETTER E WITH ACUTE]
       case '\u00CA': // Ê [LATIN CAPITAL LETTER E WITH CIRCUMFLEX]
         if (preserveAccents)
@@ -767,7 +776,7 @@ public final class Strings {
       case '\u1EBE': // ? [LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND ACUTE]
       case '\u1EC0': // ? [LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND GRAVE]
       case '\u1EC2': // ? [LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND HOOK
-                     // ABOVE]
+        // ABOVE]
       case '\u1EC4': // ? [LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND TILDE]
       case '\u1EC6': // ? [LATIN CAPITAL LETTER E WITH CIRCUMFLEX AND DOT BELOW]
       case '\u24BA': // ? [CIRCLED LATIN CAPITAL LETTER E]
@@ -775,7 +784,7 @@ public final class Strings {
       case '\uFF25': // ? [FULLWIDTH LATIN CAPITAL LETTER E]
         output[outputPos++] = 'E';
         break;
-      // case '\u00E8': // è [LATIN SMALL LETTER E WITH GRAVE]
+        // case '\u00E8': // è [LATIN SMALL LETTER E WITH GRAVE]
       case '\u00E9': // é [LATIN SMALL LETTER E WITH ACUTE]
       case '\u00EA': // ê [LATIN SMALL LETTER E WITH CIRCUMFLEX]
         if (preserveAccents)
@@ -804,7 +813,7 @@ public final class Strings {
       case '\u1D92': // ? [LATIN SMALL LETTER E WITH RETROFLEX HOOK]
       case '\u1D93': // ? [LATIN SMALL LETTER OPEN E WITH RETROFLEX HOOK]
       case '\u1D94': // ? [LATIN SMALL LETTER REVERSED OPEN E WITH RETROFLEX
-                     // HOOK]
+        // HOOK]
       case '\u1E15': // ? [LATIN SMALL LETTER E WITH MACRON AND GRAVE]
       case '\u1E17': // ? [LATIN SMALL LETTER E WITH MACRON AND ACUTE]
       case '\u1E19': // ? [LATIN SMALL LETTER E WITH CIRCUMFLEX BELOW]
@@ -950,7 +959,7 @@ public final class Strings {
         output[outputPos++] = 'h';
         break;
       case '\u01F6': // ? http://en.wikipedia.org/wiki/Hwair [LATIN CAPITAL
-                     // LETTER HWAIR]
+        // LETTER HWAIR]
         output[outputPos++] = 'H';
         output[outputPos++] = 'V';
         break;
@@ -1073,7 +1082,7 @@ public final class Strings {
       case '\uA740': // ? [LATIN CAPITAL LETTER K WITH STROKE]
       case '\uA742': // ? [LATIN CAPITAL LETTER K WITH DIAGONAL STROKE]
       case '\uA744': // ? [LATIN CAPITAL LETTER K WITH STROKE AND DIAGONAL
-                     // STROKE]
+        // STROKE]
       case '\uFF2B': // ? [FULLWIDTH LATIN CAPITAL LETTER K]
         output[outputPos++] = 'K';
         break;
@@ -1209,7 +1218,7 @@ public final class Strings {
       case '\u0145': // ? [LATIN CAPITAL LETTER N WITH CEDILLA]
       case '\u0147': // ? [LATIN CAPITAL LETTER N WITH CARON]
       case '\u014A': // ? http://en.wikipedia.org/wiki/Eng_(letter) [LATIN
-                     // CAPITAL LETTER ENG]
+        // CAPITAL LETTER ENG]
       case '\u019D': // ? [LATIN CAPITAL LETTER N WITH LEFT HOOK]
       case '\u01F8': // ? [LATIN CAPITAL LETTER N WITH GRAVE]
       case '\u0220': // ? [LATIN CAPITAL LETTER N WITH LONG RIGHT LEG]
@@ -1229,7 +1238,7 @@ public final class Strings {
       case '\u0148': // ? [LATIN SMALL LETTER N WITH CARON]
       case '\u0149': // ? [LATIN SMALL LETTER N PRECEDED BY APOSTROPHE]
       case '\u014B': // ? http://en.wikipedia.org/wiki/Eng_(letter) [LATIN SMALL
-                     // LETTER ENG]
+        // LETTER ENG]
       case '\u019E': // ? [LATIN SMALL LETTER N WITH LONG RIGHT LEG]
       case '\u01F9': // ? [LATIN SMALL LETTER N WITH GRAVE]
       case '\u0235': // ? [LATIN SMALL LETTER N WITH CURL]
@@ -1301,7 +1310,7 @@ public final class Strings {
       case '\u1ED0': // ? [LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND ACUTE]
       case '\u1ED2': // ? [LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND GRAVE]
       case '\u1ED4': // ? [LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND HOOK
-                     // ABOVE]
+        // ABOVE]
       case '\u1ED6': // ? [LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND TILDE]
       case '\u1ED8': // ? [LATIN CAPITAL LETTER O WITH CIRCUMFLEX AND DOT BELOW]
       case '\u1EDA': // ? [LATIN CAPITAL LETTER O WITH HORN AND ACUTE]
@@ -1379,7 +1388,7 @@ public final class Strings {
         output[outputPos++] = 'O';
         break;
       case '\u0222': // ? http://en.wikipedia.org/wiki/OU [LATIN CAPITAL LETTER
-                     // OU]
+        // OU]
       case '\u1D15': // ? [LATIN LETTER SMALL CAPITAL OU]
         output[outputPos++] = 'O';
         output[outputPos++] = 'U';
@@ -1399,7 +1408,7 @@ public final class Strings {
         output[outputPos++] = 'o';
         break;
       case '\u0223': // ? http://en.wikipedia.org/wiki/OU [LATIN SMALL LETTER
-                     // OU]
+        // OU]
         output[outputPos++] = 'o';
         output[outputPos++] = 'u';
         break;
@@ -1442,7 +1451,7 @@ public final class Strings {
         output[outputPos++] = 'Q';
         break;
       case '\u0138': // ? http://en.wikipedia.org/wiki/Kra_(letter) [LATIN SMALL
-                     // LETTER KRA]
+        // LETTER KRA]
       case '\u024B': // ? [LATIN SMALL LETTER Q WITH HOOK TAIL]
       case '\u02A0': // ? [LATIN SMALL LETTER Q WITH HOOK]
       case '\u24E0': // ? [CIRCLED LATIN SMALL LETTER Q]
@@ -1536,7 +1545,7 @@ public final class Strings {
       case '\u015F': // ? [LATIN SMALL LETTER S WITH CEDILLA]
       case '\u0161': // ? [LATIN SMALL LETTER S WITH CARON]
       case '\u017F': // ? http://en.wikipedia.org/wiki/Long_S [LATIN SMALL
-                     // LETTER LONG S]
+        // LETTER LONG S]
       case '\u0219': // ? [LATIN SMALL LETTER S WITH COMMA BELOW]
       case '\u023F': // ? [LATIN SMALL LETTER S WITH SWASH TAIL]
       case '\u0282': // ? [LATIN SMALL LETTER S WITH HOOK]
@@ -1610,7 +1619,7 @@ public final class Strings {
         break;
       case '\u00DE': // Þ [LATIN CAPITAL LETTER THORN]
       case '\uA766': // ? [LATIN CAPITAL LETTER THORN WITH STROKE THROUGH
-                     // DESCENDER]
+        // DESCENDER]
         output[outputPos++] = 'T';
         output[outputPos++] = 'H';
         break;
@@ -1630,7 +1639,7 @@ public final class Strings {
       case '\u00FE': // þ [LATIN SMALL LETTER THORN]
       case '\u1D7A': // ? [LATIN SMALL LETTER TH WITH STRIKETHROUGH]
       case '\uA767': // ? [LATIN SMALL LETTER THORN WITH STROKE THROUGH
-                     // DESCENDER]
+        // DESCENDER]
         output[outputPos++] = 't';
         output[outputPos++] = 'h';
         break;
@@ -1776,7 +1785,7 @@ public final class Strings {
         break;
       case '\u0174': // ? [LATIN CAPITAL LETTER W WITH CIRCUMFLEX]
       case '\u01F7': // ? http://en.wikipedia.org/wiki/Wynn [LATIN CAPITAL
-                     // LETTER WYNN]
+        // LETTER WYNN]
       case '\u1D21': // ? [LATIN LETTER SMALL CAPITAL W]
       case '\u1E80': // ? [LATIN CAPITAL LETTER W WITH GRAVE]
       case '\u1E82': // ? [LATIN CAPITAL LETTER W WITH ACUTE]
@@ -1872,7 +1881,7 @@ public final class Strings {
       case '\u017D': // ? [LATIN CAPITAL LETTER Z WITH CARON]
       case '\u01B5': // ? [LATIN CAPITAL LETTER Z WITH STROKE]
       case '\u021C': // ? http://en.wikipedia.org/wiki/Yogh [LATIN CAPITAL
-                     // LETTER YOGH]
+        // LETTER YOGH]
       case '\u0224': // ? [LATIN CAPITAL LETTER Z WITH HOOK]
       case '\u1D22': // ? [LATIN LETTER SMALL CAPITAL Z]
       case '\u1E90': // ? [LATIN CAPITAL LETTER Z WITH CIRCUMFLEX]
@@ -1889,7 +1898,7 @@ public final class Strings {
       case '\u017E': // ? [LATIN SMALL LETTER Z WITH CARON]
       case '\u01B6': // ? [LATIN SMALL LETTER Z WITH STROKE]
       case '\u021D': // ? http://en.wikipedia.org/wiki/Yogh [LATIN SMALL LETTER
-                     // YOGH]
+        // YOGH]
       case '\u0225': // ? [LATIN SMALL LETTER Z WITH HOOK]
       case '\u0240': // ? [LATIN SMALL LETTER Z WITH SWASH TAIL]
       case '\u0290': // ? [LATIN SMALL LETTER Z WITH RETROFLEX HOOK]
@@ -2451,75 +2460,191 @@ public final class Strings {
     return new String(output, 0, outputPos);
   }
 
-	public static String[] toArray(String... string) {
-		return string;
-	}
-	
-	public static String toString(String[] value, char sep) {
-		if (Containers.isEmpty(value))
-			return EMPTY;		
-		StringBuilder b = new StringBuilder(value.length * 5);
-		for(int i = 0; i < value.length; i++) {
-			if (b.length() > 0)
-				b.append(sep);
-			b.append(value[i]);
-		}
-		return b.toString();
-	}
+  public static String[] toArray(String... string) {
+    return string;
+  }
 
-	public static boolean isTrue(Object value) {
-	  return isTrue(Objects.toString(value, "false"));
-	}
+  public static String toString(String[] value, char sep) {
+    if (Containers.isEmpty(value))
+      return EMPTY;		
+    StringBuilder b = new StringBuilder(value.length * 5);
+    for(int i = 0; i < value.length; i++) {
+      if (b.length() > 0)
+        b.append(sep);
+      b.append(value[i]);
+    }
+    return b.toString();
+  }
 
-	public static boolean isTrue(String devmode) {
-		devmode = trim(devmode).toLowerCase();
-		if (!hasText(devmode))
-			return false;
-		switch(devmode) {
-			case "1":
-			case "yes":
-			case "on":
-			case "sim":
-			case "true":
-			case "ok":
-				return true;
-			default:
-				return false;
-		}
-	}
-	
-	public static boolean isFalse(String devmode) {
-		devmode = trim(devmode).toLowerCase();
-		if (!hasText(devmode))
-			return false;
-		switch(devmode) {
-			case "0":
-			case "no":
-			case "off":
-			case "não":
-			case "nao":
-			case "false":
-				return true;
-			default:
-				return false;
-		}
-	}
+  public static boolean isTrue(Object value) {
+    return isTrue(Objects.toString(value, "false"));
+  }
 
-	public static String separate(Set<?> set, char separator, boolean quotes) {
-		if (Containers.isEmpty(set))
-			return Strings.EMPTY;
-		StringBuilder b = new StringBuilder();
-		set.forEach(s -> {
-			String str = s.toString();
-			if (hasText(str)) {
-				if (b.length() > 0)
-					b.append(separator);
-				if (quotes)
-					b.append('\'').append(trim(str)).append('\'');
-				else
-					b.append(trim(str));
-			}
-		});
-		return b.toString();
-	}
+  public static boolean isTrue(String devmode) {
+    devmode = trim(devmode).toLowerCase();
+    if (!hasText(devmode))
+      return false;
+    switch(devmode) {
+    case "1":
+    case "yes":
+    case "on":
+    case "sim":
+    case "true":
+    case "ok":
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  public static boolean isFalse(String devmode) {
+    devmode = trim(devmode).toLowerCase();
+    if (!hasText(devmode))
+      return false;
+    switch(devmode) {
+    case "0":
+    case "no":
+    case "off":
+    case "não":
+    case "nao":
+    case "false":
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  public static String separate(Set<?> set, char separator, boolean quotes) {
+    if (Containers.isEmpty(set))
+      return Strings.EMPTY;
+    StringBuilder b = new StringBuilder();
+    set.forEach(s -> {
+      String str = s.toString();
+      if (hasText(str)) {
+        if (b.length() > 0)
+          b.append(separator);
+        if (quotes)
+          b.append('\'').append(trim(str)).append('\'');
+        else
+          b.append(trim(str));
+      }
+    });
+    return b.toString();
+  }
+
+  private static String replaceEach(final String text, final String[] searchList, 
+      final String[] replacementList, final boolean repeat, final int timeToLive) {
+    if (timeToLive < 0) {
+      final Set<String> searchSet = new HashSet<>(Arrays.asList(searchList));
+      final Set<String> replacementSet = new HashSet<>(Arrays.asList(replacementList));
+      searchSet.retainAll(replacementSet);
+      if (searchSet.size() > 0) {
+        throw new IllegalStateException("Aborting to protect against StackOverflowError - " +
+            "output of one loop is the input of another");
+      }
+    }
+
+    if (isEmpty(text) || isEmpty(searchList) || isEmpty(replacementList) || (isNotEmpty(searchList) && timeToLive == -1)) {
+      return text;
+    }
+
+    final int searchLength = searchList.length;
+    final int replacementLength = replacementList.length;
+
+    if (searchLength != replacementLength) {
+      throw new IllegalArgumentException("Search and Replace array lengths don't match: "
+          + searchLength
+          + " vs "
+          + replacementLength);
+    }
+
+    final boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
+
+    int textIndex = -1;
+    int replaceIndex = -1;
+    int tempIndex = -1;
+
+    for (int i = 0; i < searchLength; i++) {
+      if (noMoreMatchesForReplIndex[i] || isEmpty(searchList[i]) || replacementList[i] == null) {
+        continue;
+      }
+      tempIndex = text.indexOf(searchList[i]);
+
+      // see if we need to keep searching for this
+      if (tempIndex == -1) {
+        noMoreMatchesForReplIndex[i] = true;
+      } else {
+        if (textIndex == -1 || tempIndex < textIndex) {
+          textIndex = tempIndex;
+          replaceIndex = i;
+        }
+      }
+    }
+
+    if (textIndex == -1) {
+      return text;
+    }
+
+    int start = 0;
+
+    int increase = 0;
+
+    for (int i = 0; i < searchList.length; i++) {
+      if (searchList[i] == null || replacementList[i] == null) {
+        continue;
+      }
+      final int greater = replacementList[i].length() - searchList[i].length();
+      if (greater > 0) {
+        increase += 3 * greater; // assume 3 matches
+      }
+    }
+    increase = Math.min(increase, text.length() / 5);
+
+    final StringBuilder buf = new StringBuilder(text.length() + increase);
+
+    while (textIndex != -1) {
+
+      for (int i = start; i < textIndex; i++) {
+        buf.append(text.charAt(i));
+      }
+      buf.append(replacementList[replaceIndex]);
+
+      start = textIndex + searchList[replaceIndex].length();
+
+      textIndex = -1;
+      replaceIndex = -1;
+      tempIndex = -1;
+      for (int i = 0; i < searchLength; i++) {
+        if (noMoreMatchesForReplIndex[i] || searchList[i] == null ||
+            searchList[i].isEmpty() || replacementList[i] == null) {
+          continue;
+        }
+        tempIndex = text.indexOf(searchList[i], start);
+        if (tempIndex == -1) {
+          noMoreMatchesForReplIndex[i] = true;
+        } else {
+          if (textIndex == -1 || tempIndex < textIndex) {
+            textIndex = tempIndex;
+            replaceIndex = i;
+          }
+        }
+      }
+    }
+    final int textLength = text.length();
+    for (int i = start; i < textLength; i++) {
+      buf.append(text.charAt(i));
+    }
+    final String result = buf.toString();
+    if (!repeat) {
+      return result;
+    }
+
+    return replaceEach(result, searchList, replacementList, repeat, timeToLive - 1);
+  }
+
+
+  public static String replaceEachRepeatedly(final String text, final String[] searchList, final String[] replacementList) {
+    final int timeToLive = searchList == null ? 0 : searchList.length;
+    return replaceEach(text, searchList, replacementList, true, timeToLive);
+  }
 }
