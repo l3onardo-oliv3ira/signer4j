@@ -1,5 +1,7 @@
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.imp.Throwables.tryRun;
+
 public class Threads {
   private Threads(){}
   
@@ -34,12 +36,38 @@ public class Threads {
   }
 
   public static void async(Runnable runnable) {
-    async(Thread.currentThread().getName() + Dates.stringNow(), runnable);
+    async("From:" + Thread.currentThread().getName(), runnable);
   }
   
   public static void async(String threadName, Runnable runnable) {
     if (runnable != null) {
       new Thread(runnable, threadName).start();
     }
+  }
+  
+  public static ShutdownHookThread shutdownHook(Runnable runnable) {
+    return shutdownHookAdd(runnable, "shutdownhook:" + Dates.stringNow());
+  }
+  
+  public static ShutdownHookThread shutdownHookAdd(Runnable runnable, String name) {
+    ShutdownHookThread t = new ShutdownHookThread(name, runnable);
+    Runtime.getRuntime().addShutdownHook(t);
+    return t;
+  }
+
+  public static void shutdownHookRem(ShutdownHookThread jvmHook) {
+    if (!isShutdownHook()) {
+      tryRun(() -> Runtime.getRuntime().removeShutdownHook(jvmHook), true);
+    }
+  }
+  
+  public static class ShutdownHookThread extends Thread {
+    ShutdownHookThread(String name, Runnable r){
+      super(r, name);
+    }
+  }
+
+  public static boolean isShutdownHook() {
+    return Thread.currentThread() instanceof ShutdownHookThread;
   }
 }
