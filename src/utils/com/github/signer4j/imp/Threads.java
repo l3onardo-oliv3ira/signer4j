@@ -34,8 +34,12 @@ public class Threads {
   }
 
   public static void async(Runnable runnable) {
+    async(Thread.currentThread().getName() + Dates.stringNow(), runnable);
+  }
+  
+  public static void async(String threadName, Runnable runnable) {
     if (runnable != null) {
-      new Thread(runnable).start();
+      new Thread(runnable, threadName).start();
     }
   }
 }
