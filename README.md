@@ -42,10 +42,12 @@ public interface IDeviceManager {
 ```
 #### Device interface
 ```java
+public interface extends ISerialItem {
+  String getSerial();
+}
 public interface IGadget extends ISerialItem {
   String getLabel();
   String getModel();
-  String getSerial();
 }
 public interface IDevice extends IGadget {
   enum Type { A1, A3 }
@@ -98,7 +100,6 @@ public interface ICertificate extends ISerialItem {
   ISubjectAlternativeNames getSubjectAlternativeNames();
   
   String getName();
-  String getSerial();
   
   X509Certificate toX509();
   
@@ -120,7 +121,7 @@ System.out.println("Serial: " + slot.getSerial());
 ```
 #### Slot interface
 ```java
-public interface ISlot {
+public interface ISlot extends ISerialItem {
   long getNumber();
   IToken getToken();
   IDevice toDevice();
@@ -128,7 +129,6 @@ public interface ISlot {
   String getManufacturerId();
   String getHardwareVersion();
   String getFirmewareVersion();
-  String getSerial();
 }
 ```
 ## Token abstraction for a slot
@@ -177,7 +177,7 @@ public interface ISignedData extends IPersonalData {
 ```
 #### Token interface
 ```java
-public interface IToken extends IGadget{
+public interface IToken extends IGadget {
   IToken login() throws KeyStoreAccessException;
   IToken login(IPasswordCollector collector) throws KeyStoreAccessException;
   IToken login(char[] password) throws KeyStoreAccessException;
