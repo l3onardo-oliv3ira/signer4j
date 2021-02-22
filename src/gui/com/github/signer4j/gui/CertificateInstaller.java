@@ -30,20 +30,18 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import com.github.signer4j.AllowedExtensions;
+import com.github.signer4j.ICertificateListUI.IA1A3ConfigSaved;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.ButtonRenderer;
 import com.github.signer4j.gui.utils.DefaultFileChooser;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;
-import com.github.signer4j.imp.BiProcedure;
 import com.github.signer4j.imp.Config;
 import com.github.signer4j.imp.FilePath;
 
 class CertificateInstaller extends SimpleDialog {
 
-  public static interface IA1A3ConfigSaved extends BiProcedure<List<IFilePath>, List<IFilePath>> {}
-  
   private static final long serialVersionUID = 1L;
 
   private static final Color SELECTED = new Color(234, 248, 229);

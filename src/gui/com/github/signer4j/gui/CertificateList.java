@@ -31,7 +31,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import com.github.signer4j.ICertificateListUI;
-import com.github.signer4j.gui.CertificateInstaller.IA1A3ConfigSaved;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;

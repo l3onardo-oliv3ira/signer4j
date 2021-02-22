@@ -3,7 +3,11 @@ package com.github.signer4j;
 import java.util.List;
 import java.util.Optional;
 
+import com.github.signer4j.imp.BiProcedure;
+
 public interface ICertificateListUI {
+  
+  interface IA1A3ConfigSaved extends BiProcedure<List<IFilePath>, List<IFilePath>> {}
   
   static interface ICertificateEntry {
     String getDevice();
