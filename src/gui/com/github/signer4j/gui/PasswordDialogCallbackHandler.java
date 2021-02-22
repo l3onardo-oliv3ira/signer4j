@@ -15,34 +15,34 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+import com.github.signer4j.IGadget;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IPasswordCollector;
-import com.github.signer4j.IToken;
-import com.github.signer4j.gui.utils.Images;
+import com.github.signer4j.imp.Config;
 import com.github.signer4j.imp.GuiTools;
 import com.github.signer4j.imp.ResponseCallback;
 
-public class JDialogPasswordCallbackHandler implements IPasswordCallbackHandler {
+public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
 
   private static final String DEFAULT_PIN_TITLE = "Informe a senha";
 
   private final String title;
 
-  private final IToken token;
+  private final IGadget gadget;
   
   private final IPasswordCollector collector;
   
-  public JDialogPasswordCallbackHandler(IToken token) {
-    this(token, DEFAULT_PIN_TITLE, p -> {});
+  public PasswordDialogCallbackHandler(IGadget gadget) {
+    this(gadget, DEFAULT_PIN_TITLE, p -> {});
   }
 
-  public JDialogPasswordCallbackHandler(IToken token, IPasswordCollector collector) {
-    this(token, DEFAULT_PIN_TITLE, collector);
+  public PasswordDialogCallbackHandler(IGadget gadget, IPasswordCollector collector) {
+    this(gadget, DEFAULT_PIN_TITLE, collector);
   }
 
-  public JDialogPasswordCallbackHandler(IToken token, String title, IPasswordCollector collector) {
+  public PasswordDialogCallbackHandler(IGadget gadget, String title, IPasswordCollector collector) {
     this.title = trim(title, DEFAULT_PIN_TITLE);
-    this.token = requireNonNull(token, "token is null");
+    this.gadget = requireNonNull(gadget, "token is null");
     this.collector = requireNonNull(collector, "collector is null");
   }
 
@@ -51,11 +51,11 @@ public class JDialogPasswordCallbackHandler implements IPasswordCallbackHandler 
     JPasswordField passwordField = new JPasswordField();
     JComponent[] components = new JComponent[5];
     components[0] = new JLabel(format("Token: %s - Modelo: %s", 
-      token.getLabel(), 
-      token.getModel()
+      gadget.getLabel(), 
+      gadget.getModel()
     ));
-    components[1] = new JLabel(format("Fabricante: %s ", token.getManufacture()));
-    components[2] = new JLabel("Número de série: " + token.getSerial());
+    components[1] = new JLabel(format("Fabricante: %s ", gadget.getManufacturer()));
+    components[2] = new JLabel("Número de série: " + gadget.getSerial());
     components[3] = new JLabel("Senha/PIN: ");
     components[4] = passwordField;
     JOptionPane panel = new JOptionPane(components,
@@ -63,7 +63,7 @@ public class JDialogPasswordCallbackHandler implements IPasswordCallbackHandler 
       JOptionPane.OK_CANCEL_OPTION
     );
     JDialog dialog = panel.createDialog(title);
-    dialog.setIconImage(Images.LOCK.asImage());
+    dialog.setIconImage(Config.getIcon());
     dialog.setAlwaysOnTop(true);
     dialog.addComponentListener(new ComponentAdapter() {
       public void componentShown(ComponentEvent e) {

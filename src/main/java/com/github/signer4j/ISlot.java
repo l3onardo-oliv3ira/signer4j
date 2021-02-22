@@ -10,8 +10,6 @@ public interface ISlot extends ISerialItem {
 
   String getDescription();
   
-  String getManufacturerId();
-  
   String getHardwareVersion();
   
   String getFirmewareVersion();

@@ -30,7 +30,7 @@ class PKCS12Slot extends AbstractSlot implements ILibraryAware {
   }
 
   @Override
-  public final String getManufacturerId() {
+  public final String getManufacturer() {
     return "https://github.com/l3onardo-oliv3ira";
   }
 

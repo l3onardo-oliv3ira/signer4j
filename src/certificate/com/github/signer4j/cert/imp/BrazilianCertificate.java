@@ -61,6 +61,11 @@ class BrazilianCertificate implements ICertificate {
   }
   
   @Override
+  public String getManufacturer() {
+    return getCertificateIssuerDN().getFullName();
+  }
+
+  @Override
   public String getSerial() {
     return toString(certificate.getSerialNumber());
   }
@@ -69,7 +74,7 @@ class BrazilianCertificate implements ICertificate {
   public X509Certificate toX509() {
     return certificate; 
   }
-
+  
   @Override
   public IDistinguishedName getCertificateIssuerDN() {
     if (certificateFrom == null) {

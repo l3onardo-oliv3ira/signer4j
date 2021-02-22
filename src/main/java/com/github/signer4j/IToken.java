@@ -1,12 +1,12 @@
 package com.github.signer4j;
 
-import com.github.signer4j.gui.JDialogPasswordCallbackHandler;
+import com.github.signer4j.gui.PasswordDialogCallbackHandler;
 import com.github.signer4j.imp.LiteralPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
 
-public interface IToken extends IGadget{
+public interface IToken extends IGadget {
   
-  String getManufacture();
+  String getManufacturer();
   
   long getMinPinLen();
   
@@ -39,7 +39,7 @@ public interface IToken extends IGadget{
   }
   
   default IToken login(IPasswordCollector collector) throws KeyStoreAccessException {
-    return login(new JDialogPasswordCallbackHandler(this, collector));
+    return login(new PasswordDialogCallbackHandler(this, collector));
   }
   
   default IToken login(char[] password) throws KeyStoreAccessException {

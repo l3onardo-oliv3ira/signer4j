@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.signer4j.IPasswordCollector;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
@@ -93,9 +95,10 @@ class PKCS12Driver extends AbstractDriver {
               token.login(password);
             } else {
               LOGGER.info("Logando em modo DIALOG");
-              char[][] success = new char[1][1];
-              token.login(p -> {success[0] = p;});
-              password = success[0];
+              AtomicReference<char[]> pass = new AtomicReference<char[]>();
+              IPasswordCollector collector = p -> pass.set(p);
+              token.login(collector);
+              password = pass.get();
             }
             LOGGER.info("Logado com sucesso: " + token.isAuthenticated());
             token.logout();

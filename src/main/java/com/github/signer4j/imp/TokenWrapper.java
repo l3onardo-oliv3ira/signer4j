@@ -36,8 +36,8 @@ public class TokenWrapper implements IToken {
   }
 
   @Override
-  public String getManufacture() {
-    return token.getManufacture();
+  public String getManufacturer() {
+    return token.getManufacturer();
   }
 
   @Override

@@ -3,7 +3,7 @@ package com.github.signer4j;
 import java.util.List;
 import java.util.Optional;
 
-public interface ICertificateList {
+public interface ICertificateListUI {
   
   static interface ICertificateEntry {
     String getDevice();
@@ -16,5 +16,5 @@ public interface ICertificateList {
     void setRemembered(boolean value);
   }
 
-  Optional<ICertificateEntry> show(List<ICertificateEntry> entries);
+  Optional<ICertificateEntry> choose(List<ICertificateEntry> entries);
 }

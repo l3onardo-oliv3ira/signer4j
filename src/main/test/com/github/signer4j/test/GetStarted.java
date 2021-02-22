@@ -75,7 +75,7 @@ public class GetStarted {
     System.out.println("Description: " + slot.getDescription());
     System.out.println("FirmewareVersion: " + slot.getFirmewareVersion());
     System.out.println("HardwareVersion: " + slot.getHardwareVersion());
-    System.out.println("ManufacturerId: " + slot.getManufacturerId());
+    System.out.println("ManufacturerId: " + slot.getManufacturer());
     System.out.println("Number: " + slot.getNumber());
     System.out.println("Serial: " + slot.getSerial());
     

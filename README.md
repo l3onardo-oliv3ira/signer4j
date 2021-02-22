@@ -43,6 +43,7 @@ public interface IDeviceManager {
 #### Device interface
 ```java
 public interface extends ISerialItem {
+  String getManufacturer();
   String getSerial();
 }
 public interface IGadget extends ISerialItem {
@@ -126,7 +127,6 @@ public interface ISlot extends ISerialItem {
   IToken getToken();
   IDevice toDevice();
   String getDescription();
-  String getManufacturerId();
   String getHardwareVersion();
   String getFirmewareVersion();
 }

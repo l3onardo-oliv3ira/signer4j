@@ -29,7 +29,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   protected String label;
   protected String model;
   protected String serial;
-  protected String manufacture;
+  protected String manufacturer;
   protected long minPinLen;
   protected long maxPinLen;
   
@@ -67,8 +67,8 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
 
   @Override
-  public final String getManufacture() {
-    return manufacture;
+  public final String getManufacturer() {
+    return manufacturer;
   }
 
   @Override
@@ -165,7 +165,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     private String label;
     private String model;
     private String serial;
-    private String manufacture;
+    private String manufacturer;
     private ICertificateFactory factory = CertificateFactory.DEFAULT;
     private IPasswordCallbackHandler passwordCallback = ConsoleCallback.HANDLER;
     
@@ -189,7 +189,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     }
     
     public final Builder<S, T> withManufacture(String manufacture) {
-      this.manufacture = Strings.trim(manufacture);
+      this.manufacturer = Strings.trim(manufacture);
       return this;
     }
     
@@ -214,7 +214,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
       token.label = this.label;
       token.model = this.model;
       token.serial = this.serial;
-      token.manufacture = this.manufacture;
+      token.manufacturer = this.manufacturer;
       token.passwordCallback = this.passwordCallback;
     }
 

@@ -117,11 +117,17 @@ class DefaultDevice implements IDevice {
     return this.certificates;
   }
   
+  @Override
+  public final String getManufacturer() {
+    return slot.getManufacturer();
+  }
+
+  
   final void setCertificates(ICertificates certificates) {
     Args.requireNonNull(certificates, "certificates is null");
     this.certificates = certificates;
   }
-
+  
   @Override
   public String toString() {
     return String.format("DefaultDevice [driver=%s, label=%s, model=%s, serial=%s, slot=%s, certificates=%s]", driver,

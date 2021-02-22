@@ -53,7 +53,7 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   
   @Override
   public String toString() {
-    return "PKCS11Token [label=" + label + ", model=" + model + ", serial=" + serial + ", manufacture=" + manufacture
+    return "PKCS11Token [label=" + label + ", model=" + model + ", serial=" + serial + ", manufacture=" + manufacturer
         + ", minPinLen=" + minPinLen + ", maxPinLen=" + maxPinLen + ", certificates=" + certificates + "]";
   }
 

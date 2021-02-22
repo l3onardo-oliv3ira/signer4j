@@ -31,7 +31,7 @@ abstract class AbstractSlot extends ExceptionExpert implements ISlot {
   @Override
   public String toString() {
     return getClass().getSimpleName() + " [description=" + getDescription()
-        + ", manufacturerId=" + getManufacturerId() + ", hardwareVersion=" + getHardwareVersion()
+        + ", manufacturerId=" + getManufacturer() + ", hardwareVersion=" + getHardwareVersion()
         + ", firmewareVersion=" + getFirmewareVersion() + ", number="
         + getNumber() + "]";
   }
