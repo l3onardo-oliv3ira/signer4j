@@ -36,7 +36,7 @@ import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;
 import com.github.signer4j.imp.GuiTools;
 
-public class CertificateList extends SimpleDialog implements ICertificateListUI {
+public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
   private static final long serialVersionUID = -1L;
 
@@ -57,7 +57,7 @@ public class CertificateList extends SimpleDialog implements ICertificateListUI 
   
   private Optional<ICertificateEntry> selectedEntry = Optional.empty();
 
-  private CertificateList(String defaultAlias, IA1A3ConfigSaved onSaved) {
+  private CertificateListUI(String defaultAlias, IA1A3ConfigSaved onSaved) {
     super("Seleção de certificado", true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.onSaved = onSaved;
@@ -295,6 +295,6 @@ public class CertificateList extends SimpleDialog implements ICertificateListUI 
         return defaultEntry;
       }
     }
-    return new CertificateList(defaultAlias, onSaved).choose(entries);
+    return new CertificateListUI(defaultAlias, onSaved).choose(entries);
   }
 }
