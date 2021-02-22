@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.function.Supplier;
 
 public class Throwables {
   private static final Logger LOGGER = LoggerFactory.getLogger(Throwables.class);
@@ -70,6 +71,16 @@ public class Throwables {
     }catch(Throwable e) {
       LOGGER.warn("tryCall exception", e);
       return defaultFail;
+    }
+  }
+  
+  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, Supplier<String> throwMessage) {
+    try {
+      return procedure.call();
+    }catch(RuntimeException rte) {
+      throw rte;
+    }catch(Throwable ex) {
+      throw new RuntimeException(throwMessage.get(), ex);
     }
   }
 

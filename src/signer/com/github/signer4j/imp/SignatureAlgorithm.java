@@ -8,10 +8,10 @@ import com.github.signer4j.IAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
 
 public enum SignatureAlgorithm implements ISignatureAlgorithm {
-  MD5withRSA,
-  SHA1withRSA, 
-  SHA256withRSA, 
-  ASN1MD5withRSA;
+  MD5withRSA("MD5withRSA"),
+  SHA1withRSA("SHA1withRSA"), 
+  SHA256withRSA("SHA256withRSA"), 
+  ASN1MD5withRSA("ASN1MD5withRSA");
   
   //do not create new array's instances for each call
   private static final SignatureAlgorithm[] VALUES = SignatureAlgorithm.values(); 
@@ -21,14 +21,20 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
     return get(key).orElse(null);
   }
 
+  private String name;
+  
+  SignatureAlgorithm(String name) {
+    this.name = name;
+  }  
+  
   @JsonValue
   public String getKey() {
-    return this.getName();
+    return name;
   }
 
   @Override
-  public String getName() {
-    return name();
+  public final String getName() {
+    return name;
   }
   
   public static ISignatureAlgorithm getDefault() {
@@ -39,7 +45,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
     return getOfDefault(name, getDefault());
   }
   
-  public static IAlgorithm getOfDefault(String name, IAlgorithm defaultIfNot) {
+  public static ISignatureAlgorithm getOfDefault(String name, ISignatureAlgorithm defaultIfNot) {
     return get(name).orElse(defaultIfNot);
   }
   
@@ -51,9 +57,9 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
     return algorithm != null && get(algorithm.getName()).isPresent();
   }
   
-  public static Optional<IAlgorithm> get(String name) {
-    for(IAlgorithm a: VALUES) {
-      if (a.getName().equalsIgnoreCase(name))
+  public static Optional<ISignatureAlgorithm> get(String name) {
+    for(SignatureAlgorithm a: VALUES) {
+      if (a.name.equalsIgnoreCase(name))
         return Optional.of(a);
     }
     return Optional.empty();

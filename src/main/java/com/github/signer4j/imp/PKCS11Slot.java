@@ -112,7 +112,7 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
       .withSlot(this)
       .withLabel(this.token.getLabel())
       .withModel(this.token.getModel())
-      .withSerial(this.token.getSerialNumber())
+      .withSerial(this.token.getSerial())
       .withCertificates(this.token.getCertificates())
       .build();
   }

@@ -32,19 +32,17 @@ public interface IToken extends IGadget{
 
   void logout();
   
-  void login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
+  IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
 
   default IToken login() throws KeyStoreAccessException { 
     return login(p -> {});
   }
   
   default IToken login(IPasswordCollector collector) throws KeyStoreAccessException {
-    login(new JDialogPasswordCallbackHandler(this, collector));
-    return this;
+    return login(new JDialogPasswordCallbackHandler(this, collector));
   }
   
   default IToken login(char[] password) throws KeyStoreAccessException {
-    login(new LiteralPasswordCallbackHandler(password));
-    return this;
+    return login(new LiteralPasswordCallbackHandler(password));
   }
 }

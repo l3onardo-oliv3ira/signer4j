@@ -1,6 +1,6 @@
 package com.github.signer4j;
 
-public interface ISlot {
+public interface ISlot extends ISerialItem {
   
   long getNumber();
   
@@ -15,6 +15,4 @@ public interface ISlot {
   String getHardwareVersion();
   
   String getFirmewareVersion();
-  
-  String getSerial();
 }

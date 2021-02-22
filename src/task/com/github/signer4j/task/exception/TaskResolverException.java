@@ -7,4 +7,8 @@ public class TaskResolverException extends Exception {
   public TaskResolverException(String message) {
     super(message);
   }
+
+  public TaskResolverException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

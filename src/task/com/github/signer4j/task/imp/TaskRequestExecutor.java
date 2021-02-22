@@ -85,6 +85,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
           try {
             output.processResponse(response);
           } catch (IOException e) {
+            LOGGER.warn("Exceção no processamento da resposta", e);
             progress.abort(e);
             return;
           }
@@ -95,6 +96,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
         }
           
       }catch(Exception e) {
+        LOGGER.warn("Exceção na execução da requisição", e);
         progress.abort(e);
       }finally {
         endExecution(progress);

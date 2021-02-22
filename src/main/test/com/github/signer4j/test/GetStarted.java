@@ -39,7 +39,7 @@ public class GetStarted {
       System.out.println("Driver: " + device.getDriver());
       System.out.println("Label: " + device.getLabel());
       System.out.println("Model: " + device.getModel());
-      System.out.println("Serial: " + device.getSerialNumber());
+      System.out.println("Serial: " + device.getSerial());
     });
 
     //Access first device and listing certificates
@@ -90,20 +90,11 @@ public class GetStarted {
       
       String message = "Hello world!";
       
-      ISimpleSigner simpleSigner = token.signerBuilder().build();
+      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorigthm(SignatureAlgorithm.ASN1MD5withRSA).build();
       
       ISignedData data = simpleSigner.process(message);
       
       System.out.println("base64 signed data" + data.getSignature64());
-      
-      ICMSSigner cmsSigner = token.cmsSignerBuilder()
-        .usingAlgorigthm(SignatureAlgorithm.MD5withRSA)
-        .usingAttributes(true)
-        .usingMemoryLimit(50 * 1024 * 1024)
-        .usingSignatureType(SignatureType.ATTACHED)
-        .build();
-      
-      cmsSigner.process(message);
       
     } catch (TokenLockedException e) {
       System.out.println("Your token is blocked");

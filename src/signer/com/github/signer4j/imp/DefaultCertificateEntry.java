@@ -8,6 +8,7 @@ import com.github.signer4j.ICertificateList;
 import com.github.signer4j.IDevice;
 
 public abstract class DefaultCertificateEntry implements ICertificateList.ICertificateEntry {
+  
   private final boolean valid;
 
   protected final IDevice device;
@@ -29,11 +30,11 @@ public abstract class DefaultCertificateEntry implements ICertificateList.ICerti
 
   @Override
   public final String getDevice() {
-    return formater.apply(device.getType() + ": " + device.getSerialNumber());
+    return formater.apply(device.getType() + ": " + device.getSerial());
   }
 
   @Override
-  public String getName() {
+  public final String getName() {
     return formater.apply(certificate.getName());
   }
 
@@ -49,7 +50,7 @@ public abstract class DefaultCertificateEntry implements ICertificateList.ICerti
   
   @Override
   public final String getId() {
-    return device.getSerialNumber() + ":" + certificate.getSerialNumber();
+    return device.getSerial() + ":" + certificate.getSerial();
   }
   
   @Override

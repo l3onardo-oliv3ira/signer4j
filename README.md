@@ -12,7 +12,7 @@ dm.getDevices().stream().forEach(d -> {
   System.out.println("Driver: " + device.getDriver());
   System.out.println("Label: " + device.getLabel());
   System.out.println("Model: " + device.getModel());
-  System.out.println("Serial: " + device.getSerialNumber());
+  System.out.println("Serial: " + device.getSerial());
 });
 ```
 #### Device manager interface
@@ -42,10 +42,10 @@ public interface IDeviceManager {
 ```
 #### Device interface
 ```java
-public interface IGadget {
+public interface IGadget extends ISerialItem {
   String getLabel();
   String getModel();
-  String getSerialNumber();
+  String getSerial();
 }
 public interface IDevice extends IGadget {
   enum Type { A1, A3 }
@@ -81,7 +81,7 @@ device.getCertificates().stream().forEach(c -> {
 ```
 #### Certificate interface
 ```java
-public interface ICertificate {
+public interface ICertificate extends ISerialItem {
   Date getAfterDate();
   Date getBeforeDate();
   
@@ -98,9 +98,9 @@ public interface ICertificate {
   ISubjectAlternativeNames getSubjectAlternativeNames();
   
   String getName();
-  String getSerialNumber();
+  String getSerial();
   
-  X509Certificate getX509Certificate();
+  X509Certificate toX509();
   
   boolean hasCertificatePF();
   boolean hasCertificatePJ();
@@ -146,7 +146,7 @@ try {
   
   System.out.println("base64 signed data" + data.getSignature64());
 } catch (TokenLockedException e) {
-  System.out.println("Your token is blocked");
+  System.out.println("Your token is locked");
 } catch (InvalidPinException e) {
   System.out.println("Your password is incorrect!");
 } catch (NoTokenPresentException e) {
@@ -181,8 +181,8 @@ public interface IToken extends IGadget{
   IToken login() throws KeyStoreAccessException;
   IToken login(IPasswordCollector collector) throws KeyStoreAccessException;
   IToken login(char[] password) throws KeyStoreAccessException;
+  IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
 
-  void login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
   void logout();
 
   long getMinPinLen();
@@ -223,7 +223,7 @@ try {
     data.writeTo(out);
   }
 } catch (TokenLockedException e) {
-  System.out.println("Your token is blocked");
+  System.out.println("Your token is locked");
 } catch (InvalidPinException e) {
   System.out.println("Your password is incorrect!");
 } catch (NoTokenPresentException e) {

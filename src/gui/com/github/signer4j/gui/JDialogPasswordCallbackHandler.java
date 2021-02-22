@@ -55,7 +55,7 @@ public class JDialogPasswordCallbackHandler implements IPasswordCallbackHandler 
       token.getModel()
     ));
     components[1] = new JLabel(format("Fabricante: %s ", token.getManufacture()));
-    components[2] = new JLabel("Número de série: " + token.getSerialNumber());
+    components[2] = new JLabel("Número de série: " + token.getSerial());
     components[3] = new JLabel("Senha/PIN: ");
     components[4] = passwordField;
     JOptionPane panel = new JOptionPane(components,

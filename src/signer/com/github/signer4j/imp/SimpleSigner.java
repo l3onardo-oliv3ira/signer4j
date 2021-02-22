@@ -1,6 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.signer4j.imp.Throwables.tryCall;
 
 import java.security.Signature;
 
@@ -13,7 +14,7 @@ import com.github.signer4j.imp.exception.KeyStoreAccessException;
 
 class SimpleSigner extends SecurityObject implements ISimpleSigner {
 
-  private ISignatureAlgorithm algorithm;
+  private Signature signature;
   
   private SimpleSigner(ICertificateChooser chooser, Runnable dispose) {
     super(chooser, dispose);
@@ -26,7 +27,6 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
     Args.requirePositive(length, "length is not positive");
     return invoke(() -> {
       IChoice choice = choose();
-      Signature signature = Signature.getInstance(algorithm.getName());
       signature.initSign(choice.getPrivateKey());
       signature.update(content, offset, length);
       return SignedData.from(signature.sign(), choice);
@@ -56,7 +56,11 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
     public final ISimpleSigner build() {
       Providers.installBouncyCastleProvider();
       SimpleSigner signer = new SimpleSigner(chooser, dispose);
-      signer.algorithm = this.algorithm;
+      String aName = algorithm.getName();
+      signer.signature = tryCall(
+        () -> Signature.getInstance(aName), 
+        () -> "Algorítimo " + aName + " é desconhecido"
+      );
       return signer;
     }
   }

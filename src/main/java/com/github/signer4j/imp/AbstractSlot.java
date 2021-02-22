@@ -25,7 +25,7 @@ abstract class AbstractSlot extends ExceptionExpert implements ISlot {
 
   @Override
   public final String getSerial() {
-    return getToken().getSerialNumber();
+    return getToken().getSerial();
   }
   
   @Override

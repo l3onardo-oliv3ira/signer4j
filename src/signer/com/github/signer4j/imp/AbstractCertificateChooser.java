@@ -46,7 +46,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
   }
   
   private final String getAliasFrom(ICertificate certificate) throws KeyStoreAccessException {
-    return keyStore.getCertificateAlias(certificate.getX509Certificate());
+    return keyStore.getCertificateAlias(certificate.toX509());
   }
   
   private final String getProvider() throws KeyStoreAccessException {

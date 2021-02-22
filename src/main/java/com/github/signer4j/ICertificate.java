@@ -12,7 +12,8 @@ import com.github.signer4j.cert.IDistinguishedName;
 import com.github.signer4j.cert.ISubjectAlternativeNames;
 import com.github.signer4j.cert.imp.KeyUsage;
 
-public interface ICertificate {
+public interface ICertificate extends ISerialItem {
+  
   Date getAfterDate();
 
   Date getBeforeDate();
@@ -35,9 +36,7 @@ public interface ICertificate {
 
   String getName();
 
-  String getSerialNumber();
-
-  X509Certificate getX509Certificate();
+  X509Certificate toX509();
 
   boolean hasCertificatePF();
 

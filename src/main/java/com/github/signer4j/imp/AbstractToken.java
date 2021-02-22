@@ -62,7 +62,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
 
   @Override
-  public final String getSerialNumber() {
+  public final String getSerial() {
     return serial;
   }
 
@@ -91,7 +91,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
 
   @Override
-  public void login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+  public IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
     if (callback == null)
       callback = passwordCallback;
     if (!isAuthenticated()) {
@@ -102,6 +102,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
         throw e;
       }
     }
+    return this;
   }
 
   protected void doLogin(IKeyStore keyStore) throws KeyStoreAccessException { }

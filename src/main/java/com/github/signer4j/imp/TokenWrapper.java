@@ -5,6 +5,7 @@ import com.github.signer4j.ICertificateChooserFactory;
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IKeyStoreAccess;
 import com.github.signer4j.IPasswordCallbackHandler;
+import com.github.signer4j.IPasswordCollector;
 import com.github.signer4j.ISignerBuilder;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
@@ -30,8 +31,8 @@ public class TokenWrapper implements IToken {
   }
 
   @Override
-  public String getSerialNumber() {
-    return token.getSerialNumber();
+  public String getSerial() {
+    return token.getSerial();
   }
 
   @Override
@@ -90,8 +91,27 @@ public class TokenWrapper implements IToken {
   }
 
   @Override
-  public void login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+  public IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
     token.login(callback);
+    return this;
+  }
+  
+  @Override
+  public IToken login() throws KeyStoreAccessException {
+    token.login();
+    return this;
+  }
+  
+  @Override
+  public IToken login(IPasswordCollector collector) throws KeyStoreAccessException {
+    token.login(collector);
+    return this;
+  }
+
+  @Override
+  public IToken login(char[] password) throws KeyStoreAccessException {
+    token.login(password);
+    return this;
   }
 
   @Override

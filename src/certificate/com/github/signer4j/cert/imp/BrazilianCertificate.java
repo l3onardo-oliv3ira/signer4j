@@ -61,12 +61,12 @@ class BrazilianCertificate implements ICertificate {
   }
   
   @Override
-  public String getSerialNumber() {
+  public String getSerial() {
     return toString(certificate.getSerialNumber());
   }
 
   @Override
-  public X509Certificate getX509Certificate() {
+  public X509Certificate toX509() {
     return certificate; 
   }
 
@@ -220,7 +220,7 @@ class BrazilianCertificate implements ICertificate {
     sb.append(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
     append(sb, "issuerDN", getCertificateIssuerDN());
     append(sb, "subjectDN", getCertificateSubjectDN());
-    append(sb, "serialNumber", getSerialNumber());
+    append(sb, "serialNumber", getSerial());
     append(sb, "valid.from", formatter.format(getBeforeDate()));
     append(sb, "valid.to", formatter.format(getAfterDate()));
     append(sb, "name", getName());

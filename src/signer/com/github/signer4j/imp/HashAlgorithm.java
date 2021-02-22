@@ -10,13 +10,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IHashAlgorithm;
 
 public enum HashAlgorithm implements IHashAlgorithm {
-  DIGEST_SHA1() {
+  DIGEST_SHA1("DIGEST_SHA1") {
     @Override
     public String getName() {
       return CMSSignedDataGenerator.DIGEST_SHA1;
     }
   },
-  DIGEST_MD5(){
+  DIGEST_MD5("DIGEST_MD5"){
     @Override
     public String getName() {
       return CMSSignedDataStreamGenerator.DIGEST_MD5;
@@ -27,20 +27,21 @@ public enum HashAlgorithm implements IHashAlgorithm {
   public static IHashAlgorithm fromString(final String key) {
     return get(key).orElse(null);
   }
+  
+  private final String name;
 
+  HashAlgorithm(String name) {
+    this.name = name;
+  }
+  
   @JsonValue
   public String getKey() {
-    return this.name();
+    return this.name;
   }
   
   //do not create new array's instances for each call
   private static final HashAlgorithm[] VALUES = HashAlgorithm.values(); 
 
-  @Override
-  public String getName() {
-    return name();
-  }
-  
   public static IHashAlgorithm getDefault() {
     return DIGEST_SHA1;
   }
@@ -62,8 +63,8 @@ public enum HashAlgorithm implements IHashAlgorithm {
   }
   
   public static Optional<IHashAlgorithm> get(String name) {
-    for(IHashAlgorithm a: VALUES) {
-      if (a.getName().equalsIgnoreCase(name))
+    for(HashAlgorithm a: VALUES) {
+      if (a.name.equalsIgnoreCase(name))
         return Optional.of(a);
     }
     return Optional.empty();

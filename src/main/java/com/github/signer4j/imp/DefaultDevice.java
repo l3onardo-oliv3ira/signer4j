@@ -108,7 +108,7 @@ class DefaultDevice implements IDevice {
   }
 
   @Override
-  public final String getSerialNumber() {
+  public final String getSerial() {
     return this.serial;
   }
 
