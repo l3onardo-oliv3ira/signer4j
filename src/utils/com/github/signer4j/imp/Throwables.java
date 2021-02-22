@@ -1,10 +1,10 @@
 package com.github.signer4j.imp;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.function.Supplier;
 
 public class Throwables {
   private static final Logger LOGGER = LoggerFactory.getLogger(Throwables.class);

@@ -29,7 +29,7 @@ public class GetStarted {
   public static void main(String[] args) {
 
     IDeviceManager dm = new DeviceManager();
-
+    
     //Listing all detected devices
 
     System.out.println("**************************");

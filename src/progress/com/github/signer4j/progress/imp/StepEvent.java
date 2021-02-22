@@ -54,4 +54,9 @@ class StepEvent implements IStepEvent {
   public String toString() {
     return getStage().beginString() + ": " + getMessage();
   }
+
+  @Override
+  public boolean isAborted() {
+    return state.isAborted();
+  }
 }

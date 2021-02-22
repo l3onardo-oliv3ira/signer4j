@@ -7,7 +7,7 @@ import com.github.signer4j.ICertificate;
 import com.github.signer4j.ICertificateListUI;
 import com.github.signer4j.IDevice;
 
-public abstract class DefaultCertificateEntry implements ICertificateListUI.ICertificateEntry {
+public class DefaultCertificateEntry implements ICertificateListUI.ICertificateEntry {
   
   private final boolean valid;
 

@@ -11,4 +11,6 @@ public interface IState {
   long getTime();
 
   String getStepTree();
+
+  boolean isAborted();
 }

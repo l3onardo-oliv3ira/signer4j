@@ -9,7 +9,7 @@ public interface ICertificateListUI {
   
   interface IA1A3ConfigSaved extends BiProcedure<List<IFilePath>, List<IFilePath>> {}
   
-  static interface ICertificateEntry {
+  interface ICertificateEntry {
     String getDevice();
     String getName();
     String getIssuer();

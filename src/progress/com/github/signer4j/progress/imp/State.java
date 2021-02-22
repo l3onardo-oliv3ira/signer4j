@@ -69,6 +69,7 @@ class State implements IState {
     return stopWatch.getTime();
   }
   
+  @Override
   public final boolean isAborted() {
     return abortCause != null;
   }

@@ -63,8 +63,8 @@ class CertificateInstaller extends SimpleDialog {
   CertificateInstaller(IA1A3ConfigSaved onSaved) {
     super("Configuração de certificado", true);
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
-    Config.persister().loadA3Paths(listA3::add);
-    Config.persister().loadA1Paths(listA1::add);
+    Config.loadA3Paths(listA3::add);
+    Config.loadA1Paths(listA1::add);
     
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 474, 249); 
@@ -379,7 +379,7 @@ class CertificateInstaller extends SimpleDialog {
       @Override
       protected void load(List<IFilePath> actual) {
         List<IFilePath> m = new ArrayList<>();
-        Config.persister().loadA1Paths(m::add);
+        Config.loadA1Paths(m::add);
         m.addAll(actual);
         model.load(m);
       }
@@ -410,7 +410,7 @@ class CertificateInstaller extends SimpleDialog {
       @Override
       void load(List<IFilePath> actual) {
         List<IFilePath> m = new ArrayList<>();
-        Config.persister().loadA3Paths(m::add);
+        Config.loadA3Paths(m::add);
         m.addAll(actual);
         model.load(m);
       }
@@ -442,8 +442,8 @@ class CertificateInstaller extends SimpleDialog {
     protected abstract FileNameExtensionFilter fileFilter();
 
     void save(List<IFilePath> listA1, List<IFilePath> listA3) {
-      Config.persister().saveA1Paths(listA1.toArray(new IFilePath[listA1.size()]));
-      Config.persister().saveA3Paths(listA3.toArray(new IFilePath[listA3.size()]));
+      Config.saveA1Paths(listA1.toArray(new IFilePath[listA1.size()]));
+      Config.saveA3Paths(listA3.toArray(new IFilePath[listA3.size()]));
     }
     
     void load(File file) {

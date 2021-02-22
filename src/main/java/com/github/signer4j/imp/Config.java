@@ -1,34 +1,67 @@
 package com.github.signer4j.imp;
 
 import java.awt.Image;
+import java.util.Optional;
 
 import com.github.signer4j.IConfigPersister;
+import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 
-public final class Config{
+public class Config{
   
-  private static IConfigPersister CONF;
+  private static IConfigPersister config;
   
-  private static Image ICON;
+  private static Image icon;
+  
+  protected static void setup(Image image, IConfigPersister conf) {
+    Config.icon = image != null ? image : icon;
+    Config.config = conf != null ? conf: config;
+  }
 
-  private Config() {}
+  protected static IConfigPersister config() {
+    return config != null ? config : (config = new ConfigPersister(new SignerConfig()));
+  }
 
   public static Image getIcon() {
-    if (ICON == null)
-      ICON = Images.KEY.asImage();
-    return ICON;
-  }
-
-  public static IConfigPersister persister() {
-    if (CONF == null)
-      CONF = new ConfigPersister(new SignerConfig());
-    return CONF;
+    return icon != null ? icon : (icon = Images.KEY.asImage());
   }
   
-  public static void setup(Image icon, IConfigPersister config) {
-    if (icon != null)
-      Config.ICON = icon;
-    if (config != null)
-      Config.CONF = config;
+  public static Optional<String> defaultCertificate() {
+    return config().defaultCertificate();
   }
+
+  public static Optional<String> defaultDevice() {
+    return config().defaultDevice();
+  }
+
+  public static Optional<String> defaultAlias() {
+    return config().defaultAlias();
+  }
+
+  public static void saveA1Paths(IFilePath... path) {
+    config().saveA1Paths(path);
+  }
+
+  public static void saveA3Paths(IFilePath... path) {
+    config().saveA3Paths(path);
+  }
+
+  public static void loadA1Paths(Exec<IFilePath> add) {
+    config().loadA1Paths(add);
+  }
+
+  public static void loadA3Paths(Exec<IFilePath> add) {
+    config().loadA3Paths(add);
+  }
+
+  public static void save(String defaultAlias) {
+    config().save(defaultAlias);
+  }
+  
+  public static void reset() {
+    config().reset();
+  }
+
+  protected Config() {}
 }
+

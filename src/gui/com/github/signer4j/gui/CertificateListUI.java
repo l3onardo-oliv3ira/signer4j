@@ -1,7 +1,5 @@
 package com.github.signer4j.gui;
 
-import static com.github.signer4j.imp.Config.persister;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -34,7 +32,7 @@ import com.github.signer4j.ICertificateListUI;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;
-import com.github.signer4j.imp.GuiTools;
+import com.github.signer4j.imp.Config;
 
 public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
@@ -155,7 +153,6 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     lblConfigInstall.setVisible(onSaved != null);
     pnlNorth.add(lblConfigInstall, BorderLayout.EAST);
     setLocationRelativeTo(null);
-    GuiTools.mouseTracker(this);
   }
 
   private static class CertificateModel extends AbstractTableModel {
@@ -270,9 +267,9 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
       ICertificateEntry selectedEntry = this.selectedEntry.get();
       if (this.defaultAlias.equals(selectedEntry.getId())) {
         if (!this.chkRememberMe.isSelected())
-          persister().save("");
+          Config.save("");
       }else if (this.chkRememberMe.isSelected()) {
-        persister().save(selectedEntry.getId());
+        Config.save(selectedEntry.getId());
       }
     }
     this.close();
@@ -280,12 +277,16 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
   
   public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries) {
-    return display(entries, null, true);
+    return display(entries, true);
   }
 
-  public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries, IA1A3ConfigSaved onSaved, boolean auto) {
+  public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries, boolean auto) {
+    return display(entries, auto, null);
+  }
+  
+  public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries, boolean auto, IA1A3ConfigSaved onSaved) {
     Args.requireNonNull(entries, "entries is null");
-    String defaultAlias = persister().defaultAlias().orElse("$not_found$");
+    String defaultAlias = Config.defaultAlias().orElse("$not_found$");
     if (auto) {
       Optional<ICertificateEntry> defaultEntry = entries
           .stream()
