@@ -18,6 +18,8 @@ import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 
+import com.github.signer4j.IByteProcessor;
+import com.github.signer4j.ICMSConfigSetup;
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICMSSignerBuilder;
 import com.github.signer4j.ICertificateChooser;
@@ -34,10 +36,24 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   
   private ISignatureType signatureType;
   
+  private ICMSConfigSetup config;
+  
   private boolean hasNoSignedAttributes;
   
   private CMSSigner(ICertificateChooser chooser, Runnable dispose) {
     super(chooser, dispose);
+  }
+  
+  @Override
+  public ICMSSigner usingAttributes(boolean hasSignedAttributes) {
+    hasNoSignedAttributes = !hasSignedAttributes;
+    return this;
+  }
+  
+  @Override
+  public IByteProcessor config(Object param) {
+    config.execute(this, param);
+    return this;
   }
   
   @Override
@@ -127,6 +143,8 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     
     private final ICertificateChooser chooser;
     
+    private ICMSConfigSetup config = (p, o) -> {};
+    
     private boolean hasNoSignedAttributes = false;
     
     private ISignatureType signatureType = SignatureType.ATTACHED;
@@ -141,6 +159,12 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     @Override
     public final ICMSSignerBuilder usingMemoryLimit(long memoryLimit) {
       this.memoryLimit = Args.requireZeroPositive(memoryLimit, "memory limit is invalid");
+      return this;
+    }
+    
+    @Override
+    public final ICMSSignerBuilder usingConfig(ICMSConfigSetup config) {
+      this.config = Args.requireNonNull(config, "config is null");
       return this;
     }
 
@@ -166,6 +190,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     public final ICMSSigner build() {
       Providers.installBouncyCastleProvider();
       CMSSigner signer = new CMSSigner(chooser, dispose);
+      signer.config = config;
       signer.memoryLimit = memoryLimit;
       signer.algorithm = this.algorithm;
       signer.signatureType = this.signatureType;

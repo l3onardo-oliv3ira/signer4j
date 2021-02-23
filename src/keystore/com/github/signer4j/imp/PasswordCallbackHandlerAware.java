@@ -8,9 +8,13 @@ public class PasswordCallbackHandlerAware implements IPasswordCallbackHandler{
 
   private boolean wasHandle = false;
   
-  private IPasswordCallbackHandler handler;
+  private final IPasswordCallbackHandler handler;
   
-  public boolean isHandled() {
+  public PasswordCallbackHandlerAware(IPasswordCallbackHandler handler) {
+    this.handler = handler;
+  }
+  
+  public boolean wasHandle() {
     return wasHandle;
   }
   

@@ -1,7 +1,7 @@
 package com.github.signer4j;
 
-
 public interface ICMSSignerBuilder {
+  
   ICMSSignerBuilder usingMemoryLimit(long memoryLimit);
   
   ICMSSignerBuilder usingAlgorigthm(ISignatureAlgorithm algorithm);
@@ -9,6 +9,8 @@ public interface ICMSSignerBuilder {
   ICMSSignerBuilder usingSignatureType(ISignatureType signatureType);
 
   ICMSSignerBuilder usingAttributes(boolean hasSignedAttributes);
+  
+  ICMSSignerBuilder usingConfig(ICMSConfigSetup config);
   
   ICMSSigner build();
 }

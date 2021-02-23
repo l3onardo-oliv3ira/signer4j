@@ -63,5 +63,9 @@ public interface IByteProcessor {
   default String process64(File input) throws KeyStoreAccessException, IOException {
     return process(input).getSignature64();
   }
+  
+  default IByteProcessor config(Object param) {
+    return this;
+  }
 }
 
