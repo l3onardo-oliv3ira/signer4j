@@ -22,6 +22,7 @@ public enum HashAlgorithm implements IHashAlgorithm {
       return CMSSignedDataStreamGenerator.DIGEST_MD5;
     }
   };
+  
 
   @JsonCreator
   public static IHashAlgorithm fromString(final String key) {
