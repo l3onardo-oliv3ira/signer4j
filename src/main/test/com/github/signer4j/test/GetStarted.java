@@ -90,7 +90,7 @@ public class GetStarted {
       
       String message = "Hello world!";
       
-      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorigthm(SignatureAlgorithm.ASN1MD5withRSA).build();
+      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorigthm(SignatureAlgorithm.MD5withRSA).build();
       
       ISignedData data = simpleSigner.process(message);
       

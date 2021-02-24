@@ -1,9 +1,13 @@
-package com.github.signer4j;
+package com.github.signer4j.imp;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface IDriver {
+import com.github.signer4j.IDevice;
+import com.github.signer4j.ISlot;
+import com.github.signer4j.IToken;
+
+interface IDriver extends ILoadCycle {
   
   String getId();
   

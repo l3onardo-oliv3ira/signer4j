@@ -4,6 +4,7 @@ import static com.github.signer4j.imp.PKCS12KeyStoreLoaderParams.CERTIFICATE_PAT
 
 import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IPasswordCallbackHandler;
+import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
@@ -13,6 +14,7 @@ class PKCS12Token extends AbstractToken<PKCS12Slot>{
 
   private static final int MIN_PASSWORD_LENGTH = 1;
   private static final int MAX_PASSWORD_LENGTH = 31;
+  
   private ICertificateFactory factory;
   
   private PKCS12Token(PKCS12Slot slot) throws DriverException {
@@ -36,8 +38,8 @@ class PKCS12Token extends AbstractToken<PKCS12Slot>{
   }
   
   @Override
-  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback, Runnable dispose) throws KeyStoreAccessException {
-    return new PKCS12KeyStoreLoader(callback, getSlot().toDevice(), dispose)
+  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+    return new PKCS12KeyStoreLoader(callback, getSlot().toDevice(), getDispose())
       .getKeyStore(
         Params.create().of(CERTIFICATE_PATH_PARAM, getSlot().getLibrary())
       );
@@ -50,7 +52,7 @@ class PKCS12Token extends AbstractToken<PKCS12Slot>{
   }
 
   @Override
-  protected PKCS12Token loadCertificates(ICertificateFactory factory) throws DriverException {
+  protected IToken loadCertificates(ICertificateFactory factory) throws DriverException {
     this.factory = factory;
     this.certificates = Unavailables.getCertificates(this); //só ficará disponível após o login
     return this;

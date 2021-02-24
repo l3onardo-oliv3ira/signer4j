@@ -11,27 +11,18 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IDriver;
 import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
 
-abstract class AbstractDriver extends ExceptionExpert implements IDriver, ILifeCycle {
-
-  private boolean loaded;
+abstract class AbstractDriver extends LoadCycle implements IDriver {
 
   private List<ISlot> slots = unmodifiableList(emptyList());
 
   private final List<IDevice> devices = new ArrayList<>();
   
   protected AbstractDriver() {
-    this.loaded = false;
-  }
-  
-  @Override
-  public final boolean isLoaded() {
-    return this.loaded;
   }
   
   @Override
@@ -51,12 +42,6 @@ abstract class AbstractDriver extends ExceptionExpert implements IDriver, ILifeC
   @Override
   public final boolean isLibraryAware() {
     return this instanceof ILibraryAware;
-  }
-  
-  @Override
-  public final void reload() {
-    unload();
-    load();
   }
   
   protected final void addDevice(IDevice device) {
@@ -97,31 +82,21 @@ abstract class AbstractDriver extends ExceptionExpert implements IDriver, ILifeC
   }
   
   @Override
-  public final void unload() {
-    if (isLoaded()) {
-      try {
-        this.slots.stream().map(s -> s.getToken()).forEach(t -> t.logout());
-      }finally {
-        this.loaded = false;
-        this.devices.clear();
-        this.slots = unmodifiableList(emptyList()); 
-      }
+  protected final void doUnload() {
+    try {
+      this.slots.stream().map(s -> s.getToken()).forEach(t -> t.logout());
+    }finally {
+      this.devices.clear();
+      this.slots = unmodifiableList(emptyList()); 
     }
   }
 
   @Override
-  public final void load() {
-    if (!isLoaded()) {
-      List<ISlot> slots = new ArrayList<>();
-      try {
-        doLoad(slots);
-      } catch (DriverException e) {
-        handleException(e);
-      }
-      this.slots = Collections.unmodifiableList(slots);
-      loaded = true;
-    }
+  protected final void doLoad() throws Exception {
+    List<ISlot> slots = new ArrayList<>();
+    this.loadSlots(slots);
+    this.slots = Collections.unmodifiableList(slots);
   }
 
-  protected abstract void doLoad(List<ISlot> output) throws DriverException;
+  protected abstract void loadSlots(List<ISlot> output) throws DriverException;
 }

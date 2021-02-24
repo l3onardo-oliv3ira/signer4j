@@ -8,7 +8,7 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IKeyStoreAccess;
+import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IParams;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
 import com.github.signer4j.imp.exception.ModuleException;
@@ -23,24 +23,23 @@ class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
   
   private Runnable dispose;
 
-  protected MSCAPIKeyStoreLoader(IDevice device, Runnable dispose) {
+  public MSCAPIKeyStoreLoader(IDevice device, Runnable dispose) {
     this.device = Args.requireNonNull(device, "device is null");
     this.dispose = Args.requireNonNull(dispose, "dispose is null");
   }
   
-  public IKeyStoreAccess getKeyStore() throws KeyStoreAccessException {
+  public IKeyStore getKeyStore() throws KeyStoreAccessException {
     return getKeyStore(Params.EMPTY);
   }
-
+  
   @Override
-  public IKeyStoreAccess getKeyStore(IParams params) throws KeyStoreAccessException {
+  public IKeyStore getKeyStore(IParams params) throws KeyStoreAccessException {
     KeyStore keystore;
     try {
       keystore = KeyStore.getInstance(MSCAPI_TYPE, MSCAPI_PROVIDER);
     } catch (KeyStoreException | NoSuchProviderException e) {
-      throw new ModuleException("Unabled to create MSCAPI KeyStore instance", e);
+      throw new ModuleException("Unabled to create MSCAPI KeyStore instance", e); 
     }
-    
     try {
       keystore.load(null, null);
     } catch (NoSuchAlgorithmException | CertificateException | IOException e) {

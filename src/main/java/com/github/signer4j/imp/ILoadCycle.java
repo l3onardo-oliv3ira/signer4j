@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-interface ILifeCycle {
+interface ILoadCycle {
   
   boolean isLoaded();
   

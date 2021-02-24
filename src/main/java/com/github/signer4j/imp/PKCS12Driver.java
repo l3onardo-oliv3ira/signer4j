@@ -40,10 +40,12 @@ class PKCS12Driver extends AbstractDriver {
     return PKCS12Driver.class.getSimpleName();
   }
   
-  final boolean install(List<Path> paths) {
+  final boolean install(Path ... paths) {
     boolean refreshed = false;
     if (!Containers.isEmpty(paths)) {
       for(Path path: paths) {
+        if (path == null)
+          continue;
         if (!certPaths.stream().anyMatch(p -> Streams.isSame(p, path))) {
           certPaths.add(path);
           refreshed = true;
@@ -64,10 +66,12 @@ class PKCS12Driver extends AbstractDriver {
     }
   }
   
-  final boolean uninstall(List<Path> paths) {
+  final boolean uninstall(Path... paths) {
     boolean refreshed = false;
     if (!Containers.isEmpty(paths)) {
       for(Path path: paths) {
+        if (path == null)
+          continue;
         if (certPaths.removeIf(p -> Streams.isSame(p, path))) {
           refreshed = true;
         }
@@ -80,7 +84,7 @@ class PKCS12Driver extends AbstractDriver {
   }
   
   @Override
-  protected void doLoad(List<ISlot> output) throws DriverException {
+  protected void loadSlots(List<ISlot> output) throws DriverException {
     for(Path path: certPaths) {
       try{
         ISlot slot = new PKCS12Slot(path);

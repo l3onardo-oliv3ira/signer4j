@@ -12,36 +12,16 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
 
-class PKCS12Slot extends AbstractSlot implements ILibraryAware {
+class PKCS12Slot extends VirtualSlot implements ILibraryAware {
 
   private PKCS12Token token;
   
   private final Path certPath;
   
   PKCS12Slot(Path certPath) throws DriverException {
-    super(-1);
+    super(-1, "Pkcs12");
     this.certPath = requireNonNull(certPath, "cert path can't be null");
     this.setup();
-  }
-  
-  @Override
-  public final String getDescription() {
-    return "Virtual PKCS12 Slot";
-  }
-
-  @Override
-  public final String getManufacturer() {
-    return "https://github.com/l3onardo-oliv3ira";
-  }
-
-  @Override
-  public final String getHardwareVersion() {
-    return "Universal";
-  }
-
-  @Override
-  public final String getFirmewareVersion() {
-    return "1.0";
   }
   
   @Override

@@ -21,10 +21,8 @@ public class NotDuplicatedStrategy implements IDriverLookupStrategy {
   @Override
   public void lookup(IDriverVisitor visitor) {
     setups.clear();
-    for(IDriverLookupStrategy s: strategies) {
-      s.lookup(setup -> setups.add(setup));
-    }
-    setups.forEach(s -> visitor.visit(s));
+    strategies.stream().forEach(s -> s.lookup(setups::add));
+    setups.stream().forEach(visitor::visit);
   }
 
   public NotDuplicatedStrategy more(IDriverLookupStrategy strategy) {

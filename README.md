@@ -25,20 +25,19 @@ public interface IDeviceManager {
   
   Optional<IDevice> firstDevice();
   Optional<IDevice> firstDevice(boolean forceReload);
-  
-  List<IDriver> getDrivers();
-  List<IDriver> getDrivers(boolean forceReload);
-  List<IDriver> getDrivers(Predicate<IDriver> predicate);
-  List<IDriver> getDrivers(Predicate<IDriver> predicate, boolean forceReload);
-  
-  Optional<IDriver> firstDriver();
-  Optional<IDriver> firstDriver(boolean forceReload);
-  
-  void install(List<Path> pkcs12Files);
-  void uninstall(List<Path> pkcs12File);
-  void uninstallPkcs12();
+  Optional<IDevice> firstDevice(Predicate<IDevice> predicate);
+  Optional<IDevice> firstDevice(Predicate<IDevice> predicate, boolean forceReload);
+ 
   void close();
 }
+
+public interface ICustomDeviceManager extends IDeviceManager {
+  void install(Path ... pkcs12Files);
+  void uninstall(Path... pkcs12File);
+  void uninstallPkcs12();
+}
+
+
 ```
 #### Device interface
 ```java

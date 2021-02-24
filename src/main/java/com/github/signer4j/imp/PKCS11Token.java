@@ -5,6 +5,7 @@ import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PAR
 
 import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IPasswordCallbackHandler;
+import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
@@ -42,8 +43,8 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   }
   
   @Override
-  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback, Runnable dispose) throws KeyStoreAccessException {
-    return new PKCS11KeyStoreLoader(callback, getSlot().toDevice(), dispose)
+  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+    return new PKCS11KeyStoreLoader(callback, getSlot().toDevice(), getDispose())
       .getKeyStore(
         Params.create()
         .of(DRIVER_PATH_PARAM, getSlot().getLibrary())
@@ -58,7 +59,7 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   }
 
   @Override
-  protected PKCS11Token loadCertificates(ICertificateFactory factory) throws DriverException {
+  protected IToken loadCertificates(ICertificateFactory factory) throws DriverException {
     final PKCS11 pk = getPk();
     long session;
     try {

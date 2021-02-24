@@ -33,7 +33,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   protected long minPinLen;
   protected long maxPinLen;
   
-  private final Runnable DISPOSE_ACTION = () -> logout();
+  private final Runnable disposeAction = () -> logout();
   
   protected ICertificates certificates;
   
@@ -46,6 +46,11 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     this.type = requireNonNull(type, "type is null");
   }
 
+  @Override
+  protected final Runnable getDispose() {
+    return disposeAction;
+  }
+  
   @Override
   public final TokenType getType() {
     return type;
@@ -96,9 +101,9 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
       callback = passwordCallback;
     if (!isAuthenticated()) {
       try {
-        doLogin(this.keyStore = getKeyStore(callback, DISPOSE_ACTION));
+        doLogin(this.keyStore = getKeyStore(callback));
       }catch(KeyStoreAccessException e) {
-        DISPOSE_ACTION.run();
+        getDispose().run();
         throw e;
       }
     }
@@ -151,14 +156,14 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
   
   protected ISignerBuilder createBuilder(ICertificateChooser chooser) {
-    return new SimpleSigner.Builder(chooser, DISPOSE_ACTION);
+    return new SimpleSigner.Builder(chooser, getDispose());
   }
   
   private ICMSSignerBuilder createCMSSignerBuilder(ICertificateChooser chooser) {
-    return new CMSSigner.Builder(chooser, DISPOSE_ACTION);
+    return new CMSSigner.Builder(chooser, getDispose());
   }
 
-  protected abstract IKeyStore getKeyStore(IPasswordCallbackHandler callback, Runnable dispose) throws KeyStoreAccessException;
+  protected abstract IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
   
   static abstract class Builder<S extends ISlot, T extends IToken> {
     private S slot;
@@ -222,5 +227,5 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
 
   }
   
-  abstract IToken loadCertificates(ICertificateFactory factory) throws DriverException;
+  protected abstract IToken loadCertificates(ICertificateFactory factory) throws DriverException;
 }

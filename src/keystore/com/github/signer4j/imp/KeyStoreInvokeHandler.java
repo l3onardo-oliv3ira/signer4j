@@ -62,7 +62,7 @@ public class KeyStoreInvokeHandler extends InvokeHandler<KeyStoreAccessException
       throw e;
     } catch (Exception e) {
       catchBlock.accept(e);
-      String message = e instanceof NullPointerException ? "Token has been removed" : e.getMessage();
+      String message = Strings.trim(e instanceof NullPointerException ? "Token has been removed" : e.getMessage());
       /**
        * O provider SunPKCS11 do JAVA tem um bug que lança NullPointerException e corrompe a instância 
        * quando se remove o token após exibir a tela para digitação da senha (antes de informá-la).
@@ -74,6 +74,8 @@ public class KeyStoreInvokeHandler extends InvokeHandler<KeyStoreAccessException
        * */
       if ("Token has been removed".equalsIgnoreCase(message))
         throw new NoTokenPresentException(e);
+      if ("A operação foi cancelada pelo usuário.".equals(message))
+        throw new LoginCanceledException(e);
       if ("keystore password was incorrect".equalsIgnoreCase(message) || 
           Throwables.hasCause(e, UnrecoverableKeyException.class) ||
           Throwables.hasCause(e, BadPaddingException.class) ||

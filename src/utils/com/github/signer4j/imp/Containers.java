@@ -1,6 +1,7 @@
 package com.github.signer4j.imp;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +28,10 @@ public class Containers {
 
   public static <T> List<T> toList(Set<T> set) {
     return isEmpty(set) ? emptyList() : new ArrayList<>(set);
+  }
+  
+  public static <T> List<T> toUnmodifiableList(Set<T> set) {
+    return isEmpty(set) ? emptyList() : unmodifiableList(new ArrayList<>(set));
   }
 
   public static String firstText(Collection<String> values) {

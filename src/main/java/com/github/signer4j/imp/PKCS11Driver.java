@@ -61,7 +61,7 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
   }
   
   @Override
-  protected void doLoad(List<ISlot> output) throws DriverException {
+  protected void loadSlots(List<ISlot> output) throws DriverException {
     bugMap.remove(getLibrary());
 
     final CK_C_INITIALIZE_ARGS initArgs = new CK_C_INITIALIZE_ARGS();
