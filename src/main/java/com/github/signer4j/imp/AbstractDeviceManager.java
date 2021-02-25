@@ -88,7 +88,7 @@ abstract class AbstractDeviceManager extends LoadCycle implements IDeviceManager
   @Override
   protected final void doUnload()  throws Exception{
     this.drivers.forEach(d -> d.unload());
-    this.drivers.clear();
+    this.drivers = Collections.unmodifiableList(defaults);
   }
   
   @Override

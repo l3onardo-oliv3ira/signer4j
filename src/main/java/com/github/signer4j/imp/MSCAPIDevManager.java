@@ -99,9 +99,9 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
     
     @Override
     protected IToken loadCertificates(ICertificateFactory factory) throws DriverException {
-      try {
-        this.device.setCertificates(this.certificates = new MSCAPICertificates(this, loader.getKeyStore(), factory));
-      } catch (KeyStoreAccessException e) {
+      try(IKeyStore keyStore = loader.getKeyStore()) {
+        this.device.setCertificates(this.certificates = new MSCAPICertificates(this, keyStore, factory));
+      } catch (Exception e) {
         throw new DriverFailException("Não foi possível carregar os certificados", e);
       }
       return this;
