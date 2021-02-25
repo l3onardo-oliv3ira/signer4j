@@ -34,6 +34,10 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
     this.setup();
   }
   
+  protected Runnable getDispose() {
+    return dispose;
+  }
+  
   protected void setup() throws PrivateKeyNotFound {
     if (!checkIfHasPrivateKey()) {
       throw new PrivateKeyNotFound("KeyStore don't offer alias access to private key!");
@@ -71,7 +75,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
     try {
       return keyStore.aliases();
     } catch (KeyStoreException e) {
-      dispose.run();
+      getDispose().run();
       throw new KeyStoreAccessException("Não foi possível ler os aliases do keystore", e);
     }
   }
@@ -82,7 +86,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   private final <T> T invoke(Supplier<T> tryBlock) throws KeyStoreAccessException {
-    return INVOKER.invoke(tryBlock, (e) -> dispose.run()); //automaticaly logout if exception occurr!
+    return INVOKER.invoke(tryBlock, (e) -> getDispose().run()); //automaticaly logout if exception occurr!
   }
   
   @Override

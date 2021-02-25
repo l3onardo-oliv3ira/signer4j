@@ -45,12 +45,11 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     this.slot = requireNonNull(slot, "slot is null");
     this.type = requireNonNull(type, "type is null");
   }
-
-  @Override
+  
   protected final Runnable getDispose() {
     return disposeAction;
   }
-  
+
   @Override
   public final TokenType getType() {
     return type;
@@ -103,7 +102,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
       try {
         doLogin(this.keyStore = getKeyStore(callback));
       }catch(KeyStoreAccessException e) {
-        getDispose().run();
+        disposeAction.run();
         throw e;
       }
     }

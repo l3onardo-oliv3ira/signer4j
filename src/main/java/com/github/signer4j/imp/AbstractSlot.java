@@ -3,7 +3,7 @@ package com.github.signer4j.imp;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.ISlot;
 
-abstract class AbstractSlot extends ExceptionExpert implements ISlot {
+abstract class AbstractSlot implements ISlot {
 
   private final long number;
   

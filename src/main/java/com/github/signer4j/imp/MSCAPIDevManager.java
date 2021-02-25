@@ -73,8 +73,9 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
     private static final int MIN_PASSWORD_LENGTH = 1;
     private static final int MAX_PASSWORD_LENGTH = 31;
     
-    private MSCAPIKeyStoreLoader loader;
     private DefaultDevice device;
+
+    private MSCAPIKeyStoreLoader loader;
     
     protected MSCAPIToken(MSCAPISlot slot, DefaultDevice device) {
       super(slot, TokenType.VIRTUAL);

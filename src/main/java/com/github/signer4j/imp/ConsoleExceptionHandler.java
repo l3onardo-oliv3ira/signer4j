@@ -8,7 +8,7 @@ public enum ConsoleExceptionHandler implements IExceptionHandler {
   @Override
   public void handleException(Throwable e) {
     if (e != null) {
-      //e.printStackTrace();
+      LOGGER.error("Exceção", e);
     }
   }
 }

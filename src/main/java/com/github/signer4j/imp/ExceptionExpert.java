@@ -8,26 +8,15 @@ abstract class ExceptionExpert {
 
   private final IExceptionHandler handler;
   
-  private final Runnable dispose;
-  
   ExceptionExpert() {
-    this(() -> {});
-  }
-  
-  ExceptionExpert(Runnable dispose) {
-    this(ConsoleExceptionHandler.INSTANCE, dispose);
+    this(ConsoleExceptionHandler.INSTANCE);
   }
 
-  ExceptionExpert(IExceptionHandler handler, Runnable dispose) {
+  ExceptionExpert(IExceptionHandler handler) {
     this.handler = Optional.ofNullable(handler).orElseGet(() -> ConsoleExceptionHandler.INSTANCE);
-    this.dispose = Args.requireNonNull(dispose, "dispose is null");
   }
   
   protected final void handleException(Throwable e) {
     this.handler.handleException(e);
-  }
-  
-  protected Runnable getDispose() {
-    return dispose;
   }
 }
