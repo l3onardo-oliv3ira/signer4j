@@ -99,7 +99,7 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
           }
         }
       }
-    }finally {
+    } finally {
       try {
         this.pk.C_Finalize(null);
       } catch (PKCS11Exception e) {

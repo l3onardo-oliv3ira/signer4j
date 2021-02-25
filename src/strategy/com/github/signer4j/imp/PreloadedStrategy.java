@@ -19,6 +19,6 @@ abstract class PreloadedStrategy implements IDriverLookupStrategy {
   
   @Override
   public final void lookup(IDriverVisitor visitor) {
-    libraries.forEach(lib -> visitor.visit(lib));
+    libraries.forEach(visitor::visit);
   }
 }

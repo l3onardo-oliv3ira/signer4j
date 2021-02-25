@@ -187,7 +187,7 @@ public interface IToken extends IGadget {
   long getMinPinLen();
   long getMaxPinLen();
   
-  String getManufacture();
+  String getManufacturer();
   boolean isAuthenticated();
   
   TokenType getType();

@@ -83,7 +83,7 @@ class PKCS11Certificates extends AbstractCertificates {
           throw new DriverFailException("Unabled to create certificate from inputstream", e);
         } 
       }
-    }finally {
+    } finally {
       certificates.sort((a, b) -> a.getAfterDate().compareTo(b.getAfterDate()));
     }
   }

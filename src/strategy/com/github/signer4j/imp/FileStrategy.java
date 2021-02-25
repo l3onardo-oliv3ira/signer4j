@@ -7,10 +7,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Optional;
 
-class FileStrategy extends ExceptionExpert implements IDriverLookupStrategy {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+class FileStrategy extends AbstractStrategy implements IDriverLookupStrategy {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(FileStrategy.class);
+  
   private final File file;
 
   public FileStrategy(File file) {
@@ -25,13 +29,10 @@ class FileStrategy extends ExceptionExpert implements IDriverLookupStrategy {
         line = Strings.trim(line);
         if (line.isEmpty())
           continue;
-        Optional<DriverSetup> ds = DriverSetup.create(Paths.get(line));
-        if (ds.isPresent()) {
-          visitor.visit(ds.get());
-        }
+        createAndVisit(Paths.get(line), visitor);
       }
     } catch (IOException e) {
-      handleException(e);
+      LOGGER.debug("Exceção durante a leitura de lib's em " + file.getAbsolutePath(), e);
     }
   }
 }
