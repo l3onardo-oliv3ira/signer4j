@@ -33,6 +33,9 @@ import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;
 import com.github.signer4j.imp.Config;
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
@@ -109,11 +112,11 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
     pnlSouthInner = new JPanel();
     pnlSouth.add(pnlSouthInner);
-    pnlSouthInner.setLayout(new GridLayout(0, 2, 0, 0));
 
     chkRememberMe = new JCheckBox("Memorizar e não perguntar novamente");
     chkRememberMe.setEnabled(false);
     chkRememberMe.setSelected(false);
+    pnlSouthInner.setLayout(new GridLayout(0, 2, 0, 0));
     pnlSouthInner.add(chkRememberMe);
 
     btnButtons = new JPanel();
@@ -128,10 +131,14 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     btnCancel = new JButton("Cancelar");
     btnCancel.addActionListener((e) -> clickCancel(e));
     btnButtons.add(btnCancel);
-
+    
     pnlNorth = new JPanel();
     contentPane.add(pnlNorth, BorderLayout.NORTH);
     pnlNorth.setLayout(new BorderLayout(0, 0));
+    
+    pnlNorthEast = new JPanel();
+    
+    pnlNorth.add(pnlNorthEast, BorderLayout.EAST);
 
     lblCertificateList = new JLabel("Certificados Disponíveis");
     lblCertificateList.setIcon(Images.CERTIFICATE.asIcon());
@@ -139,19 +146,34 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     lblCertificateList.setFont(new Font("Tahoma", Font.BOLD, 15));
     pnlNorth.add(lblCertificateList);
 
-    lblConfigInstall = new JLabel("<html><u>Configurar um novo certificado&nbsp;&nbsp;</u>");
+    lblConfigInstall = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
+    lblConfigInstall.setVerticalAlignment(SwingConstants.BOTTOM);
     lblConfigInstall.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lblConfigInstall.setForeground(Color.RED);
     lblConfigInstall.setFont(new Font("Tahoma", Font.ITALIC, 12));
-    lblConfigInstall.setVerticalAlignment(SwingConstants.BOTTOM);
-    lblConfigInstall.setHorizontalAlignment(SwingConstants.RIGHT);
+    lblConfigInstall.setHorizontalAlignment(SwingConstants.LEFT);
     lblConfigInstall.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         clickConfig();
       }
     });
     lblConfigInstall.setVisible(onSaved != null);
-    pnlNorth.add(lblConfigInstall, BorderLayout.EAST);
+    
+    lblRefresh = new JLabel("");
+    lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);
+    
+    lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
+    lblRefresh.setIcon(Images.REFRESH.asIcon());
+    lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    lblRefresh.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        refresh();
+      }
+    });
+    pnlNorthEast.setLayout(new BorderLayout(0, 0));
+    pnlNorthEast.add(lblConfigInstall, BorderLayout.CENTER);
+    pnlNorthEast.add(lblRefresh, BorderLayout.EAST);
+
     setLocationRelativeTo(null);
   }
 
@@ -237,6 +259,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
   
   boolean needReload = false;
+  private JLabel lblRefresh;
+  private JPanel pnlNorthEast;
   private void clickConfig() {
     new CertificateInstaller((a, b) -> {
       this.needReload = true;
@@ -248,6 +272,11 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     if (this.needReload) {
       this.close();
     }
+  }
+  
+  private void refresh() {
+    this.needReload = true;
+    this.close();
   }
 
   private void clickCancel(ActionEvent e) {

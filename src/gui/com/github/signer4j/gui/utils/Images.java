@@ -16,6 +16,8 @@ public enum Images implements IPicture {
 
   KEY("/key.png"),
   
+  REFRESH("/update.png"),
+  
   CERTIFICATE("/certificate.png");
 
   final String path;
