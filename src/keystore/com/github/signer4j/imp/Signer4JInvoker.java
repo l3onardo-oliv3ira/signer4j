@@ -12,7 +12,7 @@ import javax.security.auth.login.LoginException;
 
 import com.github.signer4j.imp.exception.ExpiredCredentialException;
 import com.github.signer4j.imp.exception.InvalidPinException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.ModuleException;
 import com.github.signer4j.imp.exception.NoTokenPresentException;
@@ -20,14 +20,14 @@ import com.github.signer4j.imp.exception.OutOfMemoryException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.TokenLockedException;
 
-public class KeyStoreInvokeHandler extends InvokeHandler<KeyStoreAccessException> {
+public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   
-  public static final KeyStoreInvokeHandler INVOKER = new KeyStoreInvokeHandler();
+  public static final Signer4JInvoker INVOKER = new Signer4JInvoker();
   
-  private KeyStoreInvokeHandler() {}
+  private Signer4JInvoker() {}
   
   @Override
-  public <T> T invoke(Supplier<T> tryBlock, Consumer<Throwable> catchBlock, Runnable finallyBlock) throws KeyStoreAccessException {
+  public <T> T invoke(Supplier<T> tryBlock, Consumer<Throwable> catchBlock, Runnable finallyBlock) throws Signer4JException {
     try {
       return tryBlock.get();
     } catch (CanceledOperationException e) {
@@ -57,7 +57,7 @@ public class KeyStoreInvokeHandler extends InvokeHandler<KeyStoreAccessException
       if (cause != null && "CKR_PIN_LOCKED".equals(cause.getMessage()))
         throw new TokenLockedException(cause);
       throw new InvalidPinException(e);
-    } catch(KeyStoreAccessException e) {
+    } catch(Signer4JException e) {
       catchBlock.accept(e);
       throw e;
     } catch (Exception e) {

@@ -1,6 +1,6 @@
 package com.github.signer4j.imp.exception;
 
-public class LoginCanceledException extends KeyStoreAccessException {
+public class LoginCanceledException extends Signer4JException {
 
   private static final String DEFAULT_MESSAGE = "login canceled!";
   

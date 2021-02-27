@@ -6,7 +6,7 @@ import java.security.KeyStoreSpi;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 enum MscapiFixer implements IKeyStoreBugFixer {
   /**
@@ -19,7 +19,7 @@ enum MscapiFixer implements IKeyStoreBugFixer {
     }
     
     @Override
-    public void fix(KeyStore keyStore) throws KeyStoreAccessException {
+    public void fix(KeyStore keyStore) throws Signer4JException {
       if (!affectedVersion())
         return;
       try {
@@ -63,7 +63,7 @@ enum MscapiFixer implements IKeyStoreBugFixer {
           }
         }
       } catch (Exception e) {
-        throw new KeyStoreAccessException("Unabled to fix aliases on mscapi keystore", e);
+        throw new Signer4JException("Unabled to fix aliases on mscapi keystore", e);
       }
     }
   };

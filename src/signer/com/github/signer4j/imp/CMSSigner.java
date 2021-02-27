@@ -25,7 +25,7 @@ import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import org.bouncycastle.cms.CMSProcessableByteRangeArray;
 
 class CMSSigner extends SecurityObject implements ICMSSigner {
@@ -57,7 +57,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   }
   
   @Override
-  public ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException {
+  public ISignedData process(byte[] content, int offset, int length) throws Signer4JException {
     Args.requireNonNull(content, "content is null");
     Args.requireZeroPositive(offset, "offset is negative");
     Args.requirePositive(length, "length is not positive");
@@ -65,12 +65,12 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   }
   
   @Override
-  public ISignedData process(File content) throws KeyStoreAccessException {
+  public ISignedData process(File content) throws Signer4JException {
     Args.requireNonNull(content, "content is null");
     return process(new CMSProcessableFile(content), content.length());
   }
   
-  private ISignedData process(CMSTypedData content, long length) throws KeyStoreAccessException {
+  private ISignedData process(CMSTypedData content, long length) throws Signer4JException {
     return invoke(() -> {
       final IChoice choice = choose();
       CMSSignedDataGenerator generator = new CMSSignedDataGenerator();

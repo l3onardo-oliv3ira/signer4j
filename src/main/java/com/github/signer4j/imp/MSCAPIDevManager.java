@@ -11,7 +11,7 @@ import com.github.signer4j.TokenType;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 public class MSCAPIDevManager extends AbstractDeviceManager {
 
@@ -92,7 +92,7 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
     }
     
     @Override
-    protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+    protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException {
       return loader.getKeyStore();
     }
     
@@ -123,7 +123,7 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
   }
   
   private static class MSCAPICertificates extends KeyStoreCertificates {
-    public MSCAPICertificates(MSCAPIToken token, IKeyStore keyStore, ICertificateFactory factory) throws KeyStoreAccessException {
+    public MSCAPICertificates(MSCAPIToken token, IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
       super(token, keyStore, factory);
     }
   }

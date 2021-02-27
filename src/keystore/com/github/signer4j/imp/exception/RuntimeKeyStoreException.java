@@ -4,7 +4,7 @@ public class RuntimeKeyStoreException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
   
-  public RuntimeKeyStoreException(KeyStoreAccessException cause) {
+  public RuntimeKeyStoreException(Signer4JException cause) {
     super(cause);
   }
 }

@@ -18,7 +18,7 @@ import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.cert.imp.CertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.NotAuthenticatedException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements IToken {
   
@@ -95,13 +95,13 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
 
   @Override
-  public IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+  public IToken login(IPasswordCallbackHandler callback) throws Signer4JException {
     if (callback == null)
       callback = passwordCallback;
     if (!isAuthenticated()) {
       try {
         doLogin(this.keyStore = getKeyStore(callback));
-      }catch(KeyStoreAccessException e) {
+      }catch(Signer4JException e) {
         disposeAction.run();
         throw e;
       }
@@ -109,7 +109,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     return this;
   }
 
-  protected void doLogin(IKeyStore keyStore) throws KeyStoreAccessException { }
+  protected void doLogin(IKeyStore keyStore) throws Signer4JException { }
 
   @Override
   public final void logout() {
@@ -178,7 +178,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     return new PKCS7Signer.Builder(chooser, getDispose());
   }
 
-  protected abstract IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
+  protected abstract IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException;
   
   static abstract class Builder<S extends ISlot, T extends IToken> {
     private S slot;

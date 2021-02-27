@@ -1,7 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.KeyStoreInvokeHandler.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static com.github.signer4j.imp.PKCS12KeyStoreLoaderParams.CERTIFICATE_PATH_PARAM;
 import static com.github.signer4j.imp.Strings.space;
 
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IParams;
 import com.github.signer4j.IPasswordCallbackHandler;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.Pkcs12FileNotFoundException;
 
 class PKCS12KeyStoreLoader implements IKeyStoreLoader {
@@ -39,7 +39,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
   }
   
   @Override
-  public IKeyStore getKeyStore(IParams params) throws KeyStoreAccessException {
+  public IKeyStore getKeyStore(IParams params) throws Signer4JException {
     requireNonNull(params, "params is null");
     String certPath = params.orElseThrow(CERTIFICATE_PATH_PARAM, validate());
     return getKeyStore(new File(certPath));
@@ -49,7 +49,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
     return () -> new IllegalArgumentException(CERTIFICATE_PATH_PARAM + " is undefined");
   }
   
-  private IKeyStore getKeyStore(File input) throws KeyStoreAccessException {
+  private IKeyStore getKeyStore(File input) throws Signer4JException {
     try(InputStream stream = new FileInputStream(input)) {
       final PasswordCallback callback = new PasswordCallback(space(), false);
       return INVOKER.invoke(() -> {
@@ -61,7 +61,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
     } catch (FileNotFoundException e) {
       throw new Pkcs12FileNotFoundException("Arquivo não encontrado: " + input.getAbsolutePath(), e);
     } catch (IOException e) {
-      throw new KeyStoreAccessException("Não foi possível ler o arquivo: " + input.getAbsolutePath(), e);
+      throw new Signer4JException("Não foi possível ler o arquivo: " + input.getAbsolutePath(), e);
     }
   }
 }

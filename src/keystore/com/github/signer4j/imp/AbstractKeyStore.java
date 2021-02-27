@@ -1,7 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.KeyStoreInvokeHandler.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 
 abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
@@ -80,12 +80,12 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   @Override
-  public final Enumeration<String> getAliases() throws KeyStoreAccessException {
+  public final Enumeration<String> getAliases() throws Signer4JException {
     try {
       return keyStore.aliases();
     } catch (KeyStoreException e) {
       getDispose().run();
-      throw new KeyStoreAccessException("Não foi possível ler os aliases do keystore", e);
+      throw new Signer4JException("Não foi possível ler os aliases do keystore", e);
     }
   }
 
@@ -94,30 +94,30 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
     return closed;
   }
   
-  private final <T> T invoke(Supplier<T> tryBlock) throws KeyStoreAccessException {
+  private final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
     return INVOKER.invoke(tryBlock, (e) -> getDispose().run()); //automaticaly logout if exception occurr!
   }
   
   @Override
-  public final Certificate getCertificate(String alias) throws KeyStoreAccessException {
+  public final Certificate getCertificate(String alias) throws Signer4JException {
     checkIfAvailable();
     return invoke(() -> this.keyStore.getCertificate(alias));
   }
   
   @Override
-  public final List<Certificate> getCertificateChain(String alias) throws KeyStoreAccessException {
+  public final List<Certificate> getCertificateChain(String alias) throws Signer4JException {
     checkIfAvailable();
     return unmodifiableList(asList(invoke(() -> (Certificate[])this.keyStore.getCertificateChain(alias))));
   }
 
   @Override
-  public final String getCertificateAlias(Certificate certificate) throws KeyStoreAccessException {
+  public final String getCertificateAlias(Certificate certificate) throws Signer4JException {
     checkIfAvailable();
     return invoke(() -> this.keyStore.getCertificateAlias(certificate));
   }
   
   @Override
-  public final PrivateKey getPrivateKey(String alias, char[] password) throws KeyStoreAccessException {
+  public final PrivateKey getPrivateKey(String alias, char[] password) throws Signer4JException {
     checkIfAvailable();
     return invoke(() -> ofNullable((PrivateKey)this.keyStore.getKey(alias, password))
       .orElseThrow(() -> new PrivateKeyNotFound("KeyStore return's null private key for alias: " + alias))
@@ -125,7 +125,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   @Override
-  public String getProvider() throws KeyStoreAccessException {
+  public String getProvider() throws Signer4JException {
     checkIfAvailable();
     return invoke(() -> keyStore.getProvider().getName());
   }

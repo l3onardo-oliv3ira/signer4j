@@ -8,13 +8,13 @@ import java.util.Enumeration;
 import com.github.signer4j.ICertificate;
 import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificateFactory;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 class KeyStoreCertificates extends AbstractCertificates {
 
   private final transient IToken token;
   
-  KeyStoreCertificates(IToken token, IKeyStore keyStore, ICertificateFactory factory) throws KeyStoreAccessException {
+  KeyStoreCertificates(IToken token, IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
     super(factory);
     this.token = requireNonNull(token, "token is null");
     this.setup(keyStore, factory);
@@ -25,7 +25,7 @@ class KeyStoreCertificates extends AbstractCertificates {
     return token;
   }
   
-  private void setup(IKeyStore keyStore, ICertificateFactory factory) throws KeyStoreAccessException {
+  private void setup(IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
     requireNonNull(keyStore, "keyStore is null");
     Enumeration<String> aliases = keyStore.getAliases();
     while(aliases.hasMoreElements()) {
@@ -35,8 +35,8 @@ class KeyStoreCertificates extends AbstractCertificates {
         certificate = factory.call(keyStore.getCertificate(aliasName));
       } catch (CertificateException e) {
         reset();
-        throw new KeyStoreAccessException(e);
-      } catch (KeyStoreAccessException e) {
+        throw new Signer4JException(e);
+      } catch (Signer4JException e) {
         reset();
         throw e;
       }

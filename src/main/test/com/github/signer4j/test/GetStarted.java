@@ -20,7 +20,7 @@ import com.github.signer4j.imp.DeviceManager;
 import com.github.signer4j.imp.SignatureAlgorithm;
 import com.github.signer4j.imp.SignatureType;
 import com.github.signer4j.imp.exception.InvalidPinException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.NoTokenPresentException;
 import com.github.signer4j.imp.exception.TokenLockedException;
@@ -104,7 +104,7 @@ public class GetStarted {
       System.out.println("Your token is not connected to USB");
     } catch (LoginCanceledException e) {
       System.out.println("Authentication canceled by user");
-    } catch (KeyStoreAccessException e) {
+    } catch (Signer4JException e) {
       System.out.println(e.getMessage());
     } finally {
       token.logout(); 
@@ -135,7 +135,7 @@ public class GetStarted {
       System.out.println("Your token is not connected to USB");
     } catch (LoginCanceledException e) {
       System.out.println("Authentication canceled by user");
-    } catch (KeyStoreAccessException e) {
+    } catch (Signer4JException e) {
       System.out.println(e.getMessage());
     } catch (IOException e) {
       System.out.println("Unabled to read input file");

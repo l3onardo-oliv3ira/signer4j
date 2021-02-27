@@ -9,7 +9,7 @@ import java.security.cert.CertificateException;
 
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IParams;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.ModuleException;
 
 class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
@@ -27,12 +27,12 @@ class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
     this.dispose = Args.requireNonNull(dispose, "dispose is null");
   }
   
-  public IKeyStore getKeyStore() throws KeyStoreAccessException {
+  public IKeyStore getKeyStore() throws Signer4JException {
     return getKeyStore(Params.EMPTY);
   }
   
   @Override
-  public IKeyStore getKeyStore(IParams params) throws KeyStoreAccessException {
+  public IKeyStore getKeyStore(IParams params) throws Signer4JException {
     KeyStore keystore;
     try {
       keystore = KeyStore.getInstance(MSCAPI_TYPE, MSCAPI_PROVIDER);

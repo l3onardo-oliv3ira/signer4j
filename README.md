@@ -6,7 +6,6 @@ A simpler way to perform digital signature operations with A1 and A3 certificate
 ```java
 IDeviceManager dm = new DeviceManager();
 
-System.out.println("Device info");
 dm.getDevices().stream().forEach(d -> {
   IDevice device = d;
   System.out.println("Driver: " + device.getDriver());
@@ -33,7 +32,7 @@ public interface IDeviceManager {
 
 public interface ICustomDeviceManager extends IDeviceManager {
   void install(Path ... pkcs12Files);
-  void uninstall(Path... pkcs12File);
+  void uninstall(Path... pkcs12Files);
   void uninstallPkcs12();
 }
 
@@ -69,15 +68,18 @@ device.getCertificates().stream().forEach(c -> {
   System.out.println("Before date: " + c.getBeforeDate());
   System.out.println("Email: " + c.getEmail().orElse("Unknown"));
   //.... c.get*
+  
   if (certificate.hasCertificatePF()) {
     ICertificatePF pf = c.getCertificatePF().get();
     System.out.println("CPF: " + pf.getCPF().get());
     //.... pf.get*
+  
   }
   if (certificate.hasCertificatePJ()) {
     ICertificatePJ pj = c.getCertificatePJ().get();
     System.out.println("CNPJ: " + pj.getCNPJ().get());
     //.... pj.get*
+  
   }
 });
 ```
@@ -182,7 +184,7 @@ try {
   System.out.println("Your token is not connected to USB");
 } catch (LoginCanceledException e) {
   System.out.println("Authentication canceled by user");
-} catch (KeyStoreAccessException e) {
+} catch (Signer4JException e) {
   System.out.println(e.getMessage());
 } finally {
   token.logout(); 
@@ -207,10 +209,10 @@ public interface ISignedData extends IPersonalData {
 #### Token interface
 ```java
 public interface IToken extends IGadget {
-  IToken login() throws KeyStoreAccessException;
-  IToken login(IPasswordCollector collector) throws KeyStoreAccessException;
-  IToken login(char[] password) throws KeyStoreAccessException;
-  IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;
+  IToken login() throws Signer4JException;
+  IToken login(char[] password) throws Signer4JException;
+  IToken login(IPasswordCollector collector) throws Signer4JException;
+  IToken login(IPasswordCallbackHandler callback) throws Signer4JException;
 
   void logout();
 
@@ -220,17 +222,20 @@ public interface IToken extends IGadget {
   String getManufacturer();
   boolean isAuthenticated();
   
-  TokenType getType();
   ISlot getSlot();
+  TokenType getType();
   
-  IKeyStoreAccess getKeyStoreAccess();
   ICertificates getCertificates();
+  IKeyStoreAccess getKeyStoreAccess();
   
   ISignerBuilder signerBuilder();
   ISignerBuilder signerBuilder(ICertificateChooserFactory factory);
   
   ICMSSignerBuilder cmsSignerBuilder();
   ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory);
+  
+  IPKCS7SignerBuilder pkcs7SignerBuilder();
+  IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory);
 }
 ```
 
@@ -259,7 +264,7 @@ try {
   System.out.println("Your token is not connected to USB");
 } catch (LoginCanceledException e) {
   System.out.println("Authentication canceled by user");
-} catch (KeyStoreAccessException e) {
+} catch (Signer4JException e) {
   System.out.println(e.getMessage());
 } catch (IOException e) {
   System.out.println("Unabled to read input file");
@@ -271,18 +276,18 @@ try {
 #### Byte processor interface
 ```java
 public interface IByteProcessor {
-  ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException;
-  ISignedData process(byte[] content) throws KeyStoreAccessException;
-  ISignedData process(File content) throws KeyStoreAccessException, IOException;
-  ISignedData process(String content) throws KeyStoreAccessException;
-  ISignedData process(String content, Charset charset) throws KeyStoreAccessException;
-  byte[] processRaw(byte[] content) throws KeyStoreAccessException;
-  byte[] processRaw(String content) throws KeyStoreAccessException;
-  byte[] processRaw(String content, Charset charset) throws KeyStoreAccessException;
-  String process64(byte[] content) throws KeyStoreAccessException;
-  String process64(String content) throws KeyStoreAccessException;
-  String process64(String content, Charset charset) throws KeyStoreAccessException;
-  String process64(File input) throws KeyStoreAccessException, IOException;
+  ISignedData process(byte[] content, int offset, int length) throws Signer4JException;
+  ISignedData process(byte[] content) throws Signer4JException;
+  ISignedData process(File content) throws Signer4JException, IOException;
+  ISignedData process(String content) throws Signer4JException;
+  ISignedData process(String content, Charset charset) throws Signer4JException;
+  byte[] processRaw(byte[] content) throws Signer4JException;
+  byte[] processRaw(String content) throws Signer4JException;
+  byte[] processRaw(String content, Charset charset) throws Signer4JException;
+  String process64(byte[] content) throws Signer4JException;
+  String process64(String content) throws Signer4JException;
+  String process64(String content, Charset charset) throws Signer4JException;
+  String process64(File input) throws Signer4JException, IOException;
 }
 
 public interface ISimpleSigner extends IByteProcessor{

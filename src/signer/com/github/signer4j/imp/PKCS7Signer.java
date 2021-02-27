@@ -1,7 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.KeyStoreInvokeHandler.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static com.github.signer4j.imp.Throwables.tryCall;
 import static org.bouncycastle.util.Arrays.copyOfRange;
 
@@ -17,7 +17,7 @@ import com.github.signer4j.IPKCS7SignerBuilder;
 import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 import sun.security.pkcs.ContentInfo;
 import sun.security.pkcs.PKCS7;
@@ -43,7 +43,7 @@ class PKCS7Signer extends SecurityObject implements IPKCS7Signer {
   }
 
   @Override
-  public ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException {
+  public ISignedData process(byte[] content, int offset, int length) throws Signer4JException {
     return INVOKER.invoke(() -> {
       messageDigest.update(content, offset, length);
 

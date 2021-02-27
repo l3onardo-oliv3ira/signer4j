@@ -7,7 +7,7 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 class PKCS12Token extends AbstractToken<PKCS12Slot>{
 
@@ -31,13 +31,13 @@ class PKCS12Token extends AbstractToken<PKCS12Slot>{
   }
 
   @Override
-  protected void doLogin(IKeyStore keyStore) throws KeyStoreAccessException {
+  protected void doLogin(IKeyStore keyStore) throws Signer4JException {
     this.certificates = new PKCS12Certificates(this, keyStore, factory);
     getSlot().updateDevice(this.certificates);
   }
   
   @Override
-  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException {
     return new PKCS12KeyStoreLoader(callback, getSlot().toDevice(), getDispose())
       .getKeyStore(
         Params.create().of(CERTIFICATE_PATH_PARAM, getSlot().getLibrary())

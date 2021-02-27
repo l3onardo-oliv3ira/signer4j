@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IKeyStoreAccess;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 public class ConsoleChooser extends AbstractCertificateChooser {
   
@@ -14,7 +14,7 @@ public class ConsoleChooser extends AbstractCertificateChooser {
   }
 
   @Override
-  protected IChoice doChoose(List<CertificateEntry> options) throws KeyStoreAccessException {
+  protected IChoice doChoose(List<CertificateEntry> options) throws Signer4JException {
     @SuppressWarnings("resource")
     Scanner sc = new Scanner(System.in);
     do{

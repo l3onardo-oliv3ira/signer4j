@@ -3,7 +3,7 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.Args.requireText;
 import static com.github.signer4j.imp.Args.requireZeroPositive;
-import static com.github.signer4j.imp.KeyStoreInvokeHandler.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 import static java.lang.String.format;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IParams;
 import com.github.signer4j.IPasswordCallbackHandler;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   
@@ -45,7 +45,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   }
   
   @Override
-  public IKeyStore getKeyStore(IParams p) throws KeyStoreAccessException {
+  public IKeyStore getKeyStore(IParams p) throws Signer4JException {
     requireNonNull(p, "Params is null");
     return getKeyStore(
       p.orElseThrow(DRIVER_PATH_PARAM, validate()),
@@ -53,7 +53,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
     );
   }
 
-  private IKeyStore getKeyStore(String libraryPath, long slot) throws KeyStoreAccessException {
+  private IKeyStore getKeyStore(String libraryPath, long slot) throws Signer4JException {
     requireZeroPositive(slot, "slot must be 0 or positive value");
     libraryPath = requireText(libraryPath, "driver path can't be null").trim().replaceAll("\\\\",  "/");
     int s = libraryPath.lastIndexOf('/');
@@ -66,7 +66,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
     );
   }
 
-  private IKeyStore getKeyStore(String providerName, String libraryPath, long slot) throws KeyStoreAccessException {
+  private IKeyStore getKeyStore(String providerName, String libraryPath, long slot) throws Signer4JException {
     return getKeyStore(
       providerName,
       slot,
@@ -79,15 +79,15 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
     );
   }
   
-  private IKeyStore getKeyStore(String providerName, long slot, byte[] config) throws KeyStoreAccessException {
+  private IKeyStore getKeyStore(String providerName, long slot, byte[] config) throws Signer4JException {
     try(InputStream input = new ByteArrayInputStream(config)){
       return getKeyStore(providerName, slot, input); 
     } catch (IOException e) {
-      throw new KeyStoreAccessException(e); 
+      throw new Signer4JException(e); 
     }
   }
   
-  private IKeyStore getKeyStore(String providerName, long slot, InputStream config) throws KeyStoreAccessException {
+  private IKeyStore getKeyStore(String providerName, long slot, InputStream config) throws Signer4JException {
     final AuthProvider provider = Providers.installSunPKCS11Provider(providerName, config);
     return INVOKER.invoke(
       () -> { //try

@@ -10,7 +10,7 @@ import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
 import com.github.signer4j.exception.DriverSessionException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 import sun.security.pkcs11.wrapper.PKCS11;
@@ -42,7 +42,7 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   }
   
   @Override
-  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException {
     return new PKCS11KeyStoreLoader(callback, getDispose(), getSlot().toDevice())
       .getKeyStore(
         Params.create()

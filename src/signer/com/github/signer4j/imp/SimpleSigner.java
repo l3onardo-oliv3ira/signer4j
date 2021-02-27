@@ -10,7 +10,7 @@ import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.ISignerBuilder;
 import com.github.signer4j.ISimpleSigner;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 class SimpleSigner extends SecurityObject implements ISimpleSigner {
 
@@ -21,7 +21,7 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
   }
   
   @Override
-  public final ISignedData process(byte[] content, int offset, int length) throws KeyStoreAccessException {
+  public final ISignedData process(byte[] content, int offset, int length) throws Signer4JException {
     Args.requireNonEmpty(content, "content is null");
     Args.requireZeroPositive(offset, "offset is negative");
     Args.requirePositive(length, "length is not positive");

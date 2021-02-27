@@ -6,7 +6,7 @@ import java.security.PrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 
 class PKCS12KeyStore extends AbstractKeyStore {
@@ -21,7 +21,7 @@ class PKCS12KeyStore extends AbstractKeyStore {
   }
   
   @Override
-  public final PrivateKey getPrivateKey(String alias) throws KeyStoreAccessException {
+  public final PrivateKey getPrivateKey(String alias) throws Signer4JException {
     checkIfAvailable();
     if (privateKey == null)
       privateKey = super.getPrivateKey(alias, new String(password, Constants.DEFAULT_CHARSET).toCharArray());
@@ -30,7 +30,7 @@ class PKCS12KeyStore extends AbstractKeyStore {
   }
   
   @Override
-  public String getProvider() throws KeyStoreAccessException {
+  public String getProvider() throws Signer4JException {
     checkIfAvailable();
     return BouncyCastleProvider.PROVIDER_NAME;
   }

@@ -11,7 +11,7 @@ import com.github.signer4j.ISignerBuilder;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 public class TokenWrapper implements IToken {
 
@@ -102,25 +102,25 @@ public class TokenWrapper implements IToken {
   }
 
   @Override
-  public IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
+  public IToken login(IPasswordCallbackHandler callback) throws Signer4JException {
     token.login(callback);
     return this;
   }
   
   @Override
-  public IToken login() throws KeyStoreAccessException {
+  public IToken login() throws Signer4JException {
     token.login();
     return this;
   }
   
   @Override
-  public IToken login(IPasswordCollector collector) throws KeyStoreAccessException {
+  public IToken login(IPasswordCollector collector) throws Signer4JException {
     token.login(collector);
     return this;
   }
 
   @Override
-  public IToken login(char[] password) throws KeyStoreAccessException {
+  public IToken login(char[] password) throws Signer4JException {
     token.login(password);
     return this;
   }

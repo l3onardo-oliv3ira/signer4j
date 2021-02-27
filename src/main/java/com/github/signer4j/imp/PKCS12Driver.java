@@ -16,7 +16,7 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.gui.utils.InvalidPinAlert;
 import com.github.signer4j.imp.exception.InvalidPinException;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 
 class PKCS12Driver extends AbstractDriver {
@@ -117,7 +117,7 @@ class PKCS12Driver extends AbstractDriver {
             passwords.remove(key);
             if (!InvalidPinAlert.display(0)) //TODO confirmar se este código deve ou não ser executado em SwingTools.invokeAndWait
               break;
-          } catch (KeyStoreAccessException e) {
+          } catch (Signer4JException e) {
             LOGGER.error("Falha na tentativa de autenticação em PKCS12 Driver: " + path.toString(), e);
             break;
           }

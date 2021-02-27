@@ -15,7 +15,7 @@ import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IKeyStoreAccess;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 public abstract class AbstractCertificateChooser implements ICertificateChooser {
   
@@ -34,23 +34,23 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
     return keyStore.getDevice();
   }
   
-  private final List<Certificate> getChain(String alias) throws KeyStoreAccessException{
+  private final List<Certificate> getChain(String alias) throws Signer4JException{
     return keyStore.getCertificateChain(alias);
   }
 
-  private final Certificate getCertificate(String alias) throws KeyStoreAccessException {
+  private final Certificate getCertificate(String alias) throws Signer4JException {
     return keyStore.getCertificate(alias);
   }
   
-  private final PrivateKey gePrivateKey(String alias) throws KeyStoreAccessException {
+  private final PrivateKey gePrivateKey(String alias) throws Signer4JException {
     return keyStore.getPrivateKey(alias);
   }
   
-  private final String getAliasFrom(ICertificate certificate) throws KeyStoreAccessException {
+  private final String getAliasFrom(ICertificate certificate) throws Signer4JException {
     return keyStore.getCertificateAlias(certificate.toX509());
   }
   
-  private final String getProvider() throws KeyStoreAccessException {
+  private final String getProvider() throws Signer4JException {
     return keyStore.getProvider();
   }
   
@@ -64,7 +64,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
   }
   
   @Override
-  public final IChoice choose() throws KeyStoreAccessException {
+  public final IChoice choose() throws Signer4JException {
     if (this.options == null) {
       this.options = call(
         () -> certificates
@@ -72,7 +72,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
         .filter(getPredicate())
         .map(wrap(c -> new CertificateEntry(getDevice(), getAliasFrom(c), c)))
         .collect(toList()), 
-        KeyStoreAccessException.class
+        Signer4JException.class
       );
     }
     return doChoose(options);
@@ -82,11 +82,11 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
     return p -> p.getKeyUsage().isDigitalSignature();
   }
   
-  protected final IChoice toChoice(CertificateEntry choice) throws KeyStoreAccessException {
+  protected final IChoice toChoice(CertificateEntry choice) throws Signer4JException {
     return toChoice(choice.aliasName);
   }
 
-  protected final IChoice toChoice(String choosedAlias) throws KeyStoreAccessException {
+  protected final IChoice toChoice(String choosedAlias) throws Signer4JException {
     return Choice.from(
       gePrivateKey(choosedAlias),
       getCertificate(choosedAlias),
@@ -95,5 +95,5 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
     );
   }
   
-  protected abstract IChoice doChoose(List<CertificateEntry> options) throws KeyStoreAccessException;
+  protected abstract IChoice doChoose(List<CertificateEntry> options) throws Signer4JException;
 }

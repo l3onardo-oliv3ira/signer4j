@@ -1,10 +1,10 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.KeyStoreInvokeHandler.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 
 import com.github.signer4j.ICertificateChooser;
-import com.github.signer4j.imp.exception.KeyStoreAccessException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 public abstract class SecurityObject {
   
@@ -16,11 +16,11 @@ public abstract class SecurityObject {
     this.dispose = requireNonNull(dispose, "dispose is null");
   }
   
-  protected final <T> T invoke(Supplier<T> tryBlock) throws KeyStoreAccessException {
+  protected final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
     return INVOKER.invoke(tryBlock, (e) -> dispose.run());
   }
   
-  protected final IChoice choose() throws KeyStoreAccessException {
+  protected final IChoice choose() throws Signer4JException {
     IChoice choice = chooser.choose();
     if (choice.isCanceled())
       throw new CanceledOperationException();
