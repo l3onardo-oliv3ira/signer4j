@@ -95,7 +95,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
        * Nesta instância 'data' acima pode ter pendurado um byte[]/ContentInfo bem grande. Se invocado data.getEncoded() um segundo
        * volume de byte[] será criado, duplicando o consumo de espaço no Heap da JVM ainda que por um período 
        * curto de tempo. A idéia básica aqui é que se escrevermos no disco o que já se tem em memmória seguido da liberação 
-       * da referencia data para a coleta de lixo, poderemos usar a memória em um único volume ao invés de dois, o que 
+       * da referencia 'data' para a coleta de lixo, poderemos usar a memória em um único volume ao invés de dois, o que 
        * diminuirá as chances de se alcançar OutOfMemoryError. Neste cenário um OutOfMemory só será alcançado se um 
        * ÚNICO arquivo (e NÃO um lote deles) já for maior do que o todo o Heap da JVM. 
        */
