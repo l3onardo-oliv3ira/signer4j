@@ -16,7 +16,6 @@ import java.security.KeyStore;
 import java.util.function.Supplier;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IParams;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
@@ -27,11 +26,22 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   private final IDevice device;
   private final Runnable dispose;
   
-  public PKCS11KeyStoreLoader(IPasswordCallbackHandler handler, IDevice device, Runnable dispose) {
+  PKCS11KeyStoreLoader() {
+    this(ConsoleCallback.HANDLER);
+  }
+
+  PKCS11KeyStoreLoader(IPasswordCallbackHandler handler) {
+    this(handler, () -> {});
+  }
+
+  PKCS11KeyStoreLoader(IPasswordCallbackHandler handler, Runnable dispose) {
+    this(handler, dispose, null);
+  }
+  
+  PKCS11KeyStoreLoader(IPasswordCallbackHandler handler, Runnable dispose, IDevice device) {
     this.handler = requireNonNull(handler, "Unabled to create loader with null handler");
-    this.device = requireNonNull(device, "device is null");
     this.dispose = requireNonNull(dispose, "dispose is null");
-    
+    this.device = device;
   }
   
   @Override
@@ -84,7 +94,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
         provider.login(null, this.handler);
         KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
         keyStore.load(null, null); //TODO para todo PKCS11 substitui a senha se já tiver logado?
-        return new PKCS11KeyStore(device, keyStore, dispose);
+        return new PKCS11KeyStore(keyStore, dispose, device);
       }, 
       (exception) -> { //catch
         try {

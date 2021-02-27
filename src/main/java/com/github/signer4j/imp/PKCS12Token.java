@@ -2,7 +2,6 @@ package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.PKCS12KeyStoreLoaderParams.CERTIFICATE_PATH_PARAM;
 
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;

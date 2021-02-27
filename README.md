@@ -210,7 +210,7 @@ try {
   token.login();
 
   ICMSSigner cmsSigner = token.cmsSignerBuilder()
-      .usingAlgorigthm(SignatureAlgorithm.SHA1withRSA)
+      .usingAlgorithm(SignatureAlgorithm.SHA1withRSA)
       .usingAttributes(true)
       .usingMemoryLimit(50 * 1024 * 1024)
       .usingSignatureType(SignatureType.ATTACHED)

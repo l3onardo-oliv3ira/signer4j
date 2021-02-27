@@ -20,9 +20,9 @@ import com.github.signer4j.imp.exception.OutOfMemoryException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.TokenLockedException;
 
-public class KeyStoreInvokeHandler extends InvokeHandler<KeyStoreAccessException> {
+class KeyStoreInvokeHandler extends InvokeHandler<KeyStoreAccessException> {
   
-  public static final KeyStoreInvokeHandler INVOKER = new KeyStoreInvokeHandler();
+  static final KeyStoreInvokeHandler INVOKER = new KeyStoreInvokeHandler();
   
   private KeyStoreInvokeHandler() {}
   

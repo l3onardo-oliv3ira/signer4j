@@ -6,7 +6,6 @@ import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
 import com.github.signer4j.ICertificate;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;

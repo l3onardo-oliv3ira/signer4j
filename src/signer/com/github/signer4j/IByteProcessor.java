@@ -20,7 +20,7 @@ public interface IByteProcessor {
   
   default ISignedData process(File content) throws KeyStoreAccessException, IOException {
     Args.requireNonNull(content, "content is null");
-    try(OpenByteArrayOutputStream out = new OpenByteArrayOutputStream()) {
+    try(OpenByteArrayOutputStream out = new OpenByteArrayOutputStream(content.length())) {
       Files.copy(content.toPath(), out);
       return out.process(this::process);
     }

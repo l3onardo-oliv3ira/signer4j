@@ -30,6 +30,10 @@ public interface IToken extends IGadget {
   
   ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory);
 
+  IPKCS7SignerBuilder pkcs7SignerBuilder();
+  
+  IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory);
+
   void logout();
   
   IToken login(IPasswordCallbackHandler callback) throws KeyStoreAccessException;

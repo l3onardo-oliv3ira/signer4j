@@ -2,18 +2,19 @@ package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.KeyStoreInvokeHandler.INVOKER;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 
@@ -23,14 +24,22 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   
   protected final KeyStore keyStore;
   
-  private final IDevice device;
+  private final Optional<IDevice> device;
   
   private final Runnable dispose;
   
-  protected AbstractKeyStore(IDevice device, KeyStore keystore, Runnable dispose) throws PrivateKeyNotFound  {
-    this.device = requireNonNull(device, "device is null");
+  protected AbstractKeyStore(KeyStore keystore) throws PrivateKeyNotFound  {
+    this(keystore, () -> {});
+  }
+
+  protected AbstractKeyStore(KeyStore keystore, Runnable dispose) throws PrivateKeyNotFound  {
+    this(keystore, dispose, null);
+  }
+  
+  protected AbstractKeyStore(KeyStore keystore, Runnable dispose, IDevice device) throws PrivateKeyNotFound  {
     this.keyStore = requireNonNull(keystore, "null keystore is not supported");
     this.dispose = requireNonNull(dispose, "dispose is null");
+    this.device = Optional.ofNullable(device);
     this.setup();
   }
   
@@ -66,7 +75,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   @Override
-  public final IDevice getDevice() {
+  public final Optional<IDevice> getDevice() {
     return device;
   }
   
@@ -98,7 +107,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   @Override
   public final List<Certificate> getCertificateChain(String alias) throws KeyStoreAccessException {
     checkIfAvailable();
-    return Arrays.asList(invoke(() -> (Certificate[])this.keyStore.getCertificateChain(alias)));
+    return unmodifiableList(asList(invoke(() -> (Certificate[])this.keyStore.getCertificateChain(alias))));
   }
 
   @Override

@@ -6,6 +6,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
@@ -19,6 +22,8 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 @SuppressWarnings("restriction")
 class PKCS11Certificates extends AbstractCertificates {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(PKCS11Certificates.class);
+  
   private final transient PKCS11Token token;
   
   protected PKCS11Certificates(PKCS11Token token, long session, ICertificateFactory factory) throws DriverException {
@@ -60,6 +65,7 @@ class PKCS11Certificates extends AbstractCertificates {
         CK_ATTRIBUTE aliasAttrib = attributes[0];
         
         if (!hasAlias(aliasAttrib)) {
+          LOGGER.warn("Não foi encontrado atributo 'alias' para acesso ao certificado para objeto: " + object);
           continue;
         }
         
@@ -73,11 +79,18 @@ class PKCS11Certificates extends AbstractCertificates {
         CK_ATTRIBUTE certificateAttrib = attributes[0];
         
         if (!hasCertificate(certificateAttrib)) {
+          LOGGER.warn("Não foi encontrado valor do atributo 'alias' para acesso ao certificado para objeto: " + object);
+          continue;
+        }
+
+        Object value = certificateAttrib.pValue;
+        if (!(value instanceof byte[])) {
+          LOGGER.warn("Atributo do certificado encontrado mas não é instância de byte[]. Tipo: " + 
+              value.getClass().getCanonicalName());
           continue;
         }
         
-        final byte[] bytes = (byte[])certificateAttrib.pValue;
-        try (ByteArrayInputStream cert = new ByteArrayInputStream(bytes)) {
+        try (ByteArrayInputStream cert = new ByteArrayInputStream((byte[])value)) {
           this.certificates.add(factory.call(cert));
         } catch (CertificateException | IOException e) {
           throw new DriverFailException("Unabled to create certificate from inputstream", e);

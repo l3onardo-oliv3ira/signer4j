@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IParams;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
@@ -57,7 +56,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
         handler.handle(callback);
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(stream, callback.getPassword());
-        return new PKCS12KeyStore(device, keyStore, callback.getPassword(), dispose);
+        return new PKCS12KeyStore(keyStore, dispose, device, callback.getPassword());
       }, () -> callback.clearPassword());
     } catch (FileNotFoundException e) {
       throw new Pkcs12FileNotFoundException("Arquivo não encontrado: " + input.getAbsolutePath(), e);

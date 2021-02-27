@@ -8,7 +8,6 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IParams;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
 import com.github.signer4j.imp.exception.ModuleException;
@@ -48,6 +47,6 @@ class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
 
     MscapiFixer.BUG_6483657.fix(keystore);
     
-    return new MSCAPIKeyStore(device, keystore, dispose);
+    return new MSCAPIKeyStore(keystore, dispose, device);
   }
 }

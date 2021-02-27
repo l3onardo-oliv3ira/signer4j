@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.Predicate;
 
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICertificate;
@@ -41,9 +42,11 @@ public class GetStarted {
       System.out.println("Model: " + device.getModel());
       System.out.println("Serial: " + device.getSerial());
     });
+    
+    Predicate<IDevice> filter = d -> true;// d.getLabel().equals("whatever");
 
     //Access first device and listing certificates
-    IDevice device = dm.firstDevice().get();
+    IDevice device = dm.firstDevice(filter).get();
 
     System.out.println("**************************");
     System.out.println("Certificates");
@@ -79,18 +82,15 @@ public class GetStarted {
     System.out.println("Number: " + slot.getNumber());
     System.out.println("Serial: " + slot.getSerial());
     
-    
     //Get token abstraction for a slot
     IToken token = slot.getToken();
     
     try {
       token.login();
-      //token.login("mypassword".toCharArray());
-      //token.login(.....) //many other login overloaded methods
       
       String message = "Hello world!";
       
-      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorigthm(SignatureAlgorithm.MD5withRSA).build();
+      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorigthm(SignatureAlgorithm.SHA1withRSA).build();
       
       ISignedData data = simpleSigner.process(message);
       
@@ -116,7 +116,7 @@ public class GetStarted {
       token.login();
 
       ICMSSigner cmsSigner = token.cmsSignerBuilder()
-          .usingAlgorigthm(SignatureAlgorithm.SHA1withRSA)
+          .usingSignatureAlgorithm(SignatureAlgorithm.SHA1withRSA)
           .usingAttributes(true)
           .usingMemoryLimit(50 * 1024 * 1025)
           .usingSignatureType(SignatureType.ATTACHED)
@@ -124,7 +124,7 @@ public class GetStarted {
       
       ISignedData data = cmsSigner.process(new File("./input.pdf"));
       
-      try(OutputStream out = new FileOutputStream(new File("./input.pdf.p7s"))) {
+      try(OutputStream out = new FileOutputStream(new File("D:/input.pdf.p7s"))) {
         data.writeTo(out);
       }
     } catch (TokenLockedException e) {
@@ -142,5 +142,8 @@ public class GetStarted {
     } finally {
       token.logout(); 
     }
+    
+    dm.close();
   }
+ 
 }

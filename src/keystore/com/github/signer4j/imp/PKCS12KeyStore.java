@@ -15,8 +15,8 @@ class PKCS12KeyStore extends AbstractKeyStore {
 
   private PrivateKey privateKey = null;
 
-  PKCS12KeyStore(IDevice device, KeyStore keystore, char[] password, Runnable dispose) throws PrivateKeyNotFound {
-    super(device, keystore, dispose);
+  PKCS12KeyStore(KeyStore keystore, Runnable dispose, IDevice device, char[] password) throws PrivateKeyNotFound {
+    super(keystore, dispose, device);
     this.password = new String(password).getBytes(Constants.DEFAULT_CHARSET);
   }
   

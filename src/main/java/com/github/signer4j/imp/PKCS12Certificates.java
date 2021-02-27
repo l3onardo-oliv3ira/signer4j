@@ -1,6 +1,5 @@
 package com.github.signer4j.imp;
 
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.imp.exception.KeyStoreAccessException;
 

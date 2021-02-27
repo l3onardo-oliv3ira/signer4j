@@ -4,6 +4,7 @@ import com.github.signer4j.ICMSSignerBuilder;
 import com.github.signer4j.ICertificateChooserFactory;
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IKeyStoreAccess;
+import com.github.signer4j.IPKCS7SignerBuilder;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IPasswordCollector;
 import com.github.signer4j.ISignerBuilder;
@@ -88,6 +89,16 @@ public class TokenWrapper implements IToken {
   @Override
   public ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory) {
     return token.cmsSignerBuilder(factory);
+  }
+  
+  @Override
+  public IPKCS7SignerBuilder pkcs7SignerBuilder() {
+    return token.pkcs7SignerBuilder();
+  }
+
+  @Override
+  public IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory) {
+    return token.pkcs7SignerBuilder(factory);
   }
 
   @Override

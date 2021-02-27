@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;

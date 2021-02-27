@@ -7,8 +7,8 @@ import com.github.signer4j.ICMSSignerBuilder;
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificateChooserFactory;
 import com.github.signer4j.ICertificates;
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IKeyStoreAccess;
+import com.github.signer4j.IPKCS7SignerBuilder;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.ISignerBuilder;
 import com.github.signer4j.ISlot;
@@ -154,12 +154,28 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     return createCMSSignerBuilder(factory.apply(this.keyStore, this.certificates));
   }
   
+  @Override
+  public IPKCS7SignerBuilder pkcs7SignerBuilder() {
+    return pkcs7SignerBuilder((k, c) -> new ConsoleChooser(k, c));
+  }
+
+  @Override
+  public IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory) {
+    requireNonNull(factory, "factory is null");
+    checkIfAvailable();
+    return createPKCS7SignerBuilder(factory.apply(this.keyStore, this.certificates));
+  }
+
   protected ISignerBuilder createBuilder(ICertificateChooser chooser) {
     return new SimpleSigner.Builder(chooser, getDispose());
   }
   
   private ICMSSignerBuilder createCMSSignerBuilder(ICertificateChooser chooser) {
     return new CMSSigner.Builder(chooser, getDispose());
+  }
+  
+  private IPKCS7SignerBuilder createPKCS7SignerBuilder(ICertificateChooser chooser) {
+    return new PKCS7Signer.Builder(chooser, getDispose());
   }
 
   protected abstract IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException;

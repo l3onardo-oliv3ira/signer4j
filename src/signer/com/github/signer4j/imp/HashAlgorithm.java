@@ -10,19 +10,50 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IHashAlgorithm;
 
 public enum HashAlgorithm implements IHashAlgorithm {
-  DIGEST_SHA1("DIGEST_SHA1") {
-    @Override
-    public String getName() {
-      return CMSSignedDataGenerator.DIGEST_SHA1;
-    }
-  },
-  DIGEST_MD5("DIGEST_MD5"){
+  MD2("MD2"),
+  MD5("MD5") {
     @Override
     public String getName() {
       return CMSSignedDataStreamGenerator.DIGEST_MD5;
     }
-  };
+  },
+  SHA_1("SHA-1") {
+    @Override
+    public String getName() {
+      return CMSSignedDataStreamGenerator.DIGEST_SHA1;
+    }
+  },
+  SHA_224("SHA-224") {
+    @Override
+    public String getName() {
+      return CMSSignedDataStreamGenerator.DIGEST_SHA224;
+    }
+  },
+  SHA_256("SHA-256") {
+    @Override
+    public String getName() {
+      return CMSSignedDataStreamGenerator.DIGEST_SHA256;
+    }
+  },
+  SHA_384("SHA-384") {
+    @Override
+    public String getName() {
+      return CMSSignedDataStreamGenerator.DIGEST_SHA384;
+    }
+  },
+  SHA_512("SHA-512") {
+    @Override
+    public String getName() {
+      return CMSSignedDataStreamGenerator.DIGEST_SHA512;
+    }
+  },
+  SHA_512_224("SHA-512/224"),
+  SHA_512_256("SHA-512/256");
+ 
   
+  static {
+    Providers.installBouncyCastleProvider();
+  }
 
   @JsonCreator
   public static IHashAlgorithm fromString(final String key) {
@@ -40,11 +71,21 @@ public enum HashAlgorithm implements IHashAlgorithm {
     return this.name;
   }
   
+  @Override
+  public String getName() {
+    return this.getStandardName();
+  }
+  
+  @Override
+  public String getStandardName() {
+    return this.name;
+  }
+  
   //do not create new array's instances for each call
   private static final HashAlgorithm[] VALUES = HashAlgorithm.values(); 
 
   public static IHashAlgorithm getDefault() {
-    return DIGEST_SHA1;
+    return MD5;
   }
   
   public static IHashAlgorithm getOrDefault(String name) {

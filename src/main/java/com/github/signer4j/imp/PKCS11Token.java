@@ -3,7 +3,6 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 
-import com.github.signer4j.IKeyStore;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;
@@ -44,7 +43,7 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   
   @Override
   protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws KeyStoreAccessException {
-    return new PKCS11KeyStoreLoader(callback, getSlot().toDevice(), getDispose())
+    return new PKCS11KeyStoreLoader(callback, getDispose(), getSlot().toDevice())
       .getKeyStore(
         Params.create()
         .of(DRIVER_PATH_PARAM, getSlot().getLibrary())
