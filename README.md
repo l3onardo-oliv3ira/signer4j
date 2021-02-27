@@ -58,7 +58,7 @@ public interface IDevice extends IGadget {
 }
 ```
 
-## Access to the first device and certificate listing
+## First device access and certificate listing
 ```java
 IDevice device = dm.firstDevice().get();
 System.out.println("Certificates");
@@ -93,8 +93,8 @@ public interface ICertificate extends ISerialItem {
   List<String> getCRLDistributionPoint() throws IOException;
   
   Optional<String> getEmail();
-  Optional<ICertificatePF> getCertificatePF();
-  Optional<ICertificatePJ> getCertificatePJ();
+  Optional<ICertificatePF> getCertificatePF(); //full abstraction for Pessoa Física
+  Optional<ICertificatePJ> getCertificatePJ(); //full abstraction for Pessoa Jurídica
   
   KeyUsage getKeyUsage();
   ISubjectAlternativeNames getSubjectAlternativeNames();
@@ -105,6 +105,36 @@ public interface ICertificate extends ISerialItem {
   
   boolean hasCertificatePF();
   boolean hasCertificatePJ();
+}
+```
+## Brazilian abstraction for individual and legal entity certificates
+```java
+public interface ICertificatePF {
+  Optional<String> getCPF();
+  Optional<LocalDate> getBirthDate();
+  Optional<String> getNis();
+  Optional<String> getRg();
+  Optional<String> getIssuingAgencyRg();
+  Optional<String> getUfIssuingAgencyRg();
+  Optional<String> getElectoralDocument();
+  Optional<String> getSectionElectoralDocument();
+  Optional<String> getZoneElectoralDocument();
+  Optional<String> getCityElectoralDocument();
+  Optional<String> getUFElectoralDocument();
+  Optional<String> getCEI();
+}
+
+public interface ICertificatePJ {
+  Optional<String> getResponsibleName();
+  Optional<String> getResponsibleCPF();
+  Optional<String> getCNPJ();
+  Optional<String> getBirthDate();
+  Optional<String> getBusinessName();
+  Optional<String> getNis();
+  Optional<String> getRg();
+  Optional<String> getIssuingAgencyRg();
+  Optional<String> getUfIssuingAgencyRg();
+  Optional<String> getCEI();
 }
 ```
 ## Show slot informations
