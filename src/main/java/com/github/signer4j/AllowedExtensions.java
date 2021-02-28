@@ -1,4 +1,5 @@
 package com.github.signer4j;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public interface AllowedExtensions {

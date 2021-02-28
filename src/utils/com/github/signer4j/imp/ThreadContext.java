@@ -18,7 +18,7 @@ public abstract class ThreadContext implements IThreadContext {
   }
 
   @Override
-  public final void start() {
+  public final synchronized void start() {
     stop();
     context = new Thread(name) {
       @Override
@@ -31,14 +31,16 @@ public abstract class ThreadContext implements IThreadContext {
   }
 
   @Override
-  public final void stop(long timeout) {
+  public final synchronized void stop(long timeout) {
     if (context != null) {
       context.interrupt();
       try {
+        doInterrupt();
         context.join(timeout);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       } finally {
+        onStoped();
         context = null;
       }
     }
@@ -48,6 +50,10 @@ public abstract class ThreadContext implements IThreadContext {
   public final void stop() {
     stop(0);
   }
+
+  protected void onStoped() {}
+
+  protected void doInterrupt() {}
 
   protected abstract void doRun();
 }

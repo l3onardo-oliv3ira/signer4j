@@ -159,6 +159,7 @@ class ForWindowsLockDettector implements IWindowLockDettector {
         thread.join();
       } catch (InterruptedException e) {
         LOGGER.error("Não foi possível aguardar a finalização da thread de monitoração de login/logout.", e);
+        Thread.currentThread().interrupt();
       } finally {
         User32.INSTANCE.UnregisterClass(windowClass, null);
         checkError("Falha em UnregisterClass");

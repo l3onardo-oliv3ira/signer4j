@@ -19,7 +19,7 @@ public enum WindowLockDettector implements IWindowLockDettector {
     public void stop() {
       forWindows.stop();
     }
-
+    
     @Override
     public IWindowLockDettector notifyTo(IWorkstationLockListener listener) {
       forWindows.notifyTo(listener);
@@ -33,17 +33,17 @@ public enum WindowLockDettector implements IWindowLockDettector {
   
   @Override
   public void start() {
-    ;//linux and mac not implementd yet
+    ;//linux and mac not implemented yet
   }
 
   @Override
   public void stop() {
-    ;//linux and mac not implementd yet
+    ;//linux and mac not implemented yet
   }
 
   @Override
   public IWindowLockDettector notifyTo(IWorkstationLockListener listener) {
-    ;//linux and mac not implementd yet
+    ;//linux and mac not implemented yet
     return this;
   }
 }
