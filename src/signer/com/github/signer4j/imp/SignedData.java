@@ -86,6 +86,6 @@ public class SignedData implements ISignedData {
 
   @Override
   public final void writeTo(OutputStream out) throws IOException {
-    Streams.copy(signedData, out); 
+    out.write(signedData);
   }
 }
