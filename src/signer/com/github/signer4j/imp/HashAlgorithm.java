@@ -2,7 +2,6 @@ package com.github.signer4j.imp;
 
 import java.util.Optional;
 
-import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSSignedDataStreamGenerator;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

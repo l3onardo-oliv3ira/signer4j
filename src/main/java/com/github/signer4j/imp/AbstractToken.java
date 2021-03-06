@@ -136,7 +136,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     return createBuilder(factory.apply(this.keyStore, this.certificates));
   }
 
-  protected void checkIfAvailable() {
+  protected final void checkIfAvailable() {
     if (!isAuthenticated()) {
       throw new NotAuthenticatedException("Unabled to prepare signer with no authenticated token");
     }

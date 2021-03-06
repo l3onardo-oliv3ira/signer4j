@@ -76,11 +76,13 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   
   @Override
   public final Optional<IDevice> getDevice() {
+    checkIfAvailable();
     return device;
   }
   
   @Override
   public final Enumeration<String> getAliases() throws Signer4JException {
+    checkIfAvailable();
     try {
       return keyStore.aliases();
     } catch (KeyStoreException e) {
