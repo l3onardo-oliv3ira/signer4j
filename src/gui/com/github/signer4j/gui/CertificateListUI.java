@@ -33,9 +33,6 @@ import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;
 import com.github.signer4j.imp.Config;
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 
 public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
@@ -57,6 +54,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   private final IA1A3ConfigSaved onSaved;
   
   private Optional<ICertificateEntry> selectedEntry = Optional.empty();
+  
+  private boolean needReload = false;
 
   private CertificateListUI(String defaultAlias, IA1A3ConfigSaved onSaved) {
     super("Seleção de certificado", true);
@@ -136,7 +135,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     contentPane.add(pnlNorth, BorderLayout.NORTH);
     pnlNorth.setLayout(new BorderLayout(0, 0));
     
-    pnlNorthEast = new JPanel();
+    JPanel pnlNorthEast = new JPanel();
     
     pnlNorth.add(pnlNorthEast, BorderLayout.EAST);
 
@@ -159,7 +158,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     });
     lblConfigInstall.setVisible(onSaved != null);
     
-    lblRefresh = new JLabel("");
+    JLabel lblRefresh = new JLabel("");
     lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);
     
     lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -170,6 +169,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
         refresh();
       }
     });
+    lblRefresh.setVisible(onSaved != null);
+    
     pnlNorthEast.setLayout(new BorderLayout(0, 0));
     pnlNorthEast.add(lblConfigInstall, BorderLayout.CENTER);
     pnlNorthEast.add(lblRefresh, BorderLayout.EAST);
@@ -258,9 +259,6 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     }
   }
   
-  boolean needReload = false;
-  private JLabel lblRefresh;
-  private JPanel pnlNorthEast;
   private void clickConfig() {
     new CertificateInstaller((a, b) -> {
       this.needReload = true;
@@ -291,7 +289,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     this.chkRememberMe.setSelected(false);
     this.chkRememberMe.setEnabled(false);
     ((CertificateModel)table.getModel()).load(entries);
-    this.setVisible(true);
+    this.setVisible(true);  
     if (this.selectedEntry.isPresent()) {
       ICertificateEntry selectedEntry = this.selectedEntry.get();
       if (this.defaultAlias.equals(selectedEntry.getId())) {

@@ -126,7 +126,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   
   @Override
   public final ISignerBuilder signerBuilder()  {
-    return signerBuilder((k, c) -> new ConsoleChooser(k, c));
+    return signerBuilder(ICertificateChooserFactory.DEFAULT);
   }
   
   @Override
@@ -144,7 +144,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   
   @Override
   public ICMSSignerBuilder cmsSignerBuilder() {
-    return cmsSignerBuilder((k, c) -> new ConsoleChooser(k, c));
+    return cmsSignerBuilder(ICertificateChooserFactory.DEFAULT);
   }
 
   @Override
@@ -156,7 +156,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   
   @Override
   public IPKCS7SignerBuilder pkcs7SignerBuilder() {
-    return pkcs7SignerBuilder((k, c) -> new ConsoleChooser(k, c));
+    return pkcs7SignerBuilder(ICertificateChooserFactory.DEFAULT);
   }
 
   @Override
