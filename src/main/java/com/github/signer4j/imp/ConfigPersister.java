@@ -30,7 +30,7 @@ public class ConfigPersister implements IConfigPersister {
   
   private static final String CERTIFICATE_A3_LIST     = "list.a3";
 
-  private static final String PJE_DEFAULT_ALIAS       = "default.certificate";
+  private static final String DEFAULT_CERTIFICATE     = "default.certificate";
   
   private final IConfig config;
   
@@ -64,7 +64,7 @@ public class ConfigPersister implements IConfigPersister {
   
   @Override
   public final void save(String device) {
-    put(p -> "", PJE_DEFAULT_ALIAS, Strings.toArray(device));
+    put(p -> "", DEFAULT_CERTIFICATE, Strings.toArray(device));
   }
   
   @Override
@@ -90,7 +90,7 @@ public class ConfigPersister implements IConfigPersister {
     Properties properties = new Properties();
     if (!open(properties))
       return Optional.empty();
-    return Optional.ofNullable(properties.getProperty(PJE_DEFAULT_ALIAS));
+    return Optional.ofNullable(properties.getProperty(DEFAULT_CERTIFICATE));
   }
   
   @Override
@@ -154,7 +154,7 @@ public class ConfigPersister implements IConfigPersister {
   }
 
   private Optional<String> get(Properties properties, int index) {
-    List<String> members = Strings.split(properties.getProperty(PJE_DEFAULT_ALIAS, ""), ':');
+    List<String> members = Strings.split(properties.getProperty(DEFAULT_CERTIFICATE, ""), ':');
     if (members.size() != 2)
       return Optional.empty();
     return Optional.of(members.get(index));

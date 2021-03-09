@@ -1,5 +1,7 @@
 package com.github.signer4j.imp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -24,6 +26,27 @@ public class Throwables {
     }
   }
   
+  public static Throwable rootCause(Throwable throwable) {
+    while(throwable != null){
+      Throwable rootCause = throwable.getCause();
+      if (rootCause == null || rootCause == throwable)
+        break;
+      throwable = rootCause;
+    }
+    return throwable;
+  }
+  
+  public static String rootString(Throwable throwable) {
+    Throwable rootCause = rootCause(throwable);
+    if (rootCause == null)
+      return "Causa desconhecida";
+    StringWriter w = new StringWriter();
+    try(PrintWriter p = new PrintWriter(w)){
+      rootCause.printStackTrace(p);
+      return w.toString();
+    }
+  }
+
   public static void throwRuntime(Executable<?> e) {
     try {
       e.exec();

@@ -3,6 +3,7 @@ package com.github.signer4j.progress.imp;
 import java.util.function.Consumer;
 
 import com.github.signer4j.imp.Stack;
+import com.github.signer4j.imp.Throwables;
 import com.github.signer4j.progress.IProgress;
 import com.github.signer4j.progress.IStage;
 import com.github.signer4j.progress.IStageEvent;
@@ -75,7 +76,7 @@ public class DefaultProgress implements IProgress {
     State currentState;
     if (stack.isEmpty() || (currentState = stack.peek()).isAborted())
       return;
-    String message = e.getMessage(); //TODO NO CASO AQUI MOSTRAR A CAUSAS RAIZ
+    String message = e.getMessage() + ". Causa: " + Throwables.rootString(e); 
     notify(currentState.abort(e), message, stack.size());
   }
   

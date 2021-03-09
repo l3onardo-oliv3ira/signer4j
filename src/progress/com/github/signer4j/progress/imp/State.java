@@ -1,6 +1,10 @@
 package com.github.signer4j.progress.imp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import com.github.signer4j.imp.StopWatch;
+import com.github.signer4j.imp.Throwables;
 import com.github.signer4j.progress.IStage;
 import com.github.signer4j.progress.IState;
 
@@ -100,16 +104,16 @@ class State implements IState {
       builder.append(stage);
       builder.append(", ");
     }
+    builder.append("time=");
+    builder.append(getTime());
+    builder.append(", ");
     builder.append("abort=");
     builder.append(isAborted());
     builder.append(", ");
     if (abortCause != null) {
-      builder.append("abortCause=");
-      builder.append(abortCause);
-      builder.append(", ");
+      builder.append("abortCause:\n");
+      builder.append(Throwables.rootString(abortCause));
     }
-    builder.append("time=");
-    builder.append(getTime());
     builder.append("]");
     return builder.toString();
   }
