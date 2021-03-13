@@ -64,7 +64,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       catchBlock.accept(e);
       String message = Strings.trim(e instanceof NullPointerException ? "Token has been removed" : e.getMessage());
       /**
-       * O provider SunPKCS11 do JAVA tem um bug que lança NullPointerException e corrompe a instância 
+       * O provider SunPKCS11 do JAVA tem um bug em PKCS11 que lança NullPointerException e corrompe a instância 
        * quando se remove o token após exibir a tela para digitação da senha (antes de informá-la).
        * Embora uma ação atípica e não recomendada (remover o token enquanto estiver em uso), o mala
        * do usuário sempre poderá fazer isso, portanto, infelizmente um NullPointerException 
@@ -76,6 +76,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         throw new NoTokenPresentException(e);
       if ("A operação foi cancelada pelo usuário.".equals(message))
         throw new LoginCanceledException(e);
+      if ("O cartão não pode ser acessado porque foi atingido o número máximo de tentativas para digitar o PIN.".equals(message))
+        throw new TokenLockedException(message, e);
       if ("keystore password was incorrect".equalsIgnoreCase(message) || 
           Throwables.hasCause(e, UnrecoverableKeyException.class) ||
           Throwables.hasCause(e, BadPaddingException.class) ||
