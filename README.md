@@ -40,7 +40,7 @@ public interface ICustomDeviceManager extends IDeviceManager {
 ```
 #### Device interface
 ```java
-public interface extends ISerialItem {
+public interface ISerialItem {
   String getManufacturer();
   String getSerial();
 }
