@@ -49,6 +49,9 @@ import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Strings;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+
 abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements IToken {
   
   private final transient S slot;
@@ -61,6 +64,8 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   protected String manufacturer;
   protected long minPinLen;
   protected long maxPinLen;
+  
+  private final BehaviorSubject<Boolean> status = BehaviorSubject.create();
   
   private final Runnable disposeAction = () -> logout();
   
@@ -79,6 +84,11 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     return disposeAction;
   }
 
+  @Override
+  public final Observable<Boolean> getStatus() {
+    return status;
+  }
+  
   @Override
   public final TokenType getType() {
     return type;
@@ -130,6 +140,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     if (!isAuthenticated()) {
       try {
         doLogin(this.keyStore = getKeyStore(callback));
+        this.status.onNext(true);
       }catch(Signer4JException e) {
         disposeAction.run();
         throw e;
@@ -149,6 +160,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
         handleException(e);
       }finally {
         this.keyStore = null;
+        this.status.onNext(false);
       }
     }
   }

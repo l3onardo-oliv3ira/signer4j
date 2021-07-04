@@ -42,6 +42,8 @@ import com.github.signer4j.TokenType;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
 
+import io.reactivex.Observable;
+
 public class TokenWrapper implements IToken {
 
   protected final IToken token;
@@ -85,6 +87,11 @@ public class TokenWrapper implements IToken {
     return token.isAuthenticated();
   }
 
+  @Override
+  public Observable<Boolean> getStatus() {
+    return token.getStatus();
+  }
+  
   @Override
   public ISlot getSlot() {
     return token.getSlot();

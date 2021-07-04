@@ -30,7 +30,6 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.Args.requireText;
 import static com.github.utils4j.imp.Args.requireZeroPositive;
 import static com.github.utils4j.imp.ProviderInstaller.SUNPKCS11;
@@ -73,7 +72,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   
   @Override
   public IKeyStore getKeyStore(IParams p) throws Signer4JException {
-    requireNonNull(p, "Params is null");
+    Args.requireNonNull(p, "Params is null");
     return getKeyStore(
       p.orElseThrow(DRIVER_PATH_PARAM, validate()),
       p.orElse(DRIVER_SLOT_PARAM, 0L)
@@ -81,7 +80,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   }
 
   private IKeyStore getKeyStore(String libraryPath, long slot) throws Signer4JException {
-    requireZeroPositive(slot, "slot must be 0 or positive value");
+    Args.requireZeroPositive(slot, "slot must be 0 or positive value");
     libraryPath = requireText(libraryPath, "driver path can't be null").trim().replace('\\',  '/');
     int s = libraryPath.lastIndexOf('/');
     s = s <= -1 ? 0 : s + 1;

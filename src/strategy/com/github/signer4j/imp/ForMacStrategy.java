@@ -33,7 +33,6 @@ class ForMacStrategy extends UnixStrategy {
   
   public ForMacStrategy() {
     add("libwdpkcs.dylib");
-    add("libwdpkcs.dylib"); 
     add("libsfntpkcs11.dylib"); 
     add("libeTPkcs11.dylib");
     add("libetpkcs11.dylib");
