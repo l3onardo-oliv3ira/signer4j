@@ -31,7 +31,6 @@ import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PAR
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
 import static com.github.utils4j.imp.Args.requireText;
-import static com.github.utils4j.imp.Args.requireZeroPositive;
 import static com.github.utils4j.imp.ProviderInstaller.SUNPKCS11;
 import static com.github.utils4j.imp.ProviderInstaller.uninstall;
 import static java.lang.String.format;
@@ -52,22 +51,18 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   private final IDevice device;
   private final Runnable dispose;
   
-  PKCS11KeyStoreLoader() {
-    this(PasswordCallbackHandler.CONSOLE);
-  }
-
-  PKCS11KeyStoreLoader(IPasswordCallbackHandler handler) {
-    this(handler, () -> {});
-  }
-
-  PKCS11KeyStoreLoader(IPasswordCallbackHandler handler, Runnable dispose) {
-    this(handler, dispose, null);
+  PKCS11KeyStoreLoader(IDevice device) {
+    this(device, PasswordCallbackHandler.CONSOLE);
   }
   
-  PKCS11KeyStoreLoader(IPasswordCallbackHandler handler, Runnable dispose, IDevice device) {
+  PKCS11KeyStoreLoader(IDevice device, IPasswordCallbackHandler handler) {
+    this(device, handler, () -> {});
+  }
+  
+  PKCS11KeyStoreLoader(IDevice device, IPasswordCallbackHandler handler, Runnable dispose) {
     this.handler = Args.requireNonNull(handler, "Unabled to create loader with null handler");
     this.dispose = Args.requireNonNull(dispose, "dispose is null");
-    this.device = device;
+    this.device = Args.requireNonNull(device, "device is null");
   }
   
   @Override
@@ -111,7 +106,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
         provider.login(null, this.handler);
         KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
         keyStore.load(null, null);
-        return new PKCS11KeyStore(keyStore, dispose, device);
+        return new PKCS11KeyStore(keyStore, device, dispose);
       }, 
       (exception) -> {
         try {

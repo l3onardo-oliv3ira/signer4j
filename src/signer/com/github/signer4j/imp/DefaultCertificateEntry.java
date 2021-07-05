@@ -27,7 +27,6 @@
 
 package com.github.signer4j.imp;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import com.github.signer4j.ICertificate;
@@ -40,12 +39,12 @@ public class DefaultCertificateEntry implements ICertificateListUI.ICertificateE
   
   private final boolean expired;
 
-  protected final Optional<IDevice> device;
+  protected final IDevice device;
   protected final ICertificate certificate;
   protected final Function<String, String> formater;
   protected boolean remembered;
 
-  public DefaultCertificateEntry(Optional<IDevice> device, ICertificate certificate) {
+  public DefaultCertificateEntry(IDevice device, ICertificate certificate) {
     this.device = Args.requireNonNull(device, "device is null");
     this.certificate = Args.requireNonNull(certificate, "certificate is null");
     this.expired = certificate.isExpired();
@@ -59,7 +58,7 @@ public class DefaultCertificateEntry implements ICertificateListUI.ICertificateE
 
   @Override
   public final String getDevice() {
-    return formater.apply(device.isPresent() ? device.get().getType() + ": " + device.get().getSerial() : "Desconhecido");
+    return formater.apply(device.getType() + ": " + device.getSerial());
   }
 
   @Override
@@ -79,7 +78,7 @@ public class DefaultCertificateEntry implements ICertificateListUI.ICertificateE
   
   @Override
   public final String getId() {
-    return (device.isPresent() ? device.get().getSerial() : "cert") + ":" + certificate.getSerial();
+    return device.getSerial() + ":" + certificate.getSerial();
   }
   
   @Override

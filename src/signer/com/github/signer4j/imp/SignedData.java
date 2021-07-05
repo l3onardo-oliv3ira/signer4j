@@ -27,7 +27,6 @@
 
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonEmpty;
 import static com.github.utils4j.imp.Base64.base64Encode;
 
 import java.io.IOException;
@@ -62,7 +61,7 @@ public class SignedData extends CertificateAware implements ISignedData {
   private final IPersonalData personalData;
   
   private SignedData(byte[] signedBytes, IPersonalData personalData) {
-    this.signedData = requireNonEmpty(signedBytes, "empty signed bytes");
+    this.signedData = Args.requireNonEmpty(signedBytes, "empty signed bytes");
     this.personalData = Args.requireNonNull(personalData, "personalData is null");
   }
   

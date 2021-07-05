@@ -76,6 +76,6 @@ class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
 
     MscapiFixer.BUG_6483657.fix(keystore);
     
-    return new MSCAPIKeyStore(keystore, dispose, device);
+    return new MSCAPIKeyStore(keystore, device, dispose);
   }
 }

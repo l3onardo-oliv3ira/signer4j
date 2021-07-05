@@ -29,7 +29,6 @@ package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.PKCS12KeyStoreLoaderParams.CERTIFICATE_PATH_PARAM;
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.Strings.space;
 
 import java.io.File;
@@ -63,7 +62,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
   
   @Override
   public IKeyStore getKeyStore(IParams params) throws Signer4JException {
-    requireNonNull(params, "params is null");
+    Args.requireNonNull(params, "params is null");
     String certPath = params.orElseThrow(CERTIFICATE_PATH_PARAM, validate());
     return getKeyStore(new File(certPath));
   }
@@ -79,7 +78,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
         handler.handle(callback);
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(stream, callback.getPassword());
-        return new PKCS12KeyStore(keyStore, dispose, device, callback.getPassword());
+        return new PKCS12KeyStore(keyStore, device, dispose, callback.getPassword());
       }, callback::clearPassword);
     } catch (FileNotFoundException e) {
       throw new Pkcs12FileNotFoundException("Arquivo não encontrado: " + input.getAbsolutePath(), e);

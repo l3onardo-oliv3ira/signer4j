@@ -38,7 +38,6 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
@@ -52,22 +51,18 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   
   protected final KeyStore keyStore;
   
-  private final Optional<IDevice> device;
+  private final IDevice device;
   
   private final Runnable dispose;
   
-  protected AbstractKeyStore(KeyStore keystore) throws PrivateKeyNotFound  {
-    this(keystore, () -> {});
-  }
-
-  protected AbstractKeyStore(KeyStore keystore, Runnable dispose) throws PrivateKeyNotFound  {
-    this(keystore, dispose, null);
+  protected AbstractKeyStore(KeyStore keystore, IDevice device) throws PrivateKeyNotFound  {
+    this(keystore, device, () -> {});
   }
   
-  protected AbstractKeyStore(KeyStore keystore, Runnable dispose, IDevice device) throws PrivateKeyNotFound  {
+  protected AbstractKeyStore(KeyStore keystore, IDevice device, Runnable dispose) throws PrivateKeyNotFound  {
     this.keyStore = Args.requireNonNull(keystore, "null keystore is not supported");
     this.dispose = Args.requireNonNull(dispose, "dispose is null");
-    this.device = Optional.ofNullable(device);
+    this.device =  Args.requireNonNull(device, "device is null");
     this.setup();
   }
   
@@ -83,7 +78,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   
   protected void checkIfAvailable() {
     if (isClosed()) {
-      throw new IllegalStateException("Unabled to access closed KeyStore");
+      throw new IllegalStateException("KeyStore fechado. Possível perda de conexão com dispositivo");
     }
   }
   
@@ -103,7 +98,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   @Override
-  public final Optional<IDevice> getDevice() {
+  public final IDevice getDevice() {
     checkIfAvailable();
     return device;
   }

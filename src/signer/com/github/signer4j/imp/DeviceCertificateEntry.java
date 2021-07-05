@@ -31,7 +31,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.github.signer4j.ICertificate;
@@ -48,10 +47,10 @@ public class DeviceCertificateEntry extends DefaultCertificateEntry {
   }
 
   private DeviceCertificateEntry(IDevice device, ICertificate certificate) {
-    super(Optional.ofNullable(device), certificate);
+    super(device, certificate);
   }
-  
-  public Optional<IDevice> getNative() {
+
+  public IDevice getNative() {
     return super.device;
   }
 }

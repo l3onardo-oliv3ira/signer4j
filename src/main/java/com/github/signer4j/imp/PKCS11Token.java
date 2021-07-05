@@ -71,7 +71,7 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   
   @Override
   protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException {
-    return new PKCS11KeyStoreLoader(callback, getDispose(), getSlot().toDevice())
+    return new PKCS11KeyStoreLoader(getSlot().toDevice(), callback, getDispose())
       .getKeyStore(
         Params.create()
         .of(DRIVER_PATH_PARAM, getSlot().getLibrary())

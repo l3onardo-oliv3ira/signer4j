@@ -37,8 +37,8 @@ import com.github.signer4j.imp.exception.Signer4JException;
 
 class MSCAPIKeyStore extends AbstractKeyStore {
   
-  MSCAPIKeyStore(KeyStore keystore, Runnable dispose, IDevice device) throws PrivateKeyNotFound {
-    super(keystore, dispose, device);
+  MSCAPIKeyStore(KeyStore keystore, IDevice device, Runnable dispose) throws PrivateKeyNotFound {
+    super(keystore, device, dispose);
   }
   
   @Override

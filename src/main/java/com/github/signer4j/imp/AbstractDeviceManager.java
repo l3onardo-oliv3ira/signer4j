@@ -124,7 +124,7 @@ abstract class AbstractDeviceManager extends LoadCycle implements IDeviceManager
   protected final void doLoad() throws Exception {
     Set<IDriver> drivers  = new HashSet<>();
     this.load(drivers);
-    drivers.addAll(defaults);
+    drivers.addAll(defaults); 
     this.drivers = Containers.toUnmodifiableList(drivers);
   }
   

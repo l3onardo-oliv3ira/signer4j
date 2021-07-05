@@ -31,13 +31,12 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.signer4j.imp.exception.Signer4JException;
 
 public interface IKeyStoreAccess {
   
-  Optional<IDevice> getDevice();
+  IDevice getDevice();
   
   String getProvider() throws Signer4JException;
 

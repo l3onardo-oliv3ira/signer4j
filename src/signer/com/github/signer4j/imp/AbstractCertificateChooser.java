@@ -33,7 +33,6 @@ import static java.util.stream.Collectors.toList;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.github.signer4j.ICertificate;
@@ -59,7 +58,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
     this.certificates = Args.requireNonNull(certificates, "certificates is null");
   }
   
-  private Optional<IDevice> getDevice() {
+  private IDevice getDevice() {
     return keyStore.getDevice();
   }
   
@@ -86,7 +85,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
   protected static class CertificateEntry extends DefaultCertificateEntry {
     public final String aliasName;
     
-    public CertificateEntry(Optional<IDevice> device, String name, ICertificate certificate) {
+    public CertificateEntry(IDevice device, String name, ICertificate certificate) {
       super(device, certificate);
       this.aliasName = name;
     }
