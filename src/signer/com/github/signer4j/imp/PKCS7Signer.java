@@ -44,7 +44,7 @@ class PKCS7Signer extends SecurityObject implements IPKCS7Signer {
 
   @Override
   public ISignedData process(byte[] content, int offset, int length) throws Signer4JException {
-    return INVOKER.invoke(() -> {
+    return invoke(() -> {
       messageDigest.update(content, offset, length);
 
       final byte[] hashContent = messageDigest.digest();
