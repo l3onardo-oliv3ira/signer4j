@@ -14,6 +14,7 @@ import com.github.signer4j.task.ITask;
 import com.github.signer4j.task.ITaskRequest;
 import com.github.signer4j.task.ITaskRequestExecutor;
 import com.github.signer4j.task.ITaskResponse;
+import com.github.signer4j.task.exception.TaskException;
 import com.github.signer4j.task.exception.TaskExecutorException;
 import com.github.signer4j.task.exception.TaskResolverException;
 
@@ -55,6 +56,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   @Override
   public final void execute(I request, O response) throws TaskExecutorException {
     try {
+      
       IProgress progress = factory.get(); 
       
       try {
@@ -100,7 +102,6 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
         progress.abort(e);
       }finally {
         endExecution(progress);
-        progress.gameOver();
       }
     }catch(Throwable e) {
       throw new TaskExecutorException("Exceção inesperada na execução da tarefa", e);
@@ -115,6 +116,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
 
   protected void endExecution(IProgress progress) {
     progress.stackTracer(s -> LOGGER.info(s.toString()));
+    progress.dispose();
   }
 }
 
