@@ -23,7 +23,9 @@ public class DefaultProgress implements IProgress {
   
   private BehaviorSubject<IStageEvent> stageSubject;
 
-  private Runnable gameData;
+  private Runnable disposeCode;
+  
+  private Consumer<Thread> setter;
 
   public DefaultProgress() {
     this.resetObservables();
@@ -86,7 +88,7 @@ public class DefaultProgress implements IProgress {
   }
   
   @Override
-  public final IProgress reset(Runnable gameData) {
+  public final IProgress reset(Runnable disposeCode) {
     if (!isClosed()) {
       try {
         this.stack.clear();
@@ -96,7 +98,7 @@ public class DefaultProgress implements IProgress {
         this.closed = true;
       }
     }
-    this.gameData = gameData;
+    this.disposeCode = disposeCode;
     return this;
   }
 
@@ -134,7 +136,21 @@ public class DefaultProgress implements IProgress {
   }
   
   @Override
-  public void gameOver() {
-    gameData.run();
+  public void dispose() {
+    if (disposeCode != null) {
+      disposeCode.run();
+    }
+  }
+
+  @Override
+  public IProgress setThread(Consumer<Thread> setter) {
+    this.setter = setter;
+    return this;
+  }
+
+  @Override
+  public void applyThread() {
+    if (this.setter != null)
+      this.setter.accept(Thread.currentThread());
   }
 }

@@ -49,17 +49,26 @@ public enum ProgressOptions implements IProgress {
   }
 
   @Override
-  public IProgress reset(Runnable gameData) {
-    return this;
-  }
-
-  @Override
   public boolean isClosed() {
     return false;
   }
 
   @Override
-  public void gameOver() {
-    
+  public void dispose() {
+  }
+
+  @Override
+  public IProgress reset(Runnable dispose) {
+    return this;
+  }
+
+  @Override
+  public void applyThread() {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public IProgress setThread(Consumer<Thread> setter) {
+    return this;
   }
 }

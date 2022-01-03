@@ -15,9 +15,6 @@ import java.util.Optional;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
 
-import sun.security.pkcs11.SunPKCS11;
-
-@SuppressWarnings("restriction")
 public class Providers {
   
   private static final String JSR_105_PROVIDER = "XMLDSig"; //org.jcp.xml.dsig.internal.dom.XMLDSigRI
@@ -46,10 +43,16 @@ public class Providers {
   public static AuthProvider installSunPKCS11Provider(String providerName, InputStream config) {
     Optional<Provider> p = ofNullable(getProvider("SunPKCS11-" + providerName));
     if (p.isPresent())
-      return (SunPKCS11)p.get();
-    SunPKCS11 provider = new SunPKCS11(config);
-    addProvider(provider);
-    return provider;
+      return (AuthProvider)p.get();
+    Class<?> sun;
+    try {
+      sun = Class.forName("sun.security.pkcs11.SunPKCS11");
+      AuthProvider provider = (AuthProvider)sun.getConstructor(InputStream.class).newInstance(config);
+      addProvider(provider);
+      return provider;
+    } catch (Exception e) {
+      throw new RuntimeException("provider SunPKCS11 nao encontrado");
+    }
   }
 
   public static void logoutAndUninstall(Provider provider) {
