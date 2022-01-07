@@ -73,7 +73,6 @@ class ForWindowsLockDettector implements IWindowLockDettector {
       wClass.lpfnWndProc = this;
       wClass.lpszClassName = windowClass;
       User32.INSTANCE.RegisterClassEx(wClass);
-      checkError("Falha em RegisterClassEx");
     }
     
     private void info(String message) {
