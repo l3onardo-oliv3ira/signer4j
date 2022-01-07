@@ -14,7 +14,6 @@ import com.github.signer4j.task.ITask;
 import com.github.signer4j.task.ITaskRequest;
 import com.github.signer4j.task.ITaskRequestExecutor;
 import com.github.signer4j.task.ITaskResponse;
-import com.github.signer4j.task.exception.TaskException;
 import com.github.signer4j.task.exception.TaskExecutorException;
 import com.github.signer4j.task.exception.TaskResolverException;
 
