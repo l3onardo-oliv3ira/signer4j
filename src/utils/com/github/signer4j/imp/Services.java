@@ -24,7 +24,7 @@ public final class Services {
       LOGGER.debug("Cancelando tarefas atualmente em execução");
       /** Cancela tarefas atualmente rodando **/
       pool.shutdownNow();
-      doShutdown(pool, 5);
+      doShutdown(pool, timeoutSec);
     }
   }
 

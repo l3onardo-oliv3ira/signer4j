@@ -14,6 +14,8 @@ public enum Images implements IPicture {
 
   LOCK("/lock.png"),
 
+  LOG("/log.png"),
+  
   KEY("/key.png"),
   
   REFRESH("/update.png"),

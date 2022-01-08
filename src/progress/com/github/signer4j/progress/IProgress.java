@@ -7,7 +7,10 @@ import com.github.signer4j.IDisposable;
 import io.reactivex.Observable;
 
 public interface IProgress extends IDisposable {
-  String PROGRESS_PARAM = IProgress.class.getSimpleName();
+  
+  String PARAM_NAME = IProgress.class.getSimpleName();
+  
+  String getName();
   
   void begin(IStage stage);
   
@@ -19,17 +22,15 @@ public interface IProgress extends IDisposable {
   
   void abort(Exception e);
   
-  void applyThread();
-  
   boolean isClosed();
   
   IProgress stackTracer(Consumer<IState> consumer);
   
-  IProgress reset(Runnable dispose);
-  
-  IProgress setThread(Consumer<Thread> setter);
+  IProgress reset();
   
   Observable<IStepEvent> stepObservable();
 
   Observable<IStageEvent> stageObservable();
+  
+  Observable<IProgress> disposeObservable();
 }

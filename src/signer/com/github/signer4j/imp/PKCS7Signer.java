@@ -1,7 +1,6 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static com.github.signer4j.imp.Throwables.tryCall;
 import static org.bouncycastle.util.Arrays.copyOfRange;
 
@@ -26,7 +25,6 @@ import sun.security.pkcs.PKCS9Attributes;
 import sun.security.pkcs.SignerInfo;
 import sun.security.util.DerValue;
 import sun.security.x509.AlgorithmId;
-
 import sun.security.x509.X500Name;
 
 @SuppressWarnings("restriction")

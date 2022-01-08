@@ -12,12 +12,12 @@ import javax.security.auth.login.LoginException;
 
 import com.github.signer4j.imp.exception.ExpiredCredentialException;
 import com.github.signer4j.imp.exception.InvalidPinException;
-import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.ModuleException;
 import com.github.signer4j.imp.exception.NoTokenPresentException;
 import com.github.signer4j.imp.exception.OutOfMemoryException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.TokenLockedException;
 
 public class Signer4JInvoker extends InvokeHandler<Signer4JException> {

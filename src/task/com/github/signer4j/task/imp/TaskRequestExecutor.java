@@ -1,20 +1,22 @@
 package com.github.signer4j.task.imp;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.imp.Args;
-import com.github.signer4j.progress.IProgress;
+import com.github.signer4j.imp.Services;
 import com.github.signer4j.progress.IProgressFactory;
+import com.github.signer4j.progress.IProgressView;
 import com.github.signer4j.progress.IStage;
 import com.github.signer4j.task.IRequestResolver;
 import com.github.signer4j.task.ITask;
 import com.github.signer4j.task.ITaskRequest;
 import com.github.signer4j.task.ITaskRequestExecutor;
 import com.github.signer4j.task.ITaskResponse;
-import com.github.signer4j.task.exception.TaskException;
 import com.github.signer4j.task.exception.TaskExecutorException;
 import com.github.signer4j.task.exception.TaskResolverException;
 
@@ -26,6 +28,8 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
 
   private final IRequestResolver<I, O, R> requestResolver;
 
+  private final ExecutorService executor;
+  
   private static enum Stage implements IStage {
     REQUEST_HANDLING("Tratando requisição"),
     
@@ -47,19 +51,33 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
       return "(" + (ordinal() + 1) + " de 2)";
     }
   };
-  
+
   protected TaskRequestExecutor(IRequestResolver<I, O, R> resolver, IProgressFactory factory) {
+    this(resolver, factory, Executors.newFixedThreadPool(4));
+  }
+
+  protected TaskRequestExecutor(IRequestResolver<I, O, R> resolver, IProgressFactory factory, ExecutorService executor) {
     this.requestResolver = Args.requireNonNull(resolver, "resolver is null");
     this.factory = Args.requireNonNull(factory, "factory is null");
+    this.executor = Args.requireNonNull(executor, "executor is null");
+  }
+  
+  protected final ExecutorService getExecutor() {
+    return this.executor;
+  }
+  
+  @Override
+  public void close() {
+    Services.shutdownNow(executor, 2); 
   }
   
   @Override
   public final void execute(I request, O response) throws TaskExecutorException {
     try {
-      
-      IProgress progress = factory.get(); 
+      IProgressView progress = factory.get(); 
       
       try {
+        
         beginExecution(progress);
         
         progress.begin(Stage.REQUEST_HANDLING, 2);
@@ -76,14 +94,14 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
         
         progress.end();
         
-        ITask<O> task = taskRequest.getTask(progress);
+        ITask<O> task = taskRequest.getTask(progress, factory);
         
         try {
           progress.begin(Stage.PROCESSING_TASK, 2);
           progress.step("Iniciando a execução da tarefa '%s'", task.getId());
           ITaskResponse<O> output = task.get();
           progress.step("Processando resultados.");
-        
+          
           try {
             output.processResponse(response);
           } catch (IOException e) {
@@ -111,10 +129,12 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   protected void onRequestResolved(R taskRequest) {
   }
 
-  protected void beginExecution(IProgress progress) {
+  protected void beginExecution(IProgressView progress) {
+    progress.display();
   }
 
-  protected void endExecution(IProgress progress) {
+  protected void endExecution(IProgressView progress) {
+    progress.undisplay();
     progress.stackTracer(s -> LOGGER.info(s.toString()));
     progress.dispose();
   }

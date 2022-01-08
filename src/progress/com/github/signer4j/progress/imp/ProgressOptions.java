@@ -3,14 +3,16 @@ package com.github.signer4j.progress.imp;
 import java.util.function.Consumer;
 
 import com.github.signer4j.progress.IProgress;
+import com.github.signer4j.progress.IProgressView;
 import com.github.signer4j.progress.IStage;
 import com.github.signer4j.progress.IStageEvent;
 import com.github.signer4j.progress.IState;
 import com.github.signer4j.progress.IStepEvent;
 
 import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
-public enum ProgressOptions implements IProgress {
+public enum ProgressOptions implements IProgressView {
   IDLE; 
   
   @Override
@@ -54,21 +56,32 @@ public enum ProgressOptions implements IProgress {
   }
 
   @Override
+  public IProgressView reset() {
+    return this;
+  }
+
+  @Override
+  public void display() {
+    
+  }
+
+  @Override
+  public void undisplay() {
+    
+  }
+
+  @Override
   public void dispose() {
+    
   }
 
   @Override
-  public IProgress reset(Runnable dispose) {
-    return this;
+  public BehaviorSubject<IProgress> disposeObservable() {
+    return null;
   }
 
   @Override
-  public void applyThread() {
-    // TODO Auto-generated method stub
-  }
-
-  @Override
-  public IProgress setThread(Consumer<Thread> setter) {
-    return this;
+  public String getName() {
+    return IDLE.getName();
   }
 }

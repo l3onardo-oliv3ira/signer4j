@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   
@@ -109,7 +109,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   @Override
   public final List<Certificate> getCertificateChain(String alias) throws Signer4JException {
     checkIfAvailable();
-    return unmodifiableList(asList(invoke(() -> (Certificate[])this.keyStore.getCertificateChain(alias))));
+    return unmodifiableList(asList(invoke(() -> this.keyStore.getCertificateChain(alias))));
   }
 
   @Override
