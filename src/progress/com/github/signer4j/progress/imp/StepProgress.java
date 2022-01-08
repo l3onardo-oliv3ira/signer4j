@@ -1,5 +1,6 @@
 package com.github.signer4j.progress.imp;
 
+import com.github.signer4j.imp.Ids;
 import com.github.signer4j.progress.IProgressView;
 
 import io.reactivex.disposables.Disposable;
@@ -11,7 +12,11 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   private Disposable stepToken, stageToken; 
   
   protected StepProgress() {
-    super(new DefaultProgress());
+    this(Ids.next("progress-"));
+  }
+  
+  protected StepProgress(String name) {
+    super(new DefaultProgress(name));
     this.window = new ProgressWindow();
     this.attach();
   }

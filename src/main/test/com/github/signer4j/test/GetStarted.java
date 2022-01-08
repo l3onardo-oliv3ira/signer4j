@@ -20,9 +20,9 @@ import com.github.signer4j.imp.DeviceManager;
 import com.github.signer4j.imp.SignatureAlgorithm;
 import com.github.signer4j.imp.SignatureType;
 import com.github.signer4j.imp.exception.InvalidPinException;
-import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.NoTokenPresentException;
+import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.TokenLockedException;
 
 public class GetStarted {

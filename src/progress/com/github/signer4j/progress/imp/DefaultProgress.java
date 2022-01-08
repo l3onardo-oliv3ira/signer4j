@@ -2,7 +2,10 @@ package com.github.signer4j.progress.imp;
 
 import java.util.function.Consumer;
 
+import com.github.signer4j.imp.Args;
+import com.github.signer4j.imp.Ids;
 import com.github.signer4j.imp.Stack;
+import com.github.signer4j.imp.Threads;
 import com.github.signer4j.imp.Throwables;
 import com.github.signer4j.progress.IProgress;
 import com.github.signer4j.progress.IStage;
@@ -22,9 +25,23 @@ public class DefaultProgress implements IProgress {
   private BehaviorSubject<IStepEvent> stepSubject;
   
   private BehaviorSubject<IStageEvent> stageSubject;
-
+  
+  private BehaviorSubject<IProgress> disposeSubject;
+  
+  private final String name;
+  
   public DefaultProgress() {
+    this(Ids.next());
+  }
+
+  public DefaultProgress(String name) {
+    this.name = Args.requireText(name, "name can't be null");
     this.resetObservables();
+  }
+
+  @Override
+  public final String getName() {
+    return name;
   }
   
   @Override
@@ -101,13 +118,22 @@ public class DefaultProgress implements IProgress {
     try {
       stepSubject.onComplete();
     }finally {
-      stageSubject.onComplete();
+      try {
+        stageSubject.onComplete();
+      }finally {
+        disposeSubject.onComplete();
+      }
     }
+  }
+  
+  private  void notify(final IState state, final String message, int stackSize) {
+    this.stepSubject.onNext(new StepEvent(state, message, stackSize));
   }
 
   private void resetObservables() {
     stepSubject = BehaviorSubject.create();
-    stageSubject = BehaviorSubject.create(); 
+    stageSubject = BehaviorSubject.create();
+    disposeSubject = BehaviorSubject.create();
   }
   
   @Override
@@ -120,13 +146,20 @@ public class DefaultProgress implements IProgress {
     return this.stageSubject;
   }
 
-  protected void notify(final IState state, final String message, int stackSize) {
-    this.stepSubject.onNext(new StepEvent(state, message, stackSize));
+  @Override
+  public final BehaviorSubject<IProgress> disposeObservable() {
+    return this.disposeSubject;
+  }
+  
+  @Override
+  public final IProgress stackTracer(Consumer<IState> consumer) {
+    this.stack.forEach(consumer);
+    return this;
   }
 
   @Override
-  public IProgress stackTracer(Consumer<IState> consumer) {
-    this.stack.forEach(consumer);
-    return this;
+  public final void dispose() {
+    this.disposeSubject.onNext(this);
+    this.reset();
   }
 }

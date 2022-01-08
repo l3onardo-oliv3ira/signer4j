@@ -3,9 +3,9 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.Args.requireText;
 import static com.github.signer4j.imp.Args.requireZeroPositive;
-import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
+import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 import static java.lang.String.format;
 
 import java.io.ByteArrayInputStream;

@@ -10,6 +10,7 @@ import com.github.signer4j.progress.IState;
 import com.github.signer4j.progress.IStepEvent;
 
 import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 public enum ProgressOptions implements IProgressView {
   IDLE; 
@@ -67,5 +68,20 @@ public enum ProgressOptions implements IProgressView {
   @Override
   public void undisplay() {
     
+  }
+
+  @Override
+  public void dispose() {
+    
+  }
+
+  @Override
+  public BehaviorSubject<IProgress> disposeObservable() {
+    return null;
+  }
+
+  @Override
+  public String getName() {
+    return IDLE.getName();
   }
 }

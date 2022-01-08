@@ -16,8 +16,8 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.gui.utils.InvalidPinAlert;
 import com.github.signer4j.imp.exception.InvalidPinException;
-import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
+import com.github.signer4j.imp.exception.Signer4JException;
 
 class PKCS12Driver extends AbstractDriver {
 

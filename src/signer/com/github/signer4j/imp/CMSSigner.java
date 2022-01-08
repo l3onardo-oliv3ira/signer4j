@@ -11,6 +11,7 @@ import java.security.cert.X509Certificate;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSProcessableByteRangeArray;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
@@ -26,7 +27,6 @@ import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.imp.exception.Signer4JException;
-import org.bouncycastle.cms.CMSProcessableByteRangeArray;
 
 class CMSSigner extends SecurityObject implements ICMSSigner {
 

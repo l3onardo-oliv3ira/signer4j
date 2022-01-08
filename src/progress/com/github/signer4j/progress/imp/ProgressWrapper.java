@@ -17,6 +17,11 @@ public class ProgressWrapper implements IProgress {
   protected ProgressWrapper(IProgress progress) {
     this.progress = progress;
   }
+  
+  @Override
+  public String getName() {
+    return progress.getName();
+  }
 
   @Override
   public void begin(IStage stage) {
@@ -68,5 +73,15 @@ public class ProgressWrapper implements IProgress {
   @Override
   public Observable<IStageEvent> stageObservable() {
     return progress.stageObservable();
+  }
+  
+  @Override
+  public Observable<IProgress> disposeObservable() {
+    return progress.disposeObservable();
+  }
+  
+  @Override
+  public void dispose() {
+    progress.dispose();
   }
 }

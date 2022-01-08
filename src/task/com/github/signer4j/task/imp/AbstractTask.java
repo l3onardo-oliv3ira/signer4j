@@ -32,7 +32,7 @@ public abstract class AbstractTask<T> implements ITask<T> {
     return getParameter(IProgress.PARAM_NAME).orElse(ProgressOptions.IDLE);
   }
   
-  protected final IProgressView getNewProgress() {
+  protected final IProgressView newProgress() {
     return params.of(IProgress.PARAM_NAME, getParameter(IProgressFactory.PARAM_NAME).<IProgressFactory>get().get()).getValue(IProgress.PARAM_NAME);
   }
   

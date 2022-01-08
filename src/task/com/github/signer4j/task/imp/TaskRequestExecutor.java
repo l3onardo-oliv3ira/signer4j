@@ -136,6 +136,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   protected void endExecution(IProgressView progress) {
     progress.undisplay();
     progress.stackTracer(s -> LOGGER.info(s.toString()));
+    progress.dispose();
   }
 }
 
