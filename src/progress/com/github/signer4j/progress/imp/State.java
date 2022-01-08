@@ -1,8 +1,5 @@
 package com.github.signer4j.progress.imp;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import com.github.signer4j.imp.StopWatch;
 import com.github.signer4j.imp.Throwables;
 import com.github.signer4j.progress.IStage;

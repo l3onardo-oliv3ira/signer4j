@@ -143,7 +143,6 @@ class ForWindowsLockDettector implements IWindowLockDettector {
         User32.INSTANCE.DispatchMessage(msg);
       } 
       Wtsapi32.INSTANCE.WTSUnRegisterSessionNotification(windowHandle);
-      checkError("Não foi possível desativar notificação de sessão do SO");
       User32.INSTANCE.DestroyWindow(windowHandle);
       checkError("Não foi possível a destruição da janela de monitoração login/logout");
       info("Thread de monitoração log(in/off) finalizada");

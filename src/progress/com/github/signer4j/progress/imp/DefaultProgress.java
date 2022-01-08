@@ -23,10 +23,6 @@ public class DefaultProgress implements IProgress {
   
   private BehaviorSubject<IStageEvent> stageSubject;
 
-  private Runnable disposeCode;
-  
-  private Consumer<Thread> setter;
-
   public DefaultProgress() {
     this.resetObservables();
   }
@@ -67,7 +63,7 @@ public class DefaultProgress implements IProgress {
 
   private void checkInterrupted() {
     if (Thread.currentThread().isInterrupted()) {
-      InterruptedProgress ex = new InterruptedProgress("Execução cancelada pelo usuário");
+      ProgressException ex = new ProgressException("Execução cancelada pelo usuário");
       abort(ex);
       throw ex;
     }
@@ -88,7 +84,7 @@ public class DefaultProgress implements IProgress {
   }
   
   @Override
-  public final IProgress reset(Runnable disposeCode) {
+  public final IProgress reset() {
     if (!isClosed()) {
       try {
         this.stack.clear();
@@ -98,7 +94,6 @@ public class DefaultProgress implements IProgress {
         this.closed = true;
       }
     }
-    this.disposeCode = disposeCode;
     return this;
   }
 
@@ -133,24 +128,5 @@ public class DefaultProgress implements IProgress {
   public IProgress stackTracer(Consumer<IState> consumer) {
     this.stack.forEach(consumer);
     return this;
-  }
-  
-  @Override
-  public void dispose() {
-    if (disposeCode != null) {
-      disposeCode.run();
-    }
-  }
-
-  @Override
-  public IProgress setThread(Consumer<Thread> setter) {
-    this.setter = setter;
-    return this;
-  }
-
-  @Override
-  public void applyThread() {
-    if (this.setter != null)
-      this.setter.accept(Thread.currentThread());
   }
 }

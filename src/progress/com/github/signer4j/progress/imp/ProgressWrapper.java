@@ -3,7 +3,6 @@ package com.github.signer4j.progress.imp;
 import java.util.function.Consumer;
 
 import com.github.signer4j.progress.IProgress;
-import com.github.signer4j.progress.IProgressView;
 import com.github.signer4j.progress.IStage;
 import com.github.signer4j.progress.IStageEvent;
 import com.github.signer4j.progress.IState;
@@ -11,61 +10,63 @@ import com.github.signer4j.progress.IStepEvent;
 
 import io.reactivex.Observable;
 
-public enum ProgressOptions implements IProgressView {
-  IDLE; 
+public class ProgressWrapper implements IProgress {
+
+  protected final IProgress progress;
   
-  @Override
-  public void begin(IStage stage) {
-  }
-  
-  @Override
-  public void begin(IStage stage, int total) {
+  protected ProgressWrapper(IProgress progress) {
+    this.progress = progress;
   }
 
   @Override
-  public void step(String mensagem, Object ... params) {
+  public void begin(IStage stage) {
+    progress.begin(stage);
+  }
+
+  @Override
+  public void begin(IStage stage, int total) {
+    progress.begin(stage, total);
+  }
+
+  @Override
+  public void step(String mensagem, Object... params) {
+    progress.step(mensagem, params);
   }
 
   @Override
   public void end() {
+    progress.end();
   }
 
   @Override
   public void abort(Exception e) {
-  }
-
-  @Override
-  public Observable<IStepEvent> stepObservable() {
-    return Observable.empty();
-  }
-
-  @Override
-  public Observable<IStageEvent> stageObservable() {
-    return Observable.empty();
-  }
-  
-  @Override
-  public IProgress stackTracer(Consumer<IState> consumer) {
-    return this;
+    progress.abort(e);
   }
 
   @Override
   public boolean isClosed() {
-    return false;
+    return progress.isClosed();
   }
 
   @Override
-  public IProgressView reset() {
+  public IProgress stackTracer(Consumer<IState> consumer) {
+    progress.stackTracer(consumer);
     return this;
   }
 
   @Override
-  public void display() {
-    
+  public IProgress reset() {
+    progress.reset();
+    return this;
   }
 
   @Override
-  public void undisplay() {
-    
+  public Observable<IStepEvent> stepObservable() {
+    return progress.stepObservable();
+  }
+
+  @Override
+  public Observable<IStageEvent> stageObservable() {
+    return progress.stageObservable();
   }
 }
