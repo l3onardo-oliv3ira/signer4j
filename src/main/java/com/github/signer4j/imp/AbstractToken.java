@@ -133,7 +133,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   public final ISignerBuilder signerBuilder(ICertificateChooserFactory factory) {
     requireNonNull(factory, "factory is null");
     checkIfAvailable();
-    return createBuilder(factory.apply(this.keyStore, this.certificates));
+    return createBuilder(createChooser(factory));
   }
 
   protected final void checkIfAvailable() {
@@ -151,7 +151,13 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   public ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory) {
     requireNonNull(factory, "factory is null");
     checkIfAvailable();
-    return createCMSSignerBuilder(factory.apply(this.keyStore, this.certificates));
+    return createCMSSignerBuilder(createChooser(factory));
+  }
+
+  @Override
+  public ICertificateChooser createChooser(ICertificateChooserFactory factory) {
+    requireNonNull(factory, "factory is null");
+    return factory.apply(this.keyStore, this.certificates);
   }
   
   @Override
@@ -163,7 +169,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   public IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory) {
     requireNonNull(factory, "factory is null");
     checkIfAvailable();
-    return createPKCS7SignerBuilder(factory.apply(this.keyStore, this.certificates));
+    return createPKCS7SignerBuilder(createChooser(factory));
   }
 
   protected ISignerBuilder createBuilder(ICertificateChooser chooser) {

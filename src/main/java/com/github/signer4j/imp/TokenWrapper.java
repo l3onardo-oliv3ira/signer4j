@@ -1,6 +1,7 @@
 package com.github.signer4j.imp;
 
 import com.github.signer4j.ICMSSignerBuilder;
+import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificateChooserFactory;
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IKeyStoreAccess;
@@ -133,5 +134,15 @@ public class TokenWrapper implements IToken {
   @Override
   public TokenType getType() {
     return token.getType();
+  }
+
+  @Override
+  public ICertificateChooser createChooser(ICertificateChooserFactory factory) {
+    return token.createChooser(factory);
+  }
+  
+  @Override
+  public ICertificateChooser createChooser() {
+    return token.createChooser();
   }
 }

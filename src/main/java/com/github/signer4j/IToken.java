@@ -33,6 +33,12 @@ public interface IToken extends IGadget {
   IPKCS7SignerBuilder pkcs7SignerBuilder();
   
   IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory);
+  
+  ICertificateChooser createChooser(ICertificateChooserFactory factory);
+
+  default ICertificateChooser createChooser() {
+    return createChooser(ICertificateChooserFactory.DEFAULT);
+  }
 
   void logout();
   
