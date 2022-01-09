@@ -5,7 +5,7 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
 
-public class Choice implements IChoice {
+public class Choice extends CertificateAware implements IChoice {
   public static final IChoice CANCEL = new Choice();
  
   public static IChoice from(PrivateKey privateKey, Certificate certificate, List<Certificate> chain, String provider) {
@@ -31,32 +31,32 @@ public class Choice implements IChoice {
   }
 
   @Override
-  public boolean isCanceled() {
+  public final boolean isCanceled() {
     return this.canceled;
   }
 
   @Override
-  public PrivateKey getPrivateKey() {
+  public final PrivateKey getPrivateKey() {
     return this.privateKey;
   }
 
   @Override
-  public Certificate getCertificate() {
+  public final Certificate getCertificate() {
     return this.certificate;
   }
 
   @Override
-  public List<Certificate> getCertificateChain() {
+  public final List<Certificate> getCertificateChain() {
     return chain;
   }
 
   @Override
-  public int chainSize() {
+  public final int chainSize() {
     return chain.size();
   }
 
   @Override
-  public String getProvider() {
+  public final String getProvider() {
     return this.provider;
   }
 }

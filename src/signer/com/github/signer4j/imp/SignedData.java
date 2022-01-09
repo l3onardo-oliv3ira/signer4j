@@ -14,7 +14,7 @@ import java.util.List;
 import com.github.signer4j.IPersonalData;
 import com.github.signer4j.ISignedData;
 
-public class SignedData implements ISignedData {
+public class SignedData extends CertificateAware implements ISignedData {
 
   public static ISignedData from(byte[] signedBytes, IPersonalData personalData) {
     return new SignedData(signedBytes, personalData);
@@ -68,20 +68,6 @@ public class SignedData implements ISignedData {
   public final String getSignature64() {
     return signature64Cache != null ? signature64Cache : 
       (signature64Cache = base64Encode(signedData));
-  }
-
-  private String certificate64Cache;
-  @Override
-  public final String getCertificate64() throws CertificateException {
-    return certificate64Cache != null ? certificate64Cache : 
-      (certificate64Cache = base64Encode(new Certificate[] {getCertificate()}));
-  }
-
-  private String certificateChain64Cache;
-  @Override
-  public String getCertificateChain64() throws CertificateException {
-    return certificateChain64Cache != null ? certificateChain64Cache : 
-      (certificateChain64Cache = base64Encode(getCertificateChain().toArray(new Certificate[chainSize()])));
   }
 
   @Override
