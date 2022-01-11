@@ -36,15 +36,16 @@ class ProgressWindow extends SimpleFrame {
   
   private static final long serialVersionUID = 1L;
   
-  private final JPanel contentPane        = new JPanel();
-  private final JTextArea textArea        = new JTextArea();
-  private final JProgressBar progressBar  = new JProgressBar();
+  private final JTextArea textArea = new JTextArea();
+  
+  private final JProgressBar progressBar = new JProgressBar();
 
   private volatile Thread thread;
 
   ProgressWindow() {
     super("Progresso");
     setBounds(100, 100, 450, 154);
+    JPanel contentPane = new JPanel();
     contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
     contentPane.setLayout(new BorderLayout(0, 0));
     setContentPane(contentPane);
@@ -152,6 +153,7 @@ class ProgressWindow extends SimpleFrame {
     this.progressBar.setIndeterminate(false);
     this.progressBar.setStringPainted(true);
     this.progressBar.setString("");
+    this.textArea.setText("");
   }
 
   final void stepToken(IStepEvent e) {
@@ -185,14 +187,14 @@ class ProgressWindow extends SimpleFrame {
     });    
   }
   
+  final void attach(Thread thread) {
+    this.thread = thread;
+  }
+
   private static String computeTabs(int stackSize) {
     StringBuilder b = new StringBuilder(6);
     while(stackSize-- > 0)
       b.append("  ");
     return b.toString();
-  }
-
-  public void attach(Thread thread) {
-    this.thread = thread;
   }
 }
