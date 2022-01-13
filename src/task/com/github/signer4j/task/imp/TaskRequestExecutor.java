@@ -53,7 +53,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   };
 
   protected TaskRequestExecutor(IRequestResolver<I, O, R> resolver, IProgressFactory factory) {
-    this(resolver, factory, Executors.newFixedThreadPool(4));
+    this(resolver, factory, Executors.newCachedThreadPool());
   }
 
   protected TaskRequestExecutor(IRequestResolver<I, O, R> resolver, IProgressFactory factory, ExecutorService executor) {

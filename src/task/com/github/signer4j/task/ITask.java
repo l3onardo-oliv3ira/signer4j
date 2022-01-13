@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 public interface ITask<T> extends Supplier<ITaskResponse<T>> {
   
-  String PARAM_NAME = ITask.class.getSimpleName();
+  String PARAM_NAME = ITask.class.getSimpleName() + ".instance";
 
   String getId();
 

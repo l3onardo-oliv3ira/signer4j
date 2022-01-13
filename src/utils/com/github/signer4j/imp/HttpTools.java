@@ -1,8 +1,11 @@
 package com.github.signer4j.imp;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import static com.github.signer4j.imp.Throwables.tryRun;
+
+import java.io.IOException;
+
+import org.apache.hc.client5.http.fluent.Request;
+import org.apache.hc.core5.util.Timeout;
 
 public class HttpTools {
 
@@ -12,66 +15,22 @@ public class HttpTools {
     return "0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip);
   }
 
-  public static boolean sendGetRequest(String request) {
-    return sendGetRequest(request, HttpTools.class.getSimpleName());
+  public static void touch(String uri) throws IOException {
+    touch(uri, "HttpTools"); 
   }
 
-  public static boolean sendGetRequest(String request, String userAgent) {
-    return Throwables.tryRun(() -> {
-      URL url = new URL(request);
-      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-      try {
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", userAgent);
-        int statusCode = connection.getResponseCode();
-        Streams.consumeQuietly(connection.getInputStream());
-        return statusCode == HttpURLConnection.HTTP_OK;
-      }finally {
-        connection.disconnect();
-      }
-    });
+  public static void touchQuietly(String uri) {
+    tryRun(() -> touch(uri, "HttpTools"));
+  }
+  
+  public static void touch(String uri, String userAgent) throws IOException {
+    touch(uri, userAgent, Timeout.ofSeconds(5));
   }
 
-  /**
-   * A api HttpURLConnection faz novos retries silenciosamente.
-   * A idéia deste método é que a requisição seja feita e, para evitar um retry
-   * por um atraso na resposta do servidor, simplesmente disconecta 2 segundos
-   * após
-   * */
-  public static void sendGetRequestAndDisconnect(String request, String userAgent) {
-    Throwables.tryRun(() -> {
-      URL url = new URL(request);
-      final HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-      connection.setRequestMethod("GET");
-      connection.setRequestProperty("User-Agent", userAgent);
-      Threads.async(() -> {
-        Threads.sleep(2000);
-        connection.disconnect();
-      });
-      connection.getResponseCode();
-    }, true);
-  }
-
-
-  public static boolean sendGetRequest(String request, String userAgent, String jsonBody) {
-    return Throwables.tryRun(() -> {
-      URL url = new URL(request);
-      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-      try {
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setDoOutput(true);
-        connection.setRequestProperty("User-Agent", userAgent);
-        try(OutputStream os = connection.getOutputStream()) {
-          byte[] body = jsonBody.getBytes("utf-8");
-          os.write(body, 0, body.length);     
-        }
-        int statusCode = connection.getResponseCode();
-        Streams.consumeQuietly(connection.getInputStream());
-        return statusCode == HttpURLConnection.HTTP_OK;
-      }finally {
-        connection.disconnect();
-      }
-    });
+  public static void touch(String uri, String userAgent, Timeout timeout) throws IOException {
+    Args.requireNonNull(uri, "uri is null");
+    Args.requireNonNull(userAgent, "userAgent is null");
+    Args.requireNonNull(timeout, "timeout is null");
+    Request.get(uri).connectTimeout(timeout).responseTimeout(timeout).execute();
   }
 }

@@ -65,7 +65,7 @@ class PKCS11Certificates extends AbstractCertificates {
         CK_ATTRIBUTE aliasAttrib = attributes[0];
         
         if (!hasAlias(aliasAttrib)) {
-          LOGGER.warn("Não foi encontrado atributo 'alias' para acesso ao certificado para objeto: " + object);
+          LOGGER.warn("Não foi encontrado atributo 'CKA_LABEL' para acesso ao objeto: " + object);
           continue;
         }
         
@@ -79,7 +79,7 @@ class PKCS11Certificates extends AbstractCertificates {
         CK_ATTRIBUTE certificateAttrib = attributes[0];
         
         if (!hasCertificate(certificateAttrib)) {
-          LOGGER.warn("Não foi encontrado valor do atributo 'alias' para acesso ao certificado para objeto: " + object);
+          LOGGER.warn("Não foi encontrado valor do atributo 'CKA_VALUE' para acesso ao objeto: " + object);
           continue;
         }
 
