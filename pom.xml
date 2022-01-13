@@ -80,6 +80,12 @@
     	<version>1.13</version>
 	</dependency>
 	
+	<dependency>
+	  <groupId>org.apache.httpcomponents.client5</groupId>
+	  <artifactId>httpclient5-fluent</artifactId>
+	  <version>5.1</version>
+	</dependency>	
+	
   </dependencies>
 
   <build>

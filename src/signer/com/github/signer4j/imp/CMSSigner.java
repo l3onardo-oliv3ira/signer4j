@@ -29,7 +29,7 @@ import com.github.signer4j.ISignedData;
 import com.github.signer4j.imp.exception.Signer4JException;
 
 class CMSSigner extends SecurityObject implements ICMSSigner {
-
+  
   private long memoryLimit; 
       
   private ISignatureAlgorithm algorithm;
@@ -76,7 +76,6 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
       CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
       generator.addSignerInfoGenerator(
         new JcaSimpleSignerInfoGeneratorBuilder()
-          .setProvider(choice.getProvider())
           .setDirectSignature(hasNoSignedAttributes)
           .build(
             algorithm.getName(), 

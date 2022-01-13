@@ -37,13 +37,15 @@ public class DownloadStatus implements IDownloadStatus {
 
   @Override
   public void onStartDownload(long total) {
-    LOGGER.debug("Iniciando o download. Tamanho do arquivo: {}", total);
+    LOGGER.info("Iniciando o download. Tamanho do arquivo: {}", total);
   }
 
   @Override
   public void onStatus(long total, long written) {
     double percent = 100D * written / total;
-    LOGGER.debug("Baixados %.2f%%\"", percent);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Baixados %.2f%%\"", percent);
+    }
   }
 
   @Override

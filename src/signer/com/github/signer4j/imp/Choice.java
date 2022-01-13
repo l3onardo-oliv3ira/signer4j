@@ -5,6 +5,8 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 public class Choice extends CertificateAware implements IChoice {
   public static final IChoice CANCEL = new Choice();
  
@@ -58,5 +60,5 @@ public class Choice extends CertificateAware implements IChoice {
   @Override
   public final String getProvider() {
     return this.provider;
-  }
+  }  
 }
