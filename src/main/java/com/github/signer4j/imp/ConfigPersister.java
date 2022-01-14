@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.signe4j.imp.function.Performable;
 import com.github.signer4j.AllowedExtensions;
 import com.github.signer4j.IConfig;
 import com.github.signer4j.IConfigPersister;
@@ -48,12 +49,12 @@ public class ConfigPersister implements IConfigPersister {
   }
   
   @Override
-  public final void loadA1Paths(Exec<IFilePath> add) {
+  public final void loadA1Paths(Performable<IFilePath> add) {
     load(add, CERTIFICATE_A1_LIST, AllowedExtensions.CERTIFICATES);
   }
   
   @Override
-  public final void loadA3Paths(Exec<IFilePath> add) {
+  public final void loadA3Paths(Performable<IFilePath> add) {
     load(add, CERTIFICATE_A3_LIST, AllowedExtensions.LIBRARIES);
   }
   
@@ -72,7 +73,7 @@ public class ConfigPersister implements IConfigPersister {
     put(p -> "", CERTIFICATE_A1_LIST, path);
   }
   
-  private void load(Exec<IFilePath> add, String param, FileNameExtensionFilter filter) {
+  private void load(Performable<IFilePath> add, String param, FileNameExtensionFilter filter) {
     Properties properties = new Properties();
     if (!open(properties))
       return;
@@ -80,7 +81,7 @@ public class ConfigPersister implements IConfigPersister {
     for(String path: pathList) {
       File p = Paths.get(path).toFile();
       if (p.exists() && p.isFile() && filter.accept(p)) {
-        add.exec(new FilePath(p.toPath()));
+        add.perform(new FilePath(p.toPath()));
       }
     }
   }

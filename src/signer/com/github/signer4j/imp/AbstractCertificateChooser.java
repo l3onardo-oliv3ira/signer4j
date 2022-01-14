@@ -1,7 +1,7 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Caller.call;
-import static com.github.signer4j.imp.Caller.wrap;
+import static com.github.signe4j.imp.function.Caller.call;
+import static com.github.signe4j.imp.function.Caller.wrap;
 import static java.util.stream.Collectors.toList;
 
 import java.security.PrivateKey;

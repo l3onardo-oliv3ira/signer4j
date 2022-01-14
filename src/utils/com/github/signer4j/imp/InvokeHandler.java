@@ -2,6 +2,8 @@ package com.github.signer4j.imp;
 
 import java.util.function.Consumer;
 
+import com.github.signe4j.imp.function.Supplier;
+
 public abstract class InvokeHandler<E extends Throwable> {
   
   protected InvokeHandler() {}

@@ -52,7 +52,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   
   @Override
   public IByteProcessor config(Object param) {
-    config.execute(this, param);
+    config.call(this, param);
     return this;
   }
   

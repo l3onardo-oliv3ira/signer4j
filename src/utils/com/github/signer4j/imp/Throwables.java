@@ -8,6 +8,9 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.signe4j.imp.function.Executable;
+import com.github.signe4j.imp.function.Procedure;
+
 public class Throwables {
   private static final Logger LOGGER = LoggerFactory.getLogger(Throwables.class);
   
@@ -19,7 +22,7 @@ public class Throwables {
   
   public static Optional<Throwable> tryCatch(Executable<?> e) {
     try {
-      e.exec();
+      e.execute();
       return Optional.empty();
     }catch(Throwable ex) {
       return Optional.of(ex);
@@ -49,7 +52,7 @@ public class Throwables {
 
   public static void throwRuntime(Executable<?> e) {
     try {
-      e.exec();
+      e.execute();
     }catch(RuntimeException rte) {
       throw rte;
     }catch(Throwable ex) {
@@ -59,7 +62,7 @@ public class Throwables {
   
   public static void throwRuntime(Executable<?> e, String message) {
     try {
-      e.exec();
+      e.execute();
     }catch(RuntimeException rte) {
       throw rte;
     }catch(Throwable ex) {
@@ -69,7 +72,7 @@ public class Throwables {
 
   public static boolean tryRun(Executable<?> e, boolean quietly) {
     try {
-      e.exec();
+      e.execute();
       return true;
     }catch(Throwable ex) {
       if (!quietly) {
