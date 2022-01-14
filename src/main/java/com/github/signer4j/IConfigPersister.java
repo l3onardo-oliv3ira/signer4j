@@ -2,7 +2,7 @@ package com.github.signer4j;
 
 import java.util.Optional;
 
-import com.github.signe4j.imp.function.Performable;
+import com.github.signer4j.imp.function.Performable;
 
 public interface IConfigPersister {
 

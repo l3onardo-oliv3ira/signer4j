@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.signe4j.imp.function.Executable;
-import com.github.signe4j.imp.function.Procedure;
+import com.github.signer4j.imp.function.Executable;
+import com.github.signer4j.imp.function.Procedure;
 
 public class Throwables {
   private static final Logger LOGGER = LoggerFactory.getLogger(Throwables.class);

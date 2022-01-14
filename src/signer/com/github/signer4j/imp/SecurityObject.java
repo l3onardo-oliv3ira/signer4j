@@ -3,9 +3,9 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 
-import com.github.signe4j.imp.function.Supplier;
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.signer4j.imp.function.Supplier;
 
 public abstract class SecurityObject {
   
