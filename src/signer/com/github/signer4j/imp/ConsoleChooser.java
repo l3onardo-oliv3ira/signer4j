@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.github.signer4j.ICertificates;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.IKeyStoreAccess;
 import com.github.signer4j.imp.exception.Signer4JException;
 

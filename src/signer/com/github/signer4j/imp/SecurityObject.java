@@ -4,6 +4,7 @@ import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
 
 import com.github.signer4j.ICertificateChooser;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.function.Supplier;
 

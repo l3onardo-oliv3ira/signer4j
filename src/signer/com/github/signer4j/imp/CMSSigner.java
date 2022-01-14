@@ -23,6 +23,7 @@ import com.github.signer4j.ICMSConfigSetup;
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICMSSignerBuilder;
 import com.github.signer4j.ICertificateChooser;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;

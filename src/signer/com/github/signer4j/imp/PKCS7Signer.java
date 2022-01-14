@@ -11,6 +11,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 import com.github.signer4j.ICertificateChooser;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.IPKCS7Signer;
 import com.github.signer4j.IPKCS7SignerBuilder;
 import com.github.signer4j.ISignatureAlgorithm;

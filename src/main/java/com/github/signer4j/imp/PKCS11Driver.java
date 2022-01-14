@@ -22,13 +22,13 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 @SuppressWarnings("restriction")
 class PKCS11Driver extends AbstractDriver implements ILibraryAware {
 
-  private static Map<?, ?> bugMap;
+  private static Map<?, ?> moduleMap;
   
   static {
     tryRun(() -> {
       Field field = PKCS11.class.getDeclaredField("moduleMap");
       field.setAccessible(true);
-      bugMap = (Map<?, ?>)field.get(null);
+      moduleMap = (Map<?, ?>)field.get(null);
     });
   }
   
@@ -52,17 +52,17 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
   
   @Override
   public final String getLibrary() {
-    return library.toFile().getAbsolutePath();
+    return library.toFile().getAbsolutePath().replace('\\', '/');
   }
   
   @Override
   protected final boolean isSame(AbstractDriver obj) {
     return Streams.isSame(library, ((PKCS11Driver)obj).library);
   }
-  
+
   @Override
   protected void loadSlots(List<ISlot> output) throws DriverException {
-    bugMap.remove(getLibrary());
+    moduleMap.remove(getLibrary());
 
     final CK_C_INITIALIZE_ARGS initArgs = new CK_C_INITIALIZE_ARGS();
 
@@ -104,6 +104,8 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
         this.pk.C_Finalize(null);
       } catch (PKCS11Exception e) {
         throw new DriverFailException("Unabled to finalize PKCS11 driver: " + this, e);
+      } finally {
+        moduleMap.remove(getLibrary());
       }
     }
   }

@@ -10,6 +10,7 @@ import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 import java.io.InputStream;
 import java.security.AuthProvider;
 import java.security.Provider;
+import java.security.Security;
 import java.util.Optional;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -44,15 +45,10 @@ public class Providers {
     Optional<Provider> p = ofNullable(getProvider("SunPKCS11-" + providerName));
     if (p.isPresent())
       return (AuthProvider)p.get();
-    Class<?> sun;
-    try {
-      sun = Class.forName("sun.security.pkcs11.SunPKCS11");
-      AuthProvider provider = (AuthProvider)sun.getConstructor(InputStream.class).newInstance(config);
-      addProvider(provider);
-      return provider;
-    } catch (Exception e) {
-      throw new RuntimeException("provider SunPKCS11 nao encontrado");
-    }
+    @SuppressWarnings("restriction")
+    sun.security.pkcs11.SunPKCS11 provider = new sun.security.pkcs11.SunPKCS11(config);
+    Security.addProvider(provider);
+    return provider;
   }
 
   public static void logoutAndUninstall(Provider provider) {
