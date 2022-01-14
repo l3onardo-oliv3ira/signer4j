@@ -3,10 +3,10 @@ package com.github.signer4j.imp;
 import java.awt.Image;
 import java.util.Optional;
 
-import com.github.signe4j.imp.function.Performable;
 import com.github.signer4j.IConfigPersister;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
+import com.github.signer4j.imp.function.Performable;
 
 public class Config{
   

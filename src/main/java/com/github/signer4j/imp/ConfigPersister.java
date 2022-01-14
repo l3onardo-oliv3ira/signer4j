@@ -15,11 +15,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.signe4j.imp.function.Performable;
 import com.github.signer4j.AllowedExtensions;
 import com.github.signer4j.IConfig;
 import com.github.signer4j.IConfigPersister;
 import com.github.signer4j.IFilePath;
+import com.github.signer4j.imp.function.Performable;
 
 public class ConfigPersister implements IConfigPersister {
   
