@@ -95,7 +95,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
 
   @Override
-  public IToken login(IPasswordCallbackHandler callback) throws Signer4JException {
+  public final IToken login(IPasswordCallbackHandler callback) throws Signer4JException {
     if (callback == null)
       callback = passwordCallback;
     if (!isAuthenticated()) {

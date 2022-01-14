@@ -1,6 +1,4 @@
-package com.github.signer4j.imp;
-
-import com.github.signer4j.IPersonalData;
+package com.github.signer4j;
 
 public interface IChoice extends IPersonalData {
   

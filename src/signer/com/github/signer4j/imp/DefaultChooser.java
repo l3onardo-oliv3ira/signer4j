@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.github.signer4j.ICertificateListUI.ICertificateEntry;
 import com.github.signer4j.ICertificates;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.IKeyStoreAccess;
 import com.github.signer4j.gui.CertificateListUI;
 import com.github.signer4j.imp.exception.Signer4JException;

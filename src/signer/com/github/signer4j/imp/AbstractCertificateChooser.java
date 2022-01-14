@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import com.github.signer4j.ICertificate;
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificates;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IKeyStoreAccess;
 import com.github.signer4j.imp.exception.Signer4JException;

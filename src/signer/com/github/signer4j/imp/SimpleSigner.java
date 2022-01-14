@@ -6,6 +6,7 @@ import static com.github.signer4j.imp.Throwables.tryCall;
 import java.security.Signature;
 
 import com.github.signer4j.ICertificateChooser;
+import com.github.signer4j.IChoice;
 import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.ISignerBuilder;
