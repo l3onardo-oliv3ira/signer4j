@@ -59,13 +59,14 @@ class PKCS11Certificates extends AbstractCertificates {
         try {
           pk.C_GetAttributeValue(session, object, attributes);
         } catch (PKCS11Exception e) {
-          throw new DriverFailException("Unabled to get attribute value from session:  token " + token, e);
+          LOGGER.debug("Unabled to get attribute value from session:  token " + token, e);
+          continue;
         }
         
         CK_ATTRIBUTE aliasAttrib = attributes[0];
         
         if (!hasAlias(aliasAttrib)) {
-          LOGGER.warn("Não foi encontrado atributo 'CKA_LABEL' para acesso ao objeto: " + object);
+          LOGGER.debug("'CKA_LABEL' attribute not found for object: '" + object + "'");
           continue;
         }
         
@@ -73,27 +74,28 @@ class PKCS11Certificates extends AbstractCertificates {
         try {
           pk.C_GetAttributeValue(session, object, attributes);
         } catch (PKCS11Exception e3) {
-          throw new DriverFailException("Unabled to read CKA_VALUE from token", e3);
+          LOGGER.debug("'CKA_VALUE' not found for object '" + object + "'");
+          continue;
         }
         
         CK_ATTRIBUTE certificateAttrib = attributes[0];
         
         if (!hasCertificate(certificateAttrib)) {
-          LOGGER.warn("Não foi encontrado valor do atributo 'CKA_VALUE' para acesso ao objeto: " + object);
+          LOGGER.debug("'CKA_VALUE' not found for object '" + object + "'");
           continue;
         }
 
         Object value = certificateAttrib.pValue;
         if (!(value instanceof byte[])) {
-          LOGGER.warn("Atributo do certificado encontrado mas não é instância de byte[]. Tipo: " + 
-              value.getClass().getCanonicalName());
+          LOGGER.debug("'CKA_VALUE' is not byte[]. Class type is '" + value.getClass().getCanonicalName() + "'");
           continue;
         }
         
         try (ByteArrayInputStream cert = new ByteArrayInputStream((byte[])value)) {
           this.certificates.add(factory.call(cert));
         } catch (CertificateException | IOException e) {
-          throw new DriverFailException("Unabled to create certificate from inputstream", e);
+          LOGGER.debug("Unabled to create certificate instance from byte[]", e);
+          continue;
         } 
       }
     } finally {

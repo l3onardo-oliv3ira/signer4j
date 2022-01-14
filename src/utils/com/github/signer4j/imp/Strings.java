@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.github.signe4j.imp.function.Supplier;
+
 public final class Strings {
 
   private static final String[] EMPTY_ARRAY = new String[0];

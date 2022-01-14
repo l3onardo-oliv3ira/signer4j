@@ -203,7 +203,7 @@ class CertificateInstaller extends SimpleDialog {
       current.save(listA1, listA3);
     }
     this.close();
-    this.onSaved.execute(
+    this.onSaved.call(
       unmodifiableList(listA1), 
       unmodifiableList(listA3)
     );

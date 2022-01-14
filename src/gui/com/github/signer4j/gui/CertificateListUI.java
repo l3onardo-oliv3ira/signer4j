@@ -264,7 +264,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
       this.needReload = true;
       this.table.getSelectionModel().clearSelection();
       if (this.onSaved != null) {
-        this.onSaved.execute(a, b);
+        this.onSaved.call(a, b);
       }
     }).setVisible(true);
     if (this.needReload) {

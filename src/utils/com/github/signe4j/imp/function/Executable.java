@@ -1,7 +1,7 @@
-package com.github.signer4j.imp;
+package com.github.signe4j.imp.function;
 
 @FunctionalInterface
 public interface Executable<T extends Exception> {
-  void exec() throws T;
+  void execute() throws T;
 }
 

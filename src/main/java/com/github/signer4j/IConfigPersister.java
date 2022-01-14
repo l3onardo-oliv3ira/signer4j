@@ -2,7 +2,7 @@ package com.github.signer4j;
 
 import java.util.Optional;
 
-import com.github.signer4j.imp.Exec;
+import com.github.signe4j.imp.function.Performable;
 
 public interface IConfigPersister {
 
@@ -16,9 +16,9 @@ public interface IConfigPersister {
 
   void saveA3Paths(IFilePath... path);
 
-  void loadA1Paths(Exec<IFilePath> add); 
+  void loadA1Paths(Performable<IFilePath> add); 
 
-  void loadA3Paths(Exec<IFilePath> add);
+  void loadA3Paths(Performable<IFilePath> add);
 
   void save(String defaultAlias);
   

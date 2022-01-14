@@ -3,6 +3,7 @@ package com.github.signer4j.imp;
 import java.awt.Image;
 import java.util.Optional;
 
+import com.github.signe4j.imp.function.Performable;
 import com.github.signer4j.IConfigPersister;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
@@ -46,11 +47,11 @@ public class Config{
     config().saveA3Paths(path);
   }
 
-  public static void loadA1Paths(Exec<IFilePath> add) {
+  public static void loadA1Paths(Performable<IFilePath> add) {
     config().loadA1Paths(add);
   }
 
-  public static void loadA3Paths(Exec<IFilePath> add) {
+  public static void loadA3Paths(Performable<IFilePath> add) {
     config().loadA3Paths(add);
   }
 
