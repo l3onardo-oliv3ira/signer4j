@@ -11,6 +11,9 @@ import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.signer4j.IDriverLookupStrategy;
+import com.github.signer4j.IDriverVisitor;
+
 class FileStrategy extends AbstractStrategy implements IDriverLookupStrategy {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FileStrategy.class);

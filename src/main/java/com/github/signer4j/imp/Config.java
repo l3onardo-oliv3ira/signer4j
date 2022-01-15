@@ -1,6 +1,8 @@
 package com.github.signer4j.imp;
 
 import java.awt.Image;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.github.signer4j.IConfigPersister;
@@ -17,6 +19,7 @@ public class Config{
   protected static void setup(Image image, IConfigPersister conf) {
     Config.icon = image != null ? image : icon;
     Config.config = conf != null ? conf: config;
+    setupA3();
   }
 
   protected static IConfigPersister config() {
@@ -63,6 +66,15 @@ public class Config{
     config().reset();
   }
 
+  private static void setupA3() {
+    List<IFilePath> libs = new ArrayList<>();
+    loadA3Paths(libs::add);
+    if (!libs.isEmpty())
+      return;
+    LookupStrategy.notDuplicated().more(new EnvironmentStrategy()).lookup(dv -> libs.add(new FilePath(dv.getLibrary())));
+    saveA3Paths(libs.toArray(new FilePath[libs.size()]));
+  }
+  
   protected Config() {}
 }
 

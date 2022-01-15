@@ -1,4 +1,4 @@
-package com.github.signer4j.imp;
+package com.github.signer4j;
 
 public interface IDriverVisitor {
   void visit(IDriverSetup setup);

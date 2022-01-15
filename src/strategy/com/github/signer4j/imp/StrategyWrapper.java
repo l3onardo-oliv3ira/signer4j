@@ -2,6 +2,9 @@ package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
 
+import com.github.signer4j.IDriverLookupStrategy;
+import com.github.signer4j.IDriverVisitor;
+
 class StrategyWrapper implements IDriverLookupStrategy {
 
   private final IDriverLookupStrategy strategy;

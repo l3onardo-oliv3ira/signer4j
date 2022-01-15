@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.github.signer4j.ICustomDeviceManager;
+import com.github.signer4j.IDriverLookupStrategy;
 
 public class DeviceManager extends AbstractDeviceManager implements ICustomDeviceManager {
 

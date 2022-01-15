@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.github.signer4j.IDriverSetup;
+
 class DriverSetup implements IDriverSetup {
   
   public static Optional<DriverSetup> create(Path library) {

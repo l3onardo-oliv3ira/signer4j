@@ -1,8 +1,8 @@
-package com.github.signer4j.imp;
+package com.github.signer4j;
 
 import java.nio.file.Path;
 
-interface IDriverSetup {
+public interface IDriverSetup {
   Path getLibrary();
   
   String getMd5();
