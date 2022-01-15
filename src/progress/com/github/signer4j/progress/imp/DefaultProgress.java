@@ -86,12 +86,13 @@ public class DefaultProgress implements IProgress {
   }
 
   @Override
-  public final void abort(Exception e) {
+  public final <T extends Exception> T abort(T e) {
     State currentState;
     if (stack.isEmpty() || (currentState = stack.peek()).isAborted())
-      return;
+      return e;
     String message = e.getMessage() + ". Causa: " + Throwables.rootString(e); 
     notify(currentState.abort(e), message, stack.size());
+    return e;
   }
   
   @Override

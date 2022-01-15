@@ -32,7 +32,8 @@ public enum ProgressOptions implements IProgressView {
   }
 
   @Override
-  public void abort(Exception e) {
+  public <T extends Exception> T abort(T e) {
+    return e;
   }
 
   @Override

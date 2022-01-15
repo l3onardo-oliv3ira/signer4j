@@ -1,14 +1,11 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.Throwables.tryRun;
 
 import java.beans.Transient;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
 import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.ISlot;
@@ -22,22 +19,15 @@ import sun.security.pkcs11.wrapper.PKCS11Exception;
 @SuppressWarnings("restriction")
 class PKCS11Driver extends AbstractDriver implements ILibraryAware {
 
-  private static Map<?, ?> moduleMap;
-  
-  static {
-    tryRun(() -> {
-      Field field = PKCS11.class.getDeclaredField("moduleMap");
-      field.setAccessible(true);
-      moduleMap = (Map<?, ?>)field.get(null);
-    });
-  }
-  
   private PKCS11 pk;
   
-  private final Path library;
+  private final String library;
   
   PKCS11Driver(Path library) {
-    this.library = requireNonNull(library, "null library").toAbsolutePath();
+    this.library = requireNonNull(library, "null library")
+      .toFile()
+      .getAbsolutePath()
+      .replace('\\', '/');
   }
 
   @Transient
@@ -52,7 +42,7 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
   
   @Override
   public final String getLibrary() {
-    return library.toFile().getAbsolutePath().replace('\\', '/');
+    return library;
   }
   
   @Override
@@ -62,8 +52,6 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
 
   @Override
   protected void loadSlots(List<ISlot> output) throws DriverException {
-    moduleMap.remove(getLibrary());
-
     final CK_C_INITIALIZE_ARGS initArgs = new CK_C_INITIALIZE_ARGS();
 
     try {
@@ -72,40 +60,24 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
       throw new DriverFailException("Unabled to create PKCS11 instance", e);
     }
     
+    long[] slots = new long[0];
+    
     try {
-      long[] slots = new long[0];
-      
-      try {
-        slots = pk.C_GetSlotList(true);
-      } catch (PKCS11Exception e) {
-        throw new DriverFailException("Unabled to list slot from driver: " + this, e);
-      }
-      
-      if (slots.length >= 1) {
-        
+      slots = pk.C_GetSlotList(true);
+    } catch (PKCS11Exception e) {
+      throw new DriverFailException("Unabled to list slot from driver: " + this, e);
+    }
+    
+    if (slots.length >= 1) {
+
+      for(final long slot: slots) {
         try {
-          pk.C_GetMechanismList(slots[0]); //prelist
-        } catch (PKCS11Exception e) {
-          throw new DriverFailException("Unabled to list mechanism from: " + this, e);
+          PKCS11Slot s = new PKCS11Slot(this, slot);
+          output.add(s);
+          addDevice(s.toDevice());
+        }catch(DriverException e) {
+          handleException(e);
         }
-        
-        for(final long slot: slots) {
-          try {
-            PKCS11Slot s = new PKCS11Slot(this, slot);
-            output.add(s);
-            addDevice(s.toDevice());
-          }catch(DriverException e) {
-            handleException(e);
-          }
-        }
-      }
-    } finally {
-      try {
-        this.pk.C_Finalize(null);
-      } catch (PKCS11Exception e) {
-        throw new DriverFailException("Unabled to finalize PKCS11 driver: " + this, e);
-      } finally {
-        moduleMap.remove(getLibrary());
       }
     }
   }
