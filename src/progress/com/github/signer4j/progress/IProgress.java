@@ -20,7 +20,7 @@ public interface IProgress extends IDisposable {
   
   void end();
   
-  void abort(Exception e);
+  <T extends Exception> T abort(T e);
   
   boolean isClosed();
   

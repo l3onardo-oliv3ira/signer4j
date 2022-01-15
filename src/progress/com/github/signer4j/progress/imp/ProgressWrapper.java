@@ -44,8 +44,8 @@ public class ProgressWrapper implements IProgress {
   }
 
   @Override
-  public void abort(Exception e) {
-    progress.abort(e);
+  public <T extends Exception> T abort(T e) {
+    return progress.abort(e);
   }
 
   @Override
