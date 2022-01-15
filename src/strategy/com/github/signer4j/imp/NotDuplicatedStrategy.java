@@ -8,6 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.signer4j.IDriverLookupStrategy;
+import com.github.signer4j.IDriverSetup;
+import com.github.signer4j.IDriverVisitor;
+
 public class NotDuplicatedStrategy implements IDriverLookupStrategy {
 
   private final Set<IDriverSetup> setups = new HashSet<>();

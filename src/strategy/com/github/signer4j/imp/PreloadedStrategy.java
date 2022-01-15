@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.github.signer4j.IDriverLookupStrategy;
+import com.github.signer4j.IDriverVisitor;
+
 abstract class PreloadedStrategy implements IDriverLookupStrategy {
 
   private final Set<DriverSetup> libraries = new HashSet<DriverSetup>();

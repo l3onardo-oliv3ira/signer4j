@@ -6,6 +6,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.github.signer4j.IDriverVisitor;
+
 public class EnvironmentStrategy extends AbstractStrategy {
 
   private static final String VAR_PKCS11_DRIVER = "PKCS11_DRIVER";
