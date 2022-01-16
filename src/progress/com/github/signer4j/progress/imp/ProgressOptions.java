@@ -85,4 +85,9 @@ public enum ProgressOptions implements IProgressView {
   public String getName() {
     return IDLE.getName();
   }
+
+  @Override
+  public void attach(Runnable cancelCode) {
+    
+  }
 }

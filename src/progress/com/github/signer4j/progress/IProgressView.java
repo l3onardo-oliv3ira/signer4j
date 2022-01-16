@@ -1,6 +1,8 @@
 package com.github.signer4j.progress;
 
-public interface IProgressView extends IProgress {
+import com.github.signer4j.progress.imp.IAttachable;
+
+public interface IProgressView extends IProgress, IAttachable {
 
   void display();
 

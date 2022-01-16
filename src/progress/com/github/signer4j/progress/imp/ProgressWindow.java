@@ -1,6 +1,7 @@
 package com.github.signer4j.progress.imp;
 
 import static com.github.signer4j.imp.SwingTools.invokeLater;
+import static com.github.signer4j.imp.Throwables.tryRun;
 import static java.lang.String.format;
 
 import java.awt.BorderLayout;
@@ -10,6 +11,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -27,10 +33,11 @@ import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleFrame;
+import com.github.signer4j.imp.Args;
 import com.github.signer4j.progress.IStageEvent;
 import com.github.signer4j.progress.IStepEvent;
 
-class ProgressWindow extends SimpleFrame {
+class ProgressWindow extends SimpleFrame implements IAttachable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProgressWindow.class);
   
@@ -39,8 +46,8 @@ class ProgressWindow extends SimpleFrame {
   private final JTextArea textArea = new JTextArea();
   
   private final JProgressBar progressBar = new JProgressBar();
-
-  private volatile Thread thread;
+  
+  private final Map<Thread, List<Runnable>> cancels = new ConcurrentHashMap<>(2);
 
   ProgressWindow() {
     super("Progresso");
@@ -116,7 +123,8 @@ class ProgressWindow extends SimpleFrame {
   }
 
   private void clickCancel(ActionEvent e) {
-    if (thread != null) {
+    Set<Thread> threads = cancels.keySet();
+    if (!threads.isEmpty()) {
       int reply = JOptionPane.showConfirmDialog(null, 
         "Deseja mesmo cancelar a operação?", 
         "Cancelamento da operação", 
@@ -125,8 +133,11 @@ class ProgressWindow extends SimpleFrame {
       if (reply != JOptionPane.YES_OPTION) {
         return;
       }
-      if (thread != null) //double checking
-        thread.interrupt();
+      threads.forEach(t -> {
+        t.interrupt();
+        cancels.get(t).forEach(r -> tryRun(r::run));
+      });
+      unattach();
     }
     this.unreveal();
   }
@@ -187,8 +198,18 @@ class ProgressWindow extends SimpleFrame {
     });    
   }
   
-  final void attach(Thread thread) {
-    this.thread = thread;
+  final void unattach() {
+    this.cancels.clear();
+  }
+  
+  @Override
+  public final void attach(Runnable cancelCode) {
+    Args.requireNonNull(cancelCode, "cancelCode is null");
+    Thread thread = Thread.currentThread();
+    List<Runnable> codes = this.cancels.get(thread);
+    if (codes == null)
+      this.cancels.put(thread, codes = new ArrayList<>(2));
+    codes.add(cancelCode);
   }
 
   private static String computeTabs(int stackSize) {
