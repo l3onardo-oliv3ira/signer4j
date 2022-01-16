@@ -79,9 +79,7 @@ public class DefaultProgress implements IProgress {
 
   private void checkInterrupted() {
     if (Thread.currentThread().isInterrupted()) {
-      ProgressException ex = new ProgressException("Execução cancelada pelo usuário");
-      abort(ex);
-      throw ex;
+      throw abort(new ProgressException("Execução cancelada pelo usuário"));
     }
   }
 

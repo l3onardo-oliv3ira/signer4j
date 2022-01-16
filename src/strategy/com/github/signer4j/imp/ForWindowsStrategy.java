@@ -43,18 +43,21 @@ class ForWindowsStrategy extends PreloadedStrategy {
     load(winRoot.concat("/System32/pkcs11.dll"));
     load(winRoot.concat("/System32/siecap11.dll"));
     load(winRoot.concat("/System32/asepkcs.dll"));
+    load(winRoot.concat("/System32/WDICP_P11_CCID_v34.dll"));
+    load(winRoot.concat("/System32/desktopID_Provider.dll"));
+    load(winRoot.concat("/System32/DXSafePKCS11.dll"));
     //Gemalto x86
+    load("C:/Program Files (x86)/Oberthur Technologies/AWP/DLLs/OcsCryptolib_P11.dll");
     load("C:/Program Files (x86)/Gemalto/IDGo 800 PKCS11/IDPrimePKCS11.dll");
-    //64BITS: 
-    /*
-     load("C:/Program Files/Gemalto/IDGo 800 PKCS11/IDPrimePKCS1164.dll");
-     load("C:/Program Files/Oberthur Technologies/AuthentIC Webpack/DLLs/OCSCryptoki.dll");
-     load("C:/Program Files/CSP Banrisul Multiplo/PKCS11.dll");
-     load("C:/Windows/SysWOW64/aetpkss1.dll"); //certsign
-    */
     load("C:/Program Files (x86)/Oberthur Technologies/AWP/DLLs/OcsCryptoki.dll");
     load("C:/Program Files (x86)/CSP Banrisul Multiplo/PKCS11.dll");
-    load("C:/Arquivos de programas/Gemplus/GemSafe Libraries/BIN/gclib.dll");
+    //64BITS: 
     load("C:/Program Files/Gemplus/GemSafe Libraries/BIN/gclib.dll");
+    load("C:/Program Files/Gemalto/IDGo 800 PKCS11/IDPrimePKCS1164.dll");
+    load("C:/Program Files/Assistente Desktop birdID/resources/extraResources/windows/x64/vault-pkcs11.dll");
+    load("C:/Program Files/Oberthur Technologies/AuthentIC Webpack/DLLs/OCSCryptoki.dll");
+    load("C:/Program Files/CSP Banrisul Multiplo/PKCS11.dll");
+    load("C:/Windows/SysWOW64/aetpkss1.dll"); //certsign
+    load(winRoot.concat("/SysWOW64/WDICP_P11_CCID_v34.dll"));
   }
 }
