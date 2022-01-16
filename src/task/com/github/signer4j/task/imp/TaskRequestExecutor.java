@@ -75,11 +75,8 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   public final void execute(I request, O response) throws TaskExecutorException {
     try {
       IProgressView progress = factory.get(); 
-      
       try {
-        
         beginExecution(progress);
-        
         progress.begin(Stage.REQUEST_HANDLING, 2);
         progress.step("Resolvendo URL");
         R taskRequest;
@@ -89,19 +86,14 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
           throw new TaskExecutorException("Não foi possível resolver a requisição", e);
         }
         progress.step("Notificando criação de requisção");
-        
         onRequestResolved(taskRequest);
-        
         progress.end();
-        
         ITask<O> task = taskRequest.getTask(progress, factory);
-        
         try {
           progress.begin(Stage.PROCESSING_TASK, 2);
           progress.step("Iniciando a execução da tarefa '%s'", task.getId());
           ITaskResponse<O> output = task.get();
           progress.step("Processando resultados.");
-          
           try {
             output.processResponse(response);
           } catch (IOException e) {
@@ -109,7 +101,6 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
             progress.abort(e);
             return;
           }
-          
           progress.end();
         } finally {
           task.dispose();

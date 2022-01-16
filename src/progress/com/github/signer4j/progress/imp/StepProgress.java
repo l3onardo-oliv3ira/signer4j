@@ -1,5 +1,6 @@
 package com.github.signer4j.progress.imp;
 
+import com.github.signer4j.imp.Args;
 import com.github.signer4j.imp.Ids;
 import com.github.signer4j.progress.IProgressView;
 
@@ -34,6 +35,7 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   @Override
   public final IProgressView reset() {
     super.reset();
+    this.window.unattach();
     this.disposeTokens();
     this.attach();
     this.undisplay();
@@ -46,12 +48,18 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   } 
 
   private void attach() {
-    this.window.attach(Thread.currentThread());
+    attach(() -> {});
     stepToken = progress.stepObservable().subscribe(e -> {
       this.window.stepToken(e);
     });
     stageToken = progress.stageObservable().subscribe(e -> {
       this.window.stageToken(e);
     });
+  }
+
+  @Override
+  public void attach(Runnable cancelCode) {
+    Args.requireNonNull(cancelCode, "cancelCode is null");
+    this.window.attach(cancelCode);
   }
 }
