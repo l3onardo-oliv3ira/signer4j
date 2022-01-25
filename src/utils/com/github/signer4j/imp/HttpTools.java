@@ -31,6 +31,6 @@ public class HttpTools {
     Args.requireNonNull(uri, "uri is null");
     Args.requireNonNull(userAgent, "userAgent is null");
     Args.requireNonNull(timeout, "timeout is null");
-    Request.get(uri).connectTimeout(timeout).responseTimeout(timeout).execute();
+    Request.get(uri).connectTimeout(timeout).responseTimeout(timeout).execute().discardContent();
   }
 }

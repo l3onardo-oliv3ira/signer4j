@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.function.Predicate;
 
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICertificate;
+import com.github.signer4j.ICustomDeviceManager;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IDeviceManager;
+import com.github.signer4j.IPKCS7Signer;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.ISimpleSigner;
 import com.github.signer4j.ISlot;
@@ -29,8 +32,8 @@ public class GetStarted {
 
   public static void main(String[] args) {
 
-    IDeviceManager dm = new DeviceManager();
-    
+    ICustomDeviceManager dm = new DeviceManager();
+    dm.install(Paths.get("C:\\Users\\Leonardo\\Documents\\Certificado A1\\LEONARDO DE LIMA OLIVEIRA92744540153.pfx"));
     //Listing all detected devices
 
     System.out.println("**************************");
@@ -143,6 +146,39 @@ public class GetStarted {
       token.logout(); 
     }
     
+    
+    try {
+      token.login();
+
+      IPKCS7Signer pkcs7 = token.pkcs7SignerBuilder()
+          .usingChallengePassword("12345")
+          .usingEmailAddress("teste@gmail.com", "teste02@gmail.com")
+          .usingSignatureAlgorithm(SignatureAlgorithm.SHA1withRSA)
+          .usingSignatureType(SignatureType.ATTACHED)
+          .usingUnstructuredAddress("address01", "address02")
+          .usingUnstructuredName("xpto1", "xpto2")
+          .build();
+      
+      ISignedData data = pkcs7.process(new File("./input.pdf"));
+      
+      try(OutputStream out = new FileOutputStream(new File("D:/input.pdf.2.p7s"))) {
+        data.writeTo(out);
+      }
+    } catch (TokenLockedException e) {
+      System.out.println("Your token is blocked");
+    } catch (InvalidPinException e) {
+      System.out.println("Your password is incorrect!");
+    } catch (NoTokenPresentException e) {
+      System.out.println("Your token is not connected to USB");
+    } catch (LoginCanceledException e) {
+      System.out.println("Authentication canceled by user");
+    } catch (Signer4JException e) {
+      System.out.println(e.getMessage());
+    } catch (IOException e) {
+      System.out.println("Unabled to read input file");
+    } finally {
+      token.logout(); 
+    }
     dm.close();
   }
  
