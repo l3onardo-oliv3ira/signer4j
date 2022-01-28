@@ -30,13 +30,6 @@ public interface IDeviceManager {
   void close();
 }
 
-public interface ICustomDeviceManager extends IDeviceManager {
-  void install(Path ... pkcs12Files);
-  void uninstall(Path... pkcs12Files);
-  void uninstallPkcs12();
-}
-
-
 ```
 #### Device interface
 ```java
@@ -192,18 +185,19 @@ try {
 ```
 #### Signed data interface
 ```java
-public interface IPersonalData {  
+public interface IPersonalData {
   PrivateKey getPrivateKey();
   Certificate getCertificate();
   List<Certificate> getCertificateChain();
-  int chainSize();
-}
-public interface ISignedData extends IPersonalData {
-  byte[] getSignature();
-  void writeTo(OutputStream out) throws IOException;
-  String getSignature64();
   String getCertificate64() throws CertificateException;
   String getCertificateChain64() throws CertificateException;
+  int chainSize();
+}
+
+public interface ISignedData extends IPersonalData {
+  byte[] getSignature();
+  String getSignature64();
+  void writeTo(OutputStream out) throws IOException;
 }
 ```
 #### Token interface
@@ -290,8 +284,4 @@ public interface IByteProcessor {
   String process64(File input) throws Signer4JException, IOException;
 }
 
-public interface ISimpleSigner extends IByteProcessor{
-}
-public interface ICMSSigner extends IByteProcessor {
-}
 ```
