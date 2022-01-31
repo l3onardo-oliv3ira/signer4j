@@ -26,45 +26,49 @@ public final class KeyUsage {
   };
 
   private final boolean[] usages;
+  
+  private boolean isTrue(int index) {
+    return usages != null && index < usages.length && usages[index];
+  }
 
   public KeyUsage(X509Certificate cert) {
     this.usages = cert.getKeyUsage();
   }
 
   public boolean isDigitalSignature() {
-    return usages[0];
+    return isTrue(0);
   }
 
   public boolean isNonRepudiation() {
-    return usages[1];
+    return isTrue(1);
   }
 
   public boolean isKeyEncipherment() {
-    return usages[2];
+    return isTrue(2);
   }
 
   public boolean isDataEncipherment() {
-    return usages[3];
+    return isTrue(3);
   }
 
   public boolean isKeyAgreement() {
-    return usages[4];
+    return isTrue(4);
   }
 
   public boolean isKeyCertSign() {
-    return usages[5];
+    return isTrue(5);
   }
 
   public boolean isCRLSign() {
-    return usages[6];
+    return isTrue(6);
   }
 
   public boolean isEncipherOnly() {
-    return usages[7];
+    return isTrue(7);
   }
 
   public boolean isDecipherOnly() {
-    return usages[8];
+    return isTrue(8);
   }
 
   @Override
