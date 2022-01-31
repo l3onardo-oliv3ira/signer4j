@@ -5,6 +5,7 @@ import static com.github.signer4j.imp.Args.requireText;
 
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.List;
 
 public final class Base64 {
 
@@ -26,7 +27,7 @@ public final class Base64 {
   
   private Base64() {}
   
-  public static String base64Encode(final Certificate[] chain) throws CertificateException {
+  public static String base64Encode(final List<Certificate> chain) throws CertificateException {
     return base64Encode(Certificates.toByteArray(chain));
   }
 
