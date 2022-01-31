@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICertificate;
-import com.github.signer4j.ICustomDeviceManager;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IDeviceManager;
 import com.github.signer4j.IPKCS7Signer;
@@ -32,8 +31,7 @@ public class GetStarted {
 
   public static void main(String[] args) {
 
-    ICustomDeviceManager dm = new DeviceManager();
-    dm.install(Paths.get("C:\\Users\\Leonardo\\Documents\\Certificado A1\\LEONARDO DE LIMA OLIVEIRA92744540153.pfx"));
+    IDeviceManager dm = new DeviceManager();
     //Listing all detected devices
 
     System.out.println("**************************");
@@ -49,7 +47,11 @@ public class GetStarted {
     Predicate<IDevice> filter = d -> true;// d.getLabel().equals("whatever");
 
     //Access first device and listing certificates
-    IDevice device = dm.firstDevice(filter).get();
+    Optional<IDevice> dev = dm.firstDevice(filter);
+    if (!dev.isPresent())
+      return;
+      
+    IDevice device = dev.get();
 
     System.out.println("**************************");
     System.out.println("Certificates");

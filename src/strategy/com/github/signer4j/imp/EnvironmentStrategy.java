@@ -12,13 +12,13 @@ public class EnvironmentStrategy extends AbstractStrategy {
 
   private static final String VAR_PKCS11_DRIVER = "PKCS11_DRIVER";
   
-  private SystemSupport support;
+  private IModuleExtension support;
 
   public EnvironmentStrategy() {
     this(SystemSupport.getDefault());
   }
   
-  public EnvironmentStrategy(SystemSupport support) {
+  public EnvironmentStrategy(IModuleExtension support) {
     this.support = requireNonNull(support, "support can't be null");
   }
 

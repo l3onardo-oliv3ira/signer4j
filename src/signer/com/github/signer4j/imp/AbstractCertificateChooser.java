@@ -80,7 +80,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
   }
   
   protected Predicate<ICertificate> getPredicate() {
-    return p -> p.getKeyUsage().isDigitalSignature();
+    return c -> c.getKeyUsage().isDigitalSignature();
   }
   
   protected final IChoice toChoice(CertificateEntry choice) throws Signer4JException {

@@ -5,8 +5,6 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import com.github.signer4j.IChoice;
 
 public class Choice extends CertificateAware implements IChoice {
