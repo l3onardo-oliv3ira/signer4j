@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IHashAlgorithm;
 
 public enum HashAlgorithm implements IHashAlgorithm {
+  //ASN1MD5("ASN1MD5")
   MD2("MD2"),
   MD5("MD5") {
     @Override

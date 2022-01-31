@@ -17,10 +17,7 @@ public enum ProgressFactory implements IProgressFactory {
   @Override
   public IProgressView get() {
     StepProgress sp =  new StepProgress();
-    final Disposable token = sp.disposeObservable().subscribe(e -> {
-      steps.remove(e.getName()).token.dispose();
-    });
-    steps.put(sp.getName(), new Entry(sp, token));
+    steps.put(sp.getName(), new Entry(sp, sp.disposeObservable().subscribe(p -> steps.remove(p.getName()).token.dispose())));
     return sp;
   }
 
