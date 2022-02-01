@@ -44,7 +44,7 @@ enum SystemSupport implements IModuleExtension {
   UNKNOWN(".unknown") {
     @Override
     protected IDriverLookupStrategy createDriverLookupStrategy() {
-      return IDriverLookupStrategy.IDLE;
+      return IDriverLookupStrategy.NOTHING;
     }
     
     @Override

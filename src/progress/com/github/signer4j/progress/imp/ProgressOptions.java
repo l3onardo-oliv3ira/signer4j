@@ -87,7 +87,7 @@ public enum ProgressOptions implements IProgressView {
   }
 
   @Override
-  public void attach(Runnable cancelCode) {
+  public void cancelCode(Runnable cancelCode) {
     
   }
 }

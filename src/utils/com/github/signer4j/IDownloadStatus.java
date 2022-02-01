@@ -13,5 +13,5 @@ public interface IDownloadStatus {
   
   void onStatus(long total, long written);
 
-  void onDownloadFail(Exception e);
+  void onDownloadFail(Throwable e);
 }

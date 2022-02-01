@@ -1,7 +1,7 @@
 package com.github.signer4j;
 
 public interface IDriverLookupStrategy {
-  IDriverLookupStrategy IDLE = (v) -> {};
+  IDriverLookupStrategy NOTHING = (v) -> {};
 
   void lookup(IDriverVisitor visitor);
 }
