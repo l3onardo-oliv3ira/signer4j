@@ -222,6 +222,13 @@ public final class Strings {
     }
     return s.toString();
   }
+  
+  public static String computeTabs(int tabSize) {
+    StringBuilder b = new StringBuilder(6);
+    while(tabSize-- > 0)
+      b.append("  ");
+    return b.toString();
+  }
 
   public static boolean hasText(String text) {
     if (text == null)

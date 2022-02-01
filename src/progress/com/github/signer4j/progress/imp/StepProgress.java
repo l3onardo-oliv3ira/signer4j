@@ -33,9 +33,15 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   }
   
   @Override
+  public void dispose() {
+    super.dispose();
+    this.window.close();
+  }
+  
+  @Override
   public final IProgressView reset() {
     super.reset();
-    this.window.unattach();
+    this.window.cancel();
     this.disposeTokens();
     this.attach();
     this.undisplay();
@@ -48,7 +54,7 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   } 
 
   private void attach() {
-    attach(() -> {});
+    cancelCode(() -> {}); //add current thread is very important!
     stepToken = progress.stepObservable().subscribe(e -> {
       this.window.stepToken(e);
     });
@@ -58,8 +64,8 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   }
 
   @Override
-  public void attach(Runnable cancelCode) {
+  public void cancelCode(Runnable cancelCode) {
     Args.requireNonNull(cancelCode, "cancelCode is null");
-    this.window.attach(cancelCode);
+    this.window.cancelCode(cancelCode);
   }
 }

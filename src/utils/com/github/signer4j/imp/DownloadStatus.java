@@ -1,6 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.signer4j.imp.Streams.closeQuietly;
 import static java.nio.file.Files.createTempFile;
 
 import java.io.BufferedOutputStream;
@@ -49,17 +50,22 @@ public class DownloadStatus implements IDownloadStatus {
   }
 
   @Override
-  public void onDownloadFail(Exception e) {
-    Streams.closeQuietly(out);
-    out = null;
-    file.delete();
-    file = null;
+  public void onDownloadFail(Throwable e) {
+    if (out != null) {
+      closeQuietly(out);
+      file.delete(); //temp file is deleted
+      out = null;
+      file = null;
+    }
   }
 
   @Override
   public void onEndDownload() {
-    Streams.closeQuietly(out); 
-    progress.step("Download concluído");
+    if (out != null) {
+      closeQuietly(out);
+      out = null;
+      progress.step("Download concluído");
+    }
   }
   
   public final File getDownloadedFile() {

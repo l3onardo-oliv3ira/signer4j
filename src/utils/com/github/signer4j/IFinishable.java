@@ -1,9 +1,11 @@
 package com.github.signer4j;
 
 public interface IFinishable {
-  default void finish() {
-    finish(0);
+  default void exit() {
+    exit(0);
   }
   
-  void finish(long delay);
+  void exit(long delay);
+
+  void logout();
 }

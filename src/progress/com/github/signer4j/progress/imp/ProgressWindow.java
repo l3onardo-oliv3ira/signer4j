@@ -1,5 +1,6 @@
 package com.github.signer4j.progress.imp;
 
+import static com.github.signer4j.imp.Strings.computeTabs;
 import static com.github.signer4j.imp.SwingTools.invokeLater;
 import static com.github.signer4j.imp.Throwables.tryRun;
 import static java.lang.String.format;
@@ -12,10 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -37,17 +37,17 @@ import com.github.signer4j.imp.Args;
 import com.github.signer4j.progress.IStageEvent;
 import com.github.signer4j.progress.IStepEvent;
 
-class ProgressWindow extends SimpleFrame implements IAttachable {
+class ProgressWindow extends SimpleFrame implements ICanceller {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ProgressWindow.class);
-  
   private static final long serialVersionUID = 1L;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProgressWindow.class);  
   
   private final JTextArea textArea = new JTextArea();
   
   private final JProgressBar progressBar = new JProgressBar();
   
-  private final Map<Thread, List<Runnable>> cancels = new ConcurrentHashMap<>(2);
+  private final Map<Thread, List<Runnable>> cancels = new HashMap<>(2);
 
   ProgressWindow() {
     super("Progresso");
@@ -99,11 +99,11 @@ class ProgressWindow extends SimpleFrame implements IAttachable {
     pnlSouth.add(separator);
 
     JButton btnLimpar = new JButton("Limpar");
-    btnLimpar.addActionListener((e) -> clickClear(e));
+    btnLimpar.addActionListener((e) -> onClear(e));
     pnlSouth.add(btnLimpar);
 
     JButton btnNewButton = new JButton("Cancelar");
-    btnNewButton.addActionListener((e) -> clickCancel(e));
+    btnNewButton.addActionListener((e) -> onEscPressed(e));
     pnlSouth.add(btnNewButton);
     pnlSouth.setVisible(false);
 
@@ -117,33 +117,28 @@ class ProgressWindow extends SimpleFrame implements IAttachable {
     setAutoRequestFocus(true);
   }
   
+  protected void onClear(ActionEvent e) {
+    textArea.setText("");
+  }
+  
   @Override
   protected void onEscPressed(ActionEvent e) {
-    clickCancel(e);
-  }
-
-  private void clickCancel(ActionEvent e) {
-    Set<Thread> threads = cancels.keySet();
-    if (!threads.isEmpty()) {
-      int reply = JOptionPane.showConfirmDialog(null, 
-        "Deseja mesmo cancelar a operação?", 
-        "Cancelamento da operação", 
-        JOptionPane.YES_NO_OPTION
-      );
-      if (reply != JOptionPane.YES_OPTION) {
-        return;
-      }
-      threads.forEach(t -> {
-        t.interrupt();
-        cancels.get(t).forEach(r -> tryRun(r::run));
-      });
-      unattach();
+    int reply = JOptionPane.showConfirmDialog(null, 
+      "Deseja mesmo cancelar a operação?", 
+      "Cancelamento da operação", 
+      JOptionPane.YES_NO_OPTION
+    );
+    if (reply == JOptionPane.YES_OPTION) {
+      this.cancel();
+      this.unreveal();
     }
-    this.unreveal();
   }
 
-  private void clickClear(ActionEvent e) {
-    textArea.setText("");
+  private void resetProgress() {
+    this.progressBar.setIndeterminate(false);
+    this.progressBar.setStringPainted(true);
+    this.progressBar.setString("");
+    this.textArea.setText("");
   }
 
   final void reveal() {
@@ -158,13 +153,6 @@ class ProgressWindow extends SimpleFrame implements IAttachable {
       this.setVisible(false);
       this.resetProgress();
     });
-  }
-
-  private void resetProgress() {
-    this.progressBar.setIndeterminate(false);
-    this.progressBar.setStringPainted(true);
-    this.progressBar.setString("");
-    this.textArea.setText("");
   }
 
   final void stepToken(IStepEvent e) {
@@ -198,24 +186,20 @@ class ProgressWindow extends SimpleFrame implements IAttachable {
     });    
   }
   
-  final void unattach() {
-    this.cancels.clear();
+  ThreadLocal<List<Runnable>> local;
+  
+  final synchronized void cancel() {
+    cancels.entrySet().stream().peek(k -> k.getKey().interrupt()).map(k -> k.getValue()).forEach(l -> l.forEach(r -> tryRun(r::run)));     
+    cancels.clear();
   }
   
   @Override
-  public final void attach(Runnable cancelCode) {
+  public synchronized final void cancelCode(Runnable cancelCode) {
     Args.requireNonNull(cancelCode, "cancelCode is null");
     Thread thread = Thread.currentThread();
-    List<Runnable> codes = this.cancels.get(thread);
+    List<Runnable> codes = cancels.get(thread);
     if (codes == null)
-      this.cancels.put(thread, codes = new ArrayList<>(2));
+      cancels.put(thread, codes = new ArrayList<>(2));
     codes.add(cancelCode);
-  }
-
-  private static String computeTabs(int stackSize) {
-    StringBuilder b = new StringBuilder(6);
-    while(stackSize-- > 0)
-      b.append("  ");
-    return b.toString();
   }
 }

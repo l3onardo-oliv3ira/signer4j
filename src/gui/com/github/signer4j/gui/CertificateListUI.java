@@ -148,7 +148,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     lblConfigInstall = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
     lblConfigInstall.setVerticalAlignment(SwingConstants.BOTTOM);
     lblConfigInstall.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    lblConfigInstall.setForeground(Color.RED);
+    lblConfigInstall.setForeground(Color.BLUE);
     lblConfigInstall.setFont(new Font("Tahoma", Font.ITALIC, 12));
     lblConfigInstall.setHorizontalAlignment(SwingConstants.LEFT);
     lblConfigInstall.addMouseListener(new MouseAdapter() {
