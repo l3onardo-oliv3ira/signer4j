@@ -21,10 +21,10 @@ public class SignedData extends CertificateAware implements ISignedData {
   }
 
   public static ISignedData forTest() {
-    return new SignedData("test_mode_content".getBytes(Constants.DEFAULT_CHARSET), Choice.CANCEL) {
+    return new SignedData("ASSINATURA_MODO_TESTE".getBytes(Constants.DEFAULT_CHARSET), Choice.CANCEL) {
       @Override
       public String getCertificateChain64() throws CertificateException {
-        return base64Encode("test_mode_certificate_chain".getBytes(Constants.DEFAULT_CHARSET));
+        return base64Encode("coração intrépido infalível".getBytes(Constants.DEFAULT_CHARSET));
       }
     };
   }

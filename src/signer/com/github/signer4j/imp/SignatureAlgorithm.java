@@ -8,6 +8,7 @@ import com.github.signer4j.IAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
 
 public enum SignatureAlgorithm implements ISignatureAlgorithm {
+  ASN1MD5withRSA("ASN1MD5withRSA", HashAlgorithm.ASN1MD5),
   MD2withRSA("MD2WITHRSA", HashAlgorithm.MD2),
   MD5withRSA("MD5WITHRSA", HashAlgorithm.MD5),
   SHA1withDSA("SHA1withDSA", HashAlgorithm.SHA_1),
