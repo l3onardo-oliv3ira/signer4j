@@ -11,10 +11,6 @@ public class HttpTools {
 
   private HttpTools() {}
 
-  public static boolean isLocalHost(String ip) {
-    return "0:0:0:0:0:0:0:1".equals(ip) || "127.0.0.1".equals(ip);
-  }
-
   public static void touch(String uri) throws IOException {
     touch(uri, "HttpTools"); 
   }
