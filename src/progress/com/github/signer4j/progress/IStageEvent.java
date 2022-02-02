@@ -6,5 +6,13 @@ public interface IStageEvent {
   
   int getStackSize();
 
+  int getTotal();
+
   IStage getStage();
+
+  boolean isIndeterminated();
+
+  boolean isEnd();
+  
+  boolean isStart();
 }

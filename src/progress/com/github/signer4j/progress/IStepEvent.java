@@ -7,4 +7,6 @@ public interface IStepEvent extends IState {
   int getStackSize();
   
   String getStepTree();
+
+  boolean isIndeterminated();
 }

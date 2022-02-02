@@ -1,20 +1,21 @@
 package com.github.signer4j.progress.imp;
 
-import com.github.signer4j.progress.IStage;
 import com.github.signer4j.progress.IStageEvent;
+import com.github.signer4j.progress.IState;
 
-class StageEvent implements IStageEvent {
+class StageEvent extends StateWrapper implements IStageEvent {
 
-  private final IStage stage;
-  
   private final String message;
 
   private final int stackSize;
 
-  StageEvent(IStage stage, int stackSize, String message) {
-    this.stage = stage;
+  private final boolean end;
+
+  StageEvent(IState state, String message, int stackSize, boolean end) {
+    super(state);
     this.stackSize = stackSize;
     this.message = message;
+    this.end = end;
   }
 
   @Override
@@ -28,12 +29,23 @@ class StageEvent implements IStageEvent {
   }
   
   @Override
-  public final IStage getStage() {
-    return this.stage;
+  public final boolean isIndeterminated() {
+    return this.getTotal() < 0;
   }
   
   @Override
-  public final String toString() {
-    return "[" + stackSize + "]" + this.stage.toString();
+  public final boolean isEnd() {
+    return this.end;
   }
+  
+  @Override
+  public final boolean isStart() {
+    return !end;
+  }
+
+  @Override
+  public final String toString() {
+    return "[" + stackSize + "]" + this.getStage().toString();
+  }
+
 }

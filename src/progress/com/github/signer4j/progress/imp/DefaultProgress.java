@@ -44,52 +44,55 @@ public class DefaultProgress implements IProgress {
   }
   
   @Override
-  public final void begin(IStage stage) {
+  public final void begin(IStage stage) throws InterruptedException {
     begin(stage, -1);
   }
 
   @Override
-  public final void begin(IStage stage, int total) {
+  public final void begin(IStage stage, int total) throws InterruptedException {
     checkInterrupted();
     closed = false;
-    stack.push(new State(stack.isEmpty() ? null : stack.peek(), stage, total));
-    stageSubject.onNext(new StageEvent(stage, stack.size() - 1, stage.beginString()));
+    State state = new State(stack.isEmpty() ? null : stack.peek(), stage, total);
+    notifyStage(state, stage.beginString(), false);
+    stack.push(state);
   }
 
   @Override
-  public final void step(String message, Object... args) {
+  public final void step(String message, Object... args) throws InterruptedException {
     checkInterrupted();
     State currentState;
     if (stack.isEmpty() || (currentState = stack.peek()).isAborted())
       return;
     currentState.incrementAndGet();
-    notify(currentState, String.format(message, args), stack.size());
+    notifyStep(currentState, String.format(message, args));
   }
 
   @Override
-  public final void end() {
+  public final void end() throws InterruptedException {
     checkInterrupted();
     if (stack.isEmpty() || stack.peek().isAborted())
       return;
     State state = stack.pop();
     state.end();
     String message = state.getStage().endString() + " em " + state.getTime() + "ms";
-    stageSubject.onNext(new StageEvent(state.getStage(), stack.size() + 1, message));
+    notifyStage(state, message, true);
   }
-
-  private void checkInterrupted() {
+  
+  private void checkInterrupted() throws InterruptedException {
     if (Thread.currentThread().isInterrupted()) {
-      throw abort(new ProgressException("Execução cancelada pelo usuário"));
+      throw abort(new InterruptedException(CANCELED_OPERATION_MESSAGE));
     }
   }
 
   @Override
-  public final <T extends Exception> T abort(T e) {
+  public final <T extends Throwable> T abort(T e) {
     State currentState;
     if (stack.isEmpty() || (currentState = stack.peek()).isAborted())
       return e;
     String message = e.getMessage() + ". Causa: " + Throwables.rootString(e); 
-    notify(currentState.abort(e), message, stack.size());
+    notifyStep(currentState.abort(e), message);
+    message = currentState.getStage().endString() + " abortado em " + currentState.getTime() + "ms";
+    notifyStage(currentState, message, true);
     return e;
   }
   
@@ -124,14 +127,18 @@ public class DefaultProgress implements IProgress {
     }
   }
   
-  private  void notify(final IState state, final String message, int stackSize) {
-    this.stepSubject.onNext(new StepEvent(state, message, stackSize));
+  private void notifyStep(IState state, String message) {
+    this.stepSubject.onNext(new StepEvent(state, message, this.stack.size()));
   }
 
+  private void notifyStage(IState state, String message, boolean end) {
+    this.stageSubject.onNext(new StageEvent(state, message, this.stack.size(), end));
+  }
+  
   private void resetObservables() {
-    stepSubject = BehaviorSubject.create();
-    stageSubject = BehaviorSubject.create();
-    disposeSubject = BehaviorSubject.create();
+    this.stepSubject = BehaviorSubject.create();
+    this.stageSubject = BehaviorSubject.create();
+    this.disposeSubject = BehaviorSubject.create();
   }
   
   @Override

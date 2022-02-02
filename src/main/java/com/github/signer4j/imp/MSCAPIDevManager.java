@@ -1,9 +1,11 @@
 package com.github.signer4j.imp;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
 import com.github.signer4j.IDevice;
+import com.github.signer4j.IDeviceManager;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
@@ -129,5 +131,20 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
     public MSCAPICertificates(MSCAPIToken token, IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
       super(token, keyStore, factory);
     }
+  }
+
+  @Override
+  public IDeviceManager install(Path... pkcs12Files) {
+    return this;
+  }
+
+  @Override
+  public IDeviceManager uninstall(Path... pkcs12File) {
+    return this;
+  }
+
+  @Override
+  public IDeviceManager uninstallPkcs12() {
+    return this;
   }
 }

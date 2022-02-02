@@ -317,7 +317,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     if (auto) {
       Optional<ICertificateEntry> defaultEntry = entries
           .stream()
-          .filter(c -> c.getId().equals(defaultAlias)) //auto select!
+          .filter(c -> c.getId().equals(defaultAlias) && c.isValid()) //auto select!
           .findFirst();
       if (defaultEntry.isPresent()) {
         return defaultEntry;

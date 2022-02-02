@@ -24,27 +24,27 @@ public class ProgressWrapper implements IProgress {
   }
 
   @Override
-  public void begin(IStage stage) {
+  public void begin(IStage stage) throws InterruptedException {
     progress.begin(stage);
   }
 
   @Override
-  public void begin(IStage stage, int total) {
+  public void begin(IStage stage, int total) throws InterruptedException {
     progress.begin(stage, total);
   }
 
   @Override
-  public void step(String mensagem, Object... params) {
+  public void step(String mensagem, Object... params) throws InterruptedException{
     progress.step(mensagem, params);
   }
 
   @Override
-  public void end() {
+  public void end() throws InterruptedException {
     progress.end();
   }
 
   @Override
-  public <T extends Exception> T abort(T e) {
+  public <T extends Throwable> T abort(T e) {
     return progress.abort(e);
   }
 

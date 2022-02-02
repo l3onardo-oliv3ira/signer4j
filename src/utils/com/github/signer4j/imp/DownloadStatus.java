@@ -1,6 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.Streams.closeQuietly;
 import static java.nio.file.Files.createTempFile;
 
@@ -14,22 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IDownloadStatus;
-import com.github.signer4j.progress.IProgress;
 
 public class DownloadStatus implements IDownloadStatus {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DownloadStatus.class);
   
-  private final IProgress progress;
-  
   private File file;
   
   private OutputStream out;
   
-  public DownloadStatus(IProgress progress) {
-    this.progress = requireNonNull(progress, "progress is null");
-  }
-
   @Override
   public OutputStream onNewTry(int attemptCount) throws IOException {
     LOGGER.debug("Tentativa {} de download", attemptCount);
@@ -64,7 +56,6 @@ public class DownloadStatus implements IDownloadStatus {
     if (out != null) {
       closeQuietly(out);
       out = null;
-      progress.step("Download concluído");
     }
   }
   

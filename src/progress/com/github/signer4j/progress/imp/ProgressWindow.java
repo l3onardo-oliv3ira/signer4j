@@ -158,35 +158,34 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
   final void stepToken(IStepEvent e) {
     final int step = e.getStep();
     final int total = e.getTotal();
+    final boolean indeterminated = e.isIndeterminated();
     final String message = e.getMessage();
     final StringBuilder text = new StringBuilder(computeTabs(e.getStackSize()));
     final String log;
-    if (total > 0) {
-      log = text.append(format("Passo %s de %s: %s", step, total, message)).toString();
-    } else {
+    if (indeterminated) {
       log = text.append(message).toString();
+    } else {
+      log = text.append(format("Passo %s de %s: %s", step, total, message)).toString();
     }
+    LOGGER.info(log);
     invokeLater(() -> {
-      if (!progressBar.isIndeterminate())
-        progressBar.setIndeterminate(true);
-      progressBar.setString(log);
+      progressBar.setString(message);
       textArea.append(log + "\n\r");
-      LOGGER.info(log); 
     });
   }
   
   final void stageToken(IStageEvent e) {
     final String tabSize = computeTabs(e.getStackSize());
-    final String text = tabSize + e.getMessage();
+    final String message = e.getMessage();
+    final String text = tabSize + message;
+    LOGGER.info(text);
     invokeLater(() -> {
-      progressBar.setIndeterminate(true);
-      progressBar.setString(text);
+      if (!progressBar.isIndeterminate())
+        progressBar.setIndeterminate(true);
+      this.progressBar.setString(message);
       textArea.append(text + "\n\r");
-      LOGGER.info(text);
     });    
   }
-  
-  ThreadLocal<List<Runnable>> local;
   
   final synchronized void cancel() {
     cancels.entrySet().stream().peek(k -> k.getKey().interrupt()).map(k -> k.getValue()).forEach(l -> l.forEach(r -> tryRun(r::run)));     

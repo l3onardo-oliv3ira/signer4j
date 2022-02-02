@@ -81,7 +81,7 @@ class State implements IState {
     return this;
   }
 
-  final IState abort(Exception e) {
+  final IState abort(Throwable e) {
     if (e != null) {
       this.stopWatch.stop((this.abortCause = e).getMessage());
     }
@@ -106,8 +106,8 @@ class State implements IState {
     builder.append(", ");
     builder.append("abort=");
     builder.append(isAborted());
-    builder.append(", ");
     if (abortCause != null) {
+      builder.append(", ");
       builder.append("abortCause:\n");
       builder.append(Throwables.rootString(abortCause));
     }

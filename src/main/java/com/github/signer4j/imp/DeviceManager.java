@@ -1,15 +1,13 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
-
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.github.signer4j.ICustomDeviceManager;
+import com.github.signer4j.IDeviceManager;
 import com.github.signer4j.IDriverLookupStrategy;
 
-public class DeviceManager extends AbstractDeviceManager implements ICustomDeviceManager {
+public class DeviceManager extends AbstractDeviceManager {
 
   private static final PKCS12Driver PKCS12_DRIVER = PKCS12Driver.getInstance();
   
@@ -32,21 +30,24 @@ public class DeviceManager extends AbstractDeviceManager implements ICustomDevic
   }
   
   @Override
-  public final void uninstall(Path ...pkcs12Files) {
-    requireNonNull(pkcs12Files, "Unabled to uninstall driver with null path's");
+  public final IDeviceManager uninstall(Path ...pkcs12Files) {
+    Args.requireNonNull(pkcs12Files, "Unabled to uninstall driver with null path's");
     PKCS12_DRIVER.uninstall(pkcs12Files);
+    return this;
   }
   
   @Override
-  public final void uninstallPkcs12() {
+  public final IDeviceManager uninstallPkcs12() {
     PKCS12_DRIVER.uninstall();
+    return this;
   }
   
   @Override
-  public final void install(Path ... pkcs12File) {
-    requireNonNull(pkcs12File, "Unabled to install driver with null path's");
+  public final IDeviceManager install(Path ... pkcs12File) {
+    Args.requireNonNull(pkcs12File, "Unabled to install driver with null path's");
     uninstallPkcs12();
     PKCS12_DRIVER.install(pkcs12File);
+    return this;
   }
 
   @Override

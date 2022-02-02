@@ -1,5 +1,6 @@
 package com.github.signer4j;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -21,6 +22,12 @@ public interface IDeviceManager {
   Optional<IDevice> firstDevice(Predicate<IDevice> predicate);
 
   Optional<IDevice> firstDevice(Predicate<IDevice> predicate, boolean forceReload);
+  
+  IDeviceManager install(Path ... pkcs12Files);
+
+  IDeviceManager uninstall(Path... pkcs12File);
+  
+  IDeviceManager uninstallPkcs12();
  
   void close();
 }
