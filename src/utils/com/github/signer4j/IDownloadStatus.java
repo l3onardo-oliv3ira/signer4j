@@ -1,7 +1,9 @@
 package com.github.signer4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 
 public interface IDownloadStatus {
   
@@ -14,4 +16,6 @@ public interface IDownloadStatus {
   void onStatus(long total, long written);
 
   void onDownloadFail(Throwable e);
+
+  Optional<File> getDownloadedFile();
 }
