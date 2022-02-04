@@ -39,7 +39,6 @@ public class Throwables {
       return defaultIfFail;
     }
   }
-
   
   public static <E extends Exception> boolean tryRun(Procedure<Boolean, E> procedure, boolean logQuietly) {
     try {
@@ -120,7 +119,6 @@ public class Throwables {
       throw new RuntimeException(Strings.needText(throwMessageIfFail.get(), "tryRuntime fail"), ex);
     }
   }
-
   
   public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, T defaultIfFail) {
     return tryCall(procedure, defaultIfFail, false);
@@ -144,7 +142,6 @@ public class Throwables {
       return defaultIfFail.get();
     }
   }
-  
 
   public static boolean hasCause(Throwable e, Class<?> clazz) {
     if (e == null)
