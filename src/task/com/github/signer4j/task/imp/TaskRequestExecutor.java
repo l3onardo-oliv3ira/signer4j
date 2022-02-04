@@ -107,7 +107,6 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
         }
           
       }catch(Exception e) {
-        LOGGER.warn("Exceção na execução da requisição", e);
         progress.abort(e);
       }finally {
         endExecution(progress);

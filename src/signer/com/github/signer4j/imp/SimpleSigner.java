@@ -1,7 +1,6 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.Throwables.tryCall;
 
 import java.security.Signature;
 
@@ -58,9 +57,9 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
       Providers.installBouncyCastleProvider();
       SimpleSigner signer = new SimpleSigner(chooser, dispose);
       String aName = algorithm.getName();
-      signer.signature = tryCall(
+      signer.signature = Throwables.tryRuntime(
         () -> Signature.getInstance(aName), 
-        () -> "Algorítimo " + aName + " é desconhecido"
+        "Algorítimo " + aName + " é desconhecido"
       );
       return signer;
     }

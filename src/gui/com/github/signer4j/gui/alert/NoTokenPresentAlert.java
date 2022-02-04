@@ -12,8 +12,8 @@ public final class NoTokenPresentAlert {
       + "1) Se seu certificado é do tipo A3, tenha certeza de que\n"
       + "  esteja conectado no seu computador e funcional.\n"
       + "2) Se seu certificado é do tipo A1, tenha certeza que tenha\n"
-      + "  sido instalado no computador e configurado no PjeOffice.\n\n"
-      + "Tentar identificar novamente?";
+      + "  sido configurado no PjeOffice.\n\n"
+      + "Tentar identificar o certificado novamente?";
   
   private static final String[] OPTIONS = {"SIM", "NÃO"};
   

@@ -21,6 +21,10 @@ public final class InvalidPinAlert {
 
   private static final String[] OPTIONS = {"SIM", "NÃO"};
   
+  public static boolean display() {
+    return display(0);
+  }
+  
   public static boolean display(int times) {
     return display(times, Images.LOCK.asImage());
   }

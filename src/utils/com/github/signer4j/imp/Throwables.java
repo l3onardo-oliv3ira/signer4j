@@ -20,11 +20,52 @@ public class Throwables {
     return tryRun(e, false);
   }
   
-  public static Optional<Throwable> tryCatch(Executable<?> e) {
+  public static <E extends Exception> boolean tryRun(Procedure<Boolean, E> procedure) { 
+    return tryRun(procedure, false);
+  }
+
+  public static boolean tryRun(Executable<?> e, boolean defaultIfFail) {
+    return tryRun(e, defaultIfFail, false);
+  }
+
+  public static boolean tryRun(Executable<?> e, boolean defaultIfFail, boolean logQuietly) {
+    try {
+      e.execute();
+      return true;
+    }catch(Exception ex) {
+      if (!logQuietly) {
+        LOGGER.warn("tryRun fail", ex);
+      }
+      return defaultIfFail;
+    }
+  }
+
+  
+  public static <E extends Exception> boolean tryRun(Procedure<Boolean, E> procedure, boolean logQuietly) {
+    try {
+      return procedure.call();
+    }catch(Exception ex) {
+      if (!logQuietly) {
+        LOGGER.warn("tryRun fail", ex);
+      }
+      return false;
+    }
+  }
+  
+  public static Optional<Exception> tryCatch(Executable<?> e) {
     try {
       e.execute();
       return Optional.empty();
-    }catch(Throwable ex) {
+    }catch(Exception ex) {
+      return Optional.of(ex);
+    }
+  }
+  
+  public static <T, E extends Exception> Optional<Exception> tryCatch(Procedure<T, E> p) {
+    try {
+      p.call();
+      return Optional.empty();
+    }catch(Exception ex) {
       return Optional.of(ex);
     }
   }
@@ -50,65 +91,60 @@ public class Throwables {
     }
   }
 
-  public static void throwRuntime(Executable<?> e) {
+  public static void tryRuntime(Executable<?> e) {
     try {
       e.execute();
     }catch(RuntimeException rte) {
       throw rte;
-    }catch(Throwable ex) {
-      throw new RuntimeException(ex.getMessage(), ex);
+    }catch(Exception ex) {
+      throw new RuntimeException(ex);
     }
   }
   
-  public static void throwRuntime(Executable<?> e, String message) {
+  public static void tryRuntime(Executable<?> e, String message) {
     try {
       e.execute();
-    }catch(RuntimeException rte) {
-      throw rte;
-    }catch(Throwable ex) {
+    }catch(Exception ex) {
       throw new RuntimeException(message, ex);
     }
   }
 
-  public static boolean tryRun(Executable<?> e, boolean quietly) {
+  public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure, String throwMessageIfFail) {
+    return tryRuntime(procedure, () -> throwMessageIfFail);
+  }
+  
+  public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure, Supplier<String> throwMessageIfFail) {
     try {
-      e.execute();
-      return true;
-    }catch(Throwable ex) {
-      if (!quietly) {
-        LOGGER.warn("tryRun exception", ex);
+      return procedure.call();
+    }catch(Exception ex) {
+      throw new RuntimeException(Strings.needText(throwMessageIfFail.get(), "tryRuntime fail"), ex);
+    }
+  }
+
+  
+  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, T defaultIfFail) {
+    return tryCall(procedure, defaultIfFail, false);
+  }
+
+  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, Supplier<T> defaultIfFail) {
+    return tryCall(procedure, defaultIfFail, false);
+  }
+
+  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, T defaultIfFail, boolean logQuietly) {
+    return tryCall(procedure, (Supplier<T>)() -> defaultIfFail, logQuietly);
+  }
+  
+  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, Supplier<T> defaultIfFail, boolean logQuietly) {
+    try {
+      return procedure.call();
+    }catch(Exception e) {
+      if (!logQuietly) {
+        LOGGER.warn("tryCall fail", e);
       }
-      return false;
+      return defaultIfFail.get();
     }
   }
   
-  public static <E extends Exception> boolean tryRun(Procedure<Boolean, E> procedure) {
-    try {
-      return procedure.call();
-    }catch(Throwable ex) {
-      LOGGER.warn("tryRun exception", ex);
-      return false;
-    }
-  }
-  
-  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, T defaultFail) {
-    try {
-      return procedure.call();
-    }catch(Throwable e) {
-      LOGGER.warn("tryCall exception", e);
-      return defaultFail;
-    }
-  }
-  
-  public static <T, E extends Exception> T tryCall(Procedure<T, E> procedure, Supplier<String> throwMessage) {
-    try {
-      return procedure.call();
-    }catch(RuntimeException rte) {
-      throw rte;
-    }catch(Throwable ex) {
-      throw new RuntimeException(throwMessage.get(), ex);
-    }
-  }
 
   public static boolean hasCause(Throwable e, Class<?> clazz) {
     if (e == null)

@@ -1,7 +1,6 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.Throwables.tryCall;
 import static org.bouncycastle.util.Arrays.copyOfRange;
 
 import java.security.MessageDigest;
@@ -188,14 +187,14 @@ class PKCS7Signer extends SecurityObject implements IPKCS7Signer {
     public final IPKCS7Signer build() {
       PKCS7Signer signer = new PKCS7Signer(chooser, dispose);
       final String signatureAlgorithm = this.signatureAlgorithm.getName();
-      signer.signature = tryCall(
+      signer.signature = Throwables.tryRuntime(
         () -> Signature.getInstance(signatureAlgorithm), 
-        () -> "Algorítimo " + signatureAlgorithm + " é desconhecido"
+        "Algorítimo " + signatureAlgorithm + " é desconhecido"
       );
       final String hashAlgorithm = this.signatureAlgorithm.getHashName();
-      signer.messageDigest = tryCall(
+      signer.messageDigest = Throwables.tryRuntime(
         () -> MessageDigest.getInstance(hashAlgorithm),
-        () -> "Algorítimo " + hashAlgorithm + " é desconhecido"
+        "Algorítimo " + hashAlgorithm + " é desconhecido"
       );
       signer.signatureType = signatureType;
       signer.challengePassword = challengePassword;

@@ -1,52 +1,57 @@
 package com.github.signer4j.imp;
 
-import java.lang.reflect.InvocationTargetException;
+import static com.github.signer4j.imp.Throwables.tryCall;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.SwingUtilities;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.signer4j.imp.function.Supplier;
 
 public class SwingTools {
   
-  private static final Logger LOGGER = LoggerFactory.getLogger(SwingTools.class);
-      
   private SwingTools() {}
   
   public static void invokeLater(Runnable r) {
     SwingUtilities.invokeLater(r);
   }
   
-  public static void invokeAndWait(Runnable r) {
-    try {
-      SwingUtilities.invokeAndWait(r);
-    } catch (InvocationTargetException | InterruptedException e) {
-      LOGGER.warn("Exceção em thread swing", e);
-    }
-  }
-
   public static boolean isTrue(Supplier<Boolean> supplier){
-    return invoke(supplier).orElse(Boolean.FALSE);
+    return invokeAndWait(supplier).orElse(Boolean.FALSE);
+  }
+  
+  public static boolean invokeAndWait(Runnable r) {
+    return invokeAndWait(r, false);
   }
 
-  
-  public static <T> Optional<T> invoke(Supplier<T> supplier){
-    AtomicReference<T> ref = new AtomicReference<>();
-    try {
-      invokeAndWait(() -> {
+  public static boolean invokeAndWait(Runnable r, boolean defaultIfFail) {
+    return tryCall(() -> {
+      if (SwingUtilities.isEventDispatchThread()) {
+        r.run();
+        return true;
+      }
+      SwingUtilities.invokeAndWait(r);
+      return true;
+    }, defaultIfFail);
+  }
+
+  public static <T> Optional<T> invokeAndWait(Supplier<T> supplier){
+    if (SwingUtilities.isEventDispatchThread())
+      return tryCall(() -> ofNullable(supplier.get()), empty());
+    
+    return tryCall(() -> {
+      final AtomicReference<T> ref = new AtomicReference<>();
+      SwingUtilities.invokeAndWait(() -> {
         try {
           ref.set(supplier.get());
         } catch (Exception e) {
           throw new RuntimeException(e);
         }
       });
-    } catch (Exception e) {
-      LOGGER.warn("Exceção em thread swing", e);
-    }
-    return Optional.ofNullable(ref.get());
+      return ofNullable(ref.get());
+    }, empty());
   }
 }

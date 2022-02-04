@@ -1,5 +1,7 @@
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.imp.SwingTools.isTrue;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,7 +117,7 @@ class PKCS12Driver extends AbstractDriver {
             break;
           } catch(InvalidPinException e) {
             passwords.remove(key);
-            if (!InvalidPinAlert.display(0)) //TODO confirmar se este código deve ou não ser executado em SwingTools.invokeAndWait
+            if (!isTrue(InvalidPinAlert::display))
               break;
           } catch (Signer4JException e) {
             LOGGER.error("Falha na tentativa de autenticação em PKCS12 Driver: " + path.toString(), e);
