@@ -3,6 +3,7 @@ package com.github.signer4j.task.imp;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,10 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   private final IProgressFactory factory;
 
   private final IRequestResolver<I, O, R> requestResolver;
+  
+  protected final AtomicBoolean localRequest = new AtomicBoolean(false);
 
-  private final ExecutorService executor;
+  protected final ExecutorService executor;
   
   private static enum Stage implements IStage {
     REQUEST_HANDLING("Tratando requisição"),
@@ -60,10 +63,6 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
     this.requestResolver = Args.requireNonNull(resolver, "resolver is null");
     this.factory = Args.requireNonNull(factory, "factory is null");
     this.executor = Args.requireNonNull(executor, "executor is null");
-  }
-  
-  protected final ExecutorService getExecutor() {
-    return this.executor;
   }
   
   @Override
@@ -116,6 +115,11 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
     }
   }
 
+  @Override
+  public final void setAllowLocalRequest(boolean enabled) {
+    this.localRequest.set(enabled);
+  }
+
   protected void onRequestResolved(R taskRequest) {
   }
 
@@ -124,6 +128,7 @@ public class TaskRequestExecutor<I, O, R extends ITaskRequest<O>> implements ITa
   }
 
   protected void endExecution(IProgressView progress) {
+    setAllowLocalRequest(false);
     progress.undisplay();
     progress.stackTracer(s -> LOGGER.info(s.toString()));
     progress.dispose();

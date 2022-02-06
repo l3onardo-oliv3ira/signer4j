@@ -123,12 +123,12 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
   
   @Override
   protected void onEscPressed(ActionEvent e) {
-    int reply = JOptionPane.showConfirmDialog(null, 
+    int option = JOptionPane.showConfirmDialog(null, 
       "Deseja mesmo cancelar a operação?", 
       "Cancelamento da operação", 
       JOptionPane.YES_NO_OPTION
     );
-    if (reply == JOptionPane.YES_OPTION) {
+    if (option == JOptionPane.YES_OPTION) {
       this.cancel();
       this.unreveal();
     }
@@ -188,7 +188,10 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
   }
   
   final synchronized void cancel() {
-    cancels.entrySet().stream().peek(k -> k.getKey().interrupt()).map(k -> k.getValue()).forEach(l -> l.forEach(r -> tryRun(r::run)));     
+    cancels.entrySet().stream()
+      .peek(k -> k.getKey().interrupt())
+      .map(k -> k.getValue())
+      .forEach(l -> l.forEach(r -> tryRun(r::run)));     
     cancels.clear();
   }
   

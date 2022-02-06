@@ -3,6 +3,7 @@ package com.github.signer4j.imp;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -60,12 +61,28 @@ public class Throwables {
     }
   }
   
-  public static <T, E extends Exception> Optional<Exception> tryCatch(Procedure<T, E> p) {
+  public static void tryCatch(Executable<?> e, Consumer<Exception> catchBlock) {
+    try {
+      e.execute();
+    }catch(Exception ex) {
+      catchBlock.accept(ex);
+    }
+  }
+  
+  public static Optional<Exception> tryCatch(Procedure<?, Exception> p) {
     try {
       p.call();
       return Optional.empty();
     }catch(Exception ex) {
       return Optional.of(ex);
+    }
+  }
+  
+  public static void tryCatch(Procedure<?, Exception> p, Consumer<Exception> catchBlock) {
+    try {
+      p.call();
+    }catch(Exception ex) {
+      catchBlock.accept(ex);
     }
   }
   

@@ -93,7 +93,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
       () -> { //try
         provider.login(null, this.handler);
         KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
-        keyStore.load(null, null); //TODO para todo PKCS11 substitui a senha se já tiver logado?
+        keyStore.load(null, null);
         return new PKCS11KeyStore(keyStore, dispose, device);
       }, 
       (exception) -> { //catch

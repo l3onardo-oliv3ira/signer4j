@@ -22,8 +22,8 @@ public class HttpTools {
     .disableContentCompression()
     .disableCookieManagement()
     .disableRedirectHandling()
-    .evictExpiredConnections()
-    .evictIdleConnections(TimeValue.ofMinutes(1))
+    .evictExpiredConnections() //TODO we have to go back here!
+    .evictIdleConnections(TimeValue.ofMinutes(1)) //TODO we have to go back here!
     .setDefaultRequestConfig(RequestConfig.custom()
       .setCookieSpec(StandardCookieSpec.IGNORE).build())
     .setConnectionManager(PoolingHttpClientConnectionManagerBuilder.create()
@@ -34,15 +34,19 @@ public class HttpTools {
     .build();
       
   private HttpTools() {}
+  
+  public static void touchQuietly(String uri) {
+    touchQuietly(uri, "HttpTools");
+  }
+  
+  public static void touchQuietly(String uri, String userAgent) {
+    tryRun(() -> touch(uri, userAgent));
+  }
 
   public static void touch(String uri) throws IOException {
     touch(uri, "HttpTools"); 
   }
 
-  public static void touchQuietly(String uri) {
-    tryRun(() -> touch(uri, "HttpTools"));
-  }
-  
   public static void touch(String uri, String userAgent) throws IOException {
     touch(uri, userAgent, Timeout.ofSeconds(5));
   }

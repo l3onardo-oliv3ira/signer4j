@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
 
+@SuppressWarnings("restriction")
 public class Providers {
   
   private static final String JSR_105_PROVIDER = "XMLDSig"; //org.jcp.xml.dsig.internal.dom.XMLDSigRI
@@ -45,7 +46,6 @@ public class Providers {
     Optional<Provider> p = ofNullable(getProvider("SunPKCS11-" + providerName));
     if (p.isPresent())
       return (AuthProvider)p.get();
-    @SuppressWarnings("restriction")
     sun.security.pkcs11.SunPKCS11 provider = new sun.security.pkcs11.SunPKCS11(config);
     Security.addProvider(provider);
     return provider;
