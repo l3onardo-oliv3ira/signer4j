@@ -45,7 +45,7 @@ public interface IToken extends IGadget {
   IToken login(IPasswordCallbackHandler callback) throws Signer4JException;
 
   default IToken login() throws Signer4JException { 
-    return login(p -> {});
+    return login(IPasswordCollector.NOTHING);
   }
   
   default IToken login(IPasswordCollector collector) throws Signer4JException {

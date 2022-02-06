@@ -63,7 +63,7 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
     long session;
     try {
       session = pk.C_OpenSession(
-        slot.getNumber(),
+        getSlot().getNumber(),
         PKCS11Constants.CKF_LOGIN_REQUIRED, 
         null, 
         null

@@ -19,7 +19,6 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificatePF;
 import com.github.signer4j.cert.ICertificatePJ;
 import com.github.signer4j.imp.DeviceManager;
-import com.github.signer4j.imp.MSCAPIDevManager;
 import com.github.signer4j.imp.SignatureAlgorithm;
 import com.github.signer4j.imp.SignatureType;
 import com.github.signer4j.imp.exception.InvalidPinException;

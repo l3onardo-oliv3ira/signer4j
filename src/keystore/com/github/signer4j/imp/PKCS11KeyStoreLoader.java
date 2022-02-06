@@ -27,7 +27,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   private final Runnable dispose;
   
   PKCS11KeyStoreLoader() {
-    this(ConsoleCallback.HANDLER);
+    this(PasswordCallbackHandler.CONSOLE);
   }
 
   PKCS11KeyStoreLoader(IPasswordCallbackHandler handler) {

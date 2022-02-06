@@ -22,9 +22,9 @@ import com.github.signer4j.imp.exception.Signer4JException;
 
 abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements IToken {
   
-  protected final transient S slot;
+  private final transient S slot;
   
-  protected final TokenType type;
+  private final TokenType type;
   
   protected String label;
   protected String model;
@@ -157,6 +157,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   @Override
   public ICertificateChooser createChooser(ICertificateChooserFactory factory) {
     requireNonNull(factory, "factory is null");
+    checkIfAvailable();
     return factory.apply(this.keyStore, this.certificates);
   }
   
@@ -193,7 +194,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     private String serial;
     private String manufacturer;
     private ICertificateFactory factory = CertificateFactory.DEFAULT;
-    private IPasswordCallbackHandler passwordCallback = ConsoleCallback.HANDLER;
+    private IPasswordCallbackHandler passwordCallback = PasswordCallbackHandler.CONSOLE;
     
     Builder(S slot) {
       this.slot = requireNonNull(slot, "Unabled to create token with null slot");

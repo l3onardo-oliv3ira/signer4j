@@ -32,8 +32,7 @@ class PKCS12Token extends AbstractToken<PKCS12Slot>{
 
   @Override
   protected void doLogin(IKeyStore keyStore) throws Signer4JException {
-    this.certificates = new PKCS12Certificates(this, keyStore, factory);
-    getSlot().updateDevice(this.certificates);
+    getSlot().updateDevice(this.certificates = new PKCS12Certificates(this, keyStore, factory));
   }
   
   @Override

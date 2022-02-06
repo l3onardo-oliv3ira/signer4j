@@ -33,7 +33,7 @@ public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
   private final IPasswordCollector collector;
   
   public PasswordDialogCallbackHandler(IGadget gadget) {
-    this(gadget, DEFAULT_PIN_TITLE, p -> {});
+    this(gadget, DEFAULT_PIN_TITLE, IPasswordCollector.NOTHING);
   }
 
   public PasswordDialogCallbackHandler(IGadget gadget, IPasswordCollector collector) {
