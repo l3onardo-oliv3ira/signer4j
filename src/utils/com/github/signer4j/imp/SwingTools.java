@@ -1,6 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Throwables.tryCall;
+import static com.github.signer4j.imp.Throwables.tryRuntime;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
@@ -9,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.SwingUtilities;
 
+import com.github.signer4j.imp.function.Procedure;
 import com.github.signer4j.imp.function.Supplier;
 
 public class SwingTools {
@@ -28,30 +30,20 @@ public class SwingTools {
   }
 
   public static boolean invokeAndWait(Runnable r, boolean defaultIfFail) {
-    return tryCall(() -> {
-      if (SwingUtilities.isEventDispatchThread()) {
-        r.run();
-        return true;
-      }
-      SwingUtilities.invokeAndWait(r);
-      return true;
-    }, defaultIfFail);
+    Procedure<Boolean, ?> p = SwingUtilities.isEventDispatchThread() ? 
+        () -> { r.run(); return true; } : 
+        () -> { SwingUtilities.invokeAndWait(r); return true;};
+    return tryCall(p, defaultIfFail);
   }
 
   public static <T> Optional<T> invokeAndWait(Supplier<T> supplier){
-    if (SwingUtilities.isEventDispatchThread())
-      return tryCall(() -> ofNullable(supplier.get()), empty());
-    
-    return tryCall(() -> {
-      final AtomicReference<T> ref = new AtomicReference<>();
-      SwingUtilities.invokeAndWait(() -> {
-        try {
-          ref.set(supplier.get());
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      });
-      return ofNullable(ref.get());
-    }, empty());
+    Procedure<Optional<T>, ?> p = SwingUtilities.isEventDispatchThread() ? 
+      () -> ofNullable(supplier.get()) : 
+      () -> {
+        final AtomicReference<T> ref = new AtomicReference<>();
+        SwingUtilities.invokeAndWait(() -> tryRuntime(() -> ref.set(supplier.get())));
+        return ofNullable(ref.get());
+      };
+    return tryCall(p, empty());
   }
 }

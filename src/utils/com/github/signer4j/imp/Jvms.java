@@ -87,4 +87,8 @@ public class Jvms {
     System.out.println("JAVA_MINOR_VERSION: " + JAVA_MINOR_VERSION);
     System.out.println("JAVA_UPDATE_VERSION: " + JAVA_UPDATE_VERSION);
   }
+  
+  public static void main(String[] args) {
+    print();
+  }
 }

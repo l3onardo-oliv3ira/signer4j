@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 import org.slf4j.Logger;
@@ -191,7 +193,8 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
     cancels.entrySet().stream()
       .peek(k -> k.getKey().interrupt())
       .map(k -> k.getValue())
-      .forEach(l -> l.forEach(r -> tryRun(r::run)));     
+      .flatMap(Collection::stream)
+      .forEach(r -> tryRun(r::run));
     cancels.clear();
   }
   
