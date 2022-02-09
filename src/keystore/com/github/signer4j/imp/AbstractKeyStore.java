@@ -98,7 +98,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   private final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
-    return INVOKER.invoke(tryBlock, this::dispose);  //automaticaly logout if exception occurr!
+    return INVOKER.invoke(tryBlock, (e) -> this.dispose.run());  //automaticaly logout if exception occurr!
   }
   
   @Override
