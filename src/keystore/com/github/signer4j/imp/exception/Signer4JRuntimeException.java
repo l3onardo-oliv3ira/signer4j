@@ -10,8 +10,8 @@ public class Signer4JRuntimeException extends RuntimeException {
     return new Signer4JRuntimeException(cause);
   }
   
-  public static Supplier<Signer4JRuntimeException> lambda(Signer4JException cause) {
-    return () -> of(cause);
+  public static Supplier<Signer4JRuntimeException> lambda(Supplier<Signer4JException> cause) {
+    return () -> of(cause.get());
   }
   
   private Signer4JRuntimeException(Signer4JException cause) {

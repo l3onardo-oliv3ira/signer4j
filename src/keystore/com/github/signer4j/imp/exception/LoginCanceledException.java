@@ -7,9 +7,13 @@ public class LoginCanceledException extends Signer4JException {
   private static final long serialVersionUID = 1L;
 
   public LoginCanceledException() {
-    super(DEFAULT_MESSAGE);
+    this(DEFAULT_MESSAGE);
   } 
   
+  public LoginCanceledException(String message) {
+    super(message);
+  }
+
   public LoginCanceledException(Throwable e) {
     super(DEFAULT_MESSAGE, e);
   }
