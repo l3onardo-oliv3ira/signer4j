@@ -57,7 +57,7 @@ class CertificateInstaller extends SimpleDialog {
   private IA1A3ConfigSaved onSaved;
 
   CertificateInstaller() {
-    this((a, b) -> { });
+    this(IA1A3ConfigSaved.NOTHING);
   }
 
   CertificateInstaller(IA1A3ConfigSaved onSaved) {

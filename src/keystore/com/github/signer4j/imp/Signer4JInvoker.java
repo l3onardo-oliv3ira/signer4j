@@ -80,9 +80,9 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       if ("O cartão não pode ser acessado porque foi atingido o número máximo de tentativas para digitar o PIN.".equals(message))
         throw new TokenLockedException(message, e);
       if ("keystore password was incorrect".equalsIgnoreCase(message) || 
+          Throwables.hasCause(e, FailedLoginException.class) ||
           Throwables.hasCause(e, UnrecoverableKeyException.class) ||
-          Throwables.hasCause(e, BadPaddingException.class) ||
-          Throwables.hasCause(e, FailedLoginException.class))
+          Throwables.hasCause(e, BadPaddingException.class))
         throw new InvalidPinException(e); 
       throw new ModuleException(e);
     } catch (OutOfMemoryError e) {

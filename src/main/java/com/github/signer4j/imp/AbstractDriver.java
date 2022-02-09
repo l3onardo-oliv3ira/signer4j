@@ -84,7 +84,7 @@ abstract class AbstractDriver extends LoadCycle implements IDriver {
   @Override
   protected final void doUnload() {
     try {
-      this.slots.stream().map(s -> s.getToken()).forEach(t -> t.logout());
+      this.slots.stream().map(ISlot::getToken).forEach(IToken::logout);
     }finally {
       this.devices.clear();
       this.slots = unmodifiableList(emptyList()); 

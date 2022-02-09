@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -125,15 +126,23 @@ public class Throwables {
     }
   }
 
+  public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure) {
+    return tryRuntime(procedure, "");
+  }
+
   public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure, String throwMessageIfFail) {
     return tryRuntime(procedure, () -> throwMessageIfFail);
   }
   
   public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure, Supplier<String> throwMessageIfFail) {
+    return tryRuntime(procedure, (ex) -> new RuntimeException(Strings.needText(throwMessageIfFail.get(), "tryRuntime fail"), ex));
+  }
+  
+  public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure, Function<E, RuntimeException> wrapper) {
     try {
       return procedure.call();
     }catch(Exception ex) {
-      throw new RuntimeException(Strings.needText(throwMessageIfFail.get(), "tryRuntime fail"), ex);
+      throw wrapper.apply((E)ex);
     }
   }
   

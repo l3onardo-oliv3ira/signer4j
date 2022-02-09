@@ -1,6 +1,8 @@
 package com.github.signer4j.imp;
 
-import java.util.ArrayList;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -12,14 +14,12 @@ import com.github.signer4j.IDevice;
 public class DeviceCertificateEntry extends DefaultCertificateEntry {
   
   public static List<ICertificateEntry> toEntries(List<IDevice> devices, Predicate<ICertificate> filter) {
-    final List<ICertificateEntry> entries = new ArrayList<>();
-    devices.forEach(d -> d.getCertificates()
-      .stream()
-      .filter(filter)
-      .forEach(c -> entries.add(new DeviceCertificateEntry(d, c))));
-    return entries;
+    return devices.stream()
+      .map(d -> d.getCertificates().filter(filter).map(c -> new DeviceCertificateEntry(d, c)).collect(toList()))
+      .flatMap(Collection::stream)
+      .collect(toList());
   }
-  
+
   private DeviceCertificateEntry(IDevice device, ICertificate certificate) {
     super(Optional.ofNullable(device), certificate);
   }

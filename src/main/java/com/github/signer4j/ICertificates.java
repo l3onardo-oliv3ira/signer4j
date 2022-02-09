@@ -4,13 +4,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-public interface ICertificates extends Iterable<ICertificate> {
+public interface ICertificates extends Iterable<ICertificate>, IStreamProvider<ICertificate> {
   IToken getToken();
 
   int size();
   
   List<ICertificate> toList();
 
+  @Override
   default Stream<ICertificate> stream() {
     return toList().stream();
   }

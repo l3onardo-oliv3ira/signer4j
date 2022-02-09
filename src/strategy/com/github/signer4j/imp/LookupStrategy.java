@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
-
 public class LookupStrategy {
   private LookupStrategy() {}
   
@@ -10,6 +8,7 @@ public class LookupStrategy {
   }
   
   public static NotDuplicatedStrategy notDuplicated(SystemSupport support) {
-    return new NotDuplicatedStrategy(requireNonNull(support, "Unabled to use null SystemSupport").getStrategy());
+    Args.requireNonNull(support, "Unabled to use null SystemSupport");
+    return new NotDuplicatedStrategy(support.getStrategy());
   }
 }

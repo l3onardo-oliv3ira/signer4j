@@ -61,6 +61,11 @@ class BrazilianCertificate implements ICertificate {
   }
   
   @Override
+  public boolean isExpired() {
+    return new Date().getTime() > getAfterDate().getTime();
+  }
+  
+  @Override
   public String getManufacturer() {
     return getCertificateIssuerDN().getFullName();
   }

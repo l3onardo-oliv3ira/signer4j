@@ -71,7 +71,7 @@ public class Config{
     loadA3Paths(libs::add);
     if (!libs.isEmpty())
       return;
-    LookupStrategy.notDuplicated().more(new EnvironmentStrategy()).lookup(dv -> libs.add(new FilePath(dv.getLibrary())));
+    new SmartLookupStrategy().lookup(dv -> libs.add(new FilePath(dv.getLibrary())));
     saveA3Paths(libs.toArray(new FilePath[libs.size()]));
   }
   

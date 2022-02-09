@@ -1,6 +1,5 @@
 package com.github.signer4j.imp;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -10,7 +9,7 @@ import com.github.signer4j.IDevice;
 
 public class DefaultCertificateEntry implements ICertificateListUI.ICertificateEntry {
   
-  private final boolean valid;
+  private final boolean expired;
 
   protected final Optional<IDevice> device;
   protected final ICertificate certificate;
@@ -20,13 +19,13 @@ public class DefaultCertificateEntry implements ICertificateListUI.ICertificateE
   public DefaultCertificateEntry(Optional<IDevice> device, ICertificate certificate) {
     this.device = Args.requireNonNull(device, "device is null");
     this.certificate = Args.requireNonNull(certificate, "certificate is null");
-    this.valid = new Date().getTime() <= certificate.getAfterDate().getTime();
-    this.formater = valid ? s -> s : s -> "<html><strike style=\"color:red\">" + s + "</strike></html>";
+    this.expired = certificate.isExpired();
+    this.formater = !expired ? s -> s : s -> "<html><strike style=\"color:red\">" + s + "</strike></html>";
   }
   
   @Override
-  public final boolean isValid() {
-    return valid;
+  public final boolean isExpired() {
+    return expired;
   }
 
   @Override

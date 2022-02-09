@@ -17,6 +17,8 @@ public interface ICertificate extends ISerialItem {
   Date getAfterDate();
 
   Date getBeforeDate();
+  
+  boolean isExpired();
 
   IDistinguishedName getCertificateIssuerDN();
 

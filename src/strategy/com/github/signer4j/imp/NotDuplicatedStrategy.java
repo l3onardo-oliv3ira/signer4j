@@ -1,12 +1,11 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.github.signer4j.IDriverLookupStrategy;
 import com.github.signer4j.IDriverSetup;
@@ -19,7 +18,8 @@ public class NotDuplicatedStrategy implements IDriverLookupStrategy {
   private final List<IDriverLookupStrategy> strategies;
   
   public NotDuplicatedStrategy(IDriverLookupStrategy ... strategies) {
-    this.strategies = new ArrayList<>(asList(requireNonNull(strategies, "Unabled to create compounded strategy with null params")));
+    Args.requireNonNull(strategies, "Unabled to create compounded strategy with null params");
+    this.strategies = Stream.of(strategies).filter(f -> f != null).collect(toList());
   } 
   
   @Override

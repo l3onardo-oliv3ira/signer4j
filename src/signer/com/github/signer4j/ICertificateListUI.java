@@ -2,12 +2,19 @@ package com.github.signer4j;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.github.signer4j.imp.function.BiProcedure;
 
 public interface ICertificateListUI {
   
-  interface IA1A3ConfigSaved extends BiProcedure<List<IFilePath>, List<IFilePath>> {}
+  interface IA1A3ConfigSaved extends BiProcedure<List<IFilePath>, List<IFilePath>> {
+    IA1A3ConfigSaved NOTHING = (a, b) -> {};
+  }
+  
+  interface IChoice extends Supplier<Optional<ICertificateEntry>>{
+    IChoice NEED_RELOAD     = () -> Optional.empty();
+  }
   
   interface ICertificateEntry {
     String getDevice();
@@ -16,9 +23,9 @@ public interface ICertificateListUI {
     String getDate();
     String getId();
     boolean isRemembered();
-    boolean isValid();
+    boolean isExpired();
     void setRemembered(boolean value);
   }
 
-  Optional<ICertificateEntry> choose(List<ICertificateEntry> entries);
+  IChoice choose(List<ICertificateEntry> entries);
 }

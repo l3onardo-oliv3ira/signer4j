@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import com.github.signer4j.ICertificateListUI;
+import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.gui.utils.SimpleDialog;
 import com.github.signer4j.imp.Args;
@@ -38,6 +39,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
   private static final long serialVersionUID = -1L;
 
+  private static IChoice UNDEFINED_CHOICE  = () -> Optional.empty();
+  
   private JPanel contentPane;
   private JTable table;
   private JPanel pnlCenter;
@@ -55,12 +58,12 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   
   private Optional<ICertificateEntry> selectedEntry = Optional.empty();
   
-  private boolean needReload = false;
+  private IChoice choice = UNDEFINED_CHOICE;
 
   private CertificateListUI(String defaultAlias, IA1A3ConfigSaved onSaved) {
     super("Seleção de certificado", true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
-    this.onSaved = onSaved;
+    this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 560, 287);
     contentPane = new JPanel();
@@ -94,7 +97,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
         CertificateModel model = (CertificateModel)table.getModel();
         ICertificateEntry rowEntry = model.getEntryAt(selectedRow);
         this.selectedEntry = Optional.of(rowEntry);
-        enabled |= rowEntry.isValid();
+        enabled |= !rowEntry.isExpired();
         this.chkRememberMe.setSelected(defaultAlias.equals(rowEntry.getId()) && enabled);
         rowEntry.setRemembered(this.chkRememberMe.isSelected());
       }
@@ -156,7 +159,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
         clickConfig();
       }
     });
-    lblConfigInstall.setVisible(onSaved != null);
+    lblConfigInstall.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
     
     JLabel lblRefresh = new JLabel("");
     lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -169,7 +172,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
         refresh();
       }
     });
-    lblRefresh.setVisible(onSaved != null);
+    lblRefresh.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
     
     pnlNorthEast.setLayout(new BorderLayout(0, 0));
     pnlNorthEast.add(lblConfigInstall, BorderLayout.CENTER);
@@ -260,20 +263,20 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
   
   private void clickConfig() {
-    new CertificateInstaller((a, b) -> {
-      this.needReload = true;
-      this.table.getSelectionModel().clearSelection();
-      if (this.onSaved != null) {
-        this.onSaved.call(a, b);
-      }
-    }).setVisible(true);
-    if (this.needReload) {
+    new CertificateInstaller(this::onConfigSaved).setVisible(true);
+    if (this.choice == IChoice.NEED_RELOAD) {
       this.close();
     }
   }
   
+  protected void onConfigSaved(List<IFilePath> a1list, List<IFilePath> a3List) {
+    this.choice = IChoice.NEED_RELOAD;
+    this.table.getSelectionModel().clearSelection();
+    this.onSaved.call(a1list, a3List);
+  }
+  
   private void refresh() {
-    this.needReload = true;
+    this.choice = IChoice.NEED_RELOAD;
     this.close();
   }
 
@@ -284,7 +287,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
 
   @Override
-  public Optional<ICertificateEntry> choose(List<ICertificateEntry> entries) {
+  public IChoice choose(List<ICertificateEntry> entries) {
     Args.requireNonNull(entries, "entries is null");
     this.chkRememberMe.setSelected(false);
     this.chkRememberMe.setEnabled(false);
@@ -300,27 +303,28 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
       }
     }
     this.close();
-    return needReload ? null : this.selectedEntry; 
+    return this.choice == IChoice.NEED_RELOAD ? this.choice : () -> this.selectedEntry;
   }
   
-  public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries) {
+  public static IChoice display(List<ICertificateEntry> entries) {
     return display(entries, true);
   }
 
-  public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries, boolean auto) {
-    return display(entries, auto, null);
+  public static IChoice display(List<ICertificateEntry> entries, boolean auto) {
+    return display(entries, auto, IA1A3ConfigSaved.NOTHING);
   }
   
-  public static Optional<ICertificateEntry> display(List<ICertificateEntry> entries, boolean auto, IA1A3ConfigSaved onSaved) {
+  public static IChoice display(List<ICertificateEntry> entries, boolean auto, IA1A3ConfigSaved onSaved) {
     Args.requireNonNull(entries, "entries is null");
+    Args.requireNonNull(onSaved, "onSaved is null");
     String defaultAlias = Config.defaultAlias().orElse("$not_found$");
     if (auto) {
       Optional<ICertificateEntry> defaultEntry = entries
           .stream()
-          .filter(c -> c.getId().equals(defaultAlias) && c.isValid()) //auto select!
+          .filter(c -> c.getId().equals(defaultAlias) && !c.isExpired()) //auto select!
           .findFirst();
       if (defaultEntry.isPresent()) {
-        return defaultEntry;
+        return () -> defaultEntry;
       }
     }
     return new CertificateListUI(defaultAlias, onSaved).choose(entries);
