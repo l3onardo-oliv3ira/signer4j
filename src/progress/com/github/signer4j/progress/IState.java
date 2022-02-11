@@ -13,4 +13,6 @@ public interface IState {
   String getStepTree();
 
   boolean isAborted();
+
+  Throwable getAbortCause();
 }

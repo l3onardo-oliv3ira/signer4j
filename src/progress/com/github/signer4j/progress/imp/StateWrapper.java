@@ -40,4 +40,9 @@ public class StateWrapper implements IState {
   public boolean isAborted() {
     return state.isAborted();
   }
+
+  @Override
+  public Throwable getAbortCause() {
+    return state.getAbortCause();
+  }
 }

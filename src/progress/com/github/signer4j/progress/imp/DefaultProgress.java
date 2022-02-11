@@ -97,6 +97,11 @@ public class DefaultProgress implements IProgress {
   }
   
   @Override
+  public final Throwable getAbortCause() {
+    return stack.isEmpty() ? null : stack.peek().getAbortCause();
+  }
+  
+  @Override
   public final boolean isClosed() {
     return closed;
   }

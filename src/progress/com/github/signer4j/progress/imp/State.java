@@ -38,6 +38,11 @@ class State implements IState {
     return (parent != null ? parent.getStepTree() + "." : "") + getStep();
   }
   
+  @Override
+  public final Throwable getAbortCause() {
+    return this.abortCause;
+  }
+  
   public final long incrementAndGet() { 
     if (isAborted())
       return -1; //lock increment if aborted!

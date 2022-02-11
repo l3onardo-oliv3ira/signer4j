@@ -90,4 +90,9 @@ public enum ProgressOptions implements IProgressView {
   public void cancelCode(Runnable cancelCode) {
     
   }
+
+  @Override
+  public Throwable getAbortCause() {
+    return null;
+  }
 }

@@ -35,7 +35,7 @@ public final class Strings {
   private Strings() {
   }
 
-  public static <T> Optional<T> getQuietly(Supplier<T> s, T defaultIfFail) {
+  public static <T> Optional<T> get(Supplier<T> s, T defaultIfFail) {
     try {
       return Optional.ofNullable(s.get());
     }catch (Exception e){

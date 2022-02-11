@@ -24,6 +24,8 @@ public interface IProgress extends IDisposable {
   
   <T extends Throwable> T abort(T e);
   
+  Throwable getAbortCause();
+  
   boolean isClosed();
   
   IProgress stackTracer(Consumer<IState> consumer);

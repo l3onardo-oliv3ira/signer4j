@@ -84,4 +84,9 @@ public class ProgressWrapper implements IProgress {
   public void dispose() {
     progress.dispose();
   }
+
+  @Override
+  public Throwable getAbortCause() {
+    return progress.getAbortCause();
+  }
 }
