@@ -138,6 +138,7 @@ public class Throwables {
     return tryRuntime(procedure, (ex) -> new RuntimeException(Strings.needText(throwMessageIfFail.get(), "tryRuntime fail"), ex));
   }
   
+  @SuppressWarnings("unchecked")
   public static <T, E extends Exception> T tryRuntime(Procedure<T, E> procedure, Function<E, RuntimeException> wrapper) {
     try {
       return procedure.call();
