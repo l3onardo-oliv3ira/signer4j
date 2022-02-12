@@ -40,7 +40,7 @@ class ForWindowsLockDettector implements IWindowLockDettector {
   @Override
   public void start() {
     if (this.thread == null) {
-      this.thread = new Thread(workstation = new WorkStation());
+      this.thread = new Thread(workstation = new WorkStation(), "windowLockDettector");
       this.thread.start();
     }
   }

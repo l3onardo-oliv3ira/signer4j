@@ -31,5 +31,5 @@ public abstract class AbstractRequestReader<P extends Params, O> implements IReq
     return params;
   }
   
-  protected abstract ITask<?> createTask(P params, O pojo) throws IOException;
+  protected abstract ITask<?> createTask(P output, O pojo) throws IOException;
 }
