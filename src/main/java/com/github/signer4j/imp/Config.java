@@ -4,11 +4,11 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.github.signer4j.IConfigPersister;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
-import com.github.signer4j.imp.function.Performable;
 
 public class Config{
   
@@ -50,11 +50,11 @@ public class Config{
     config().saveA3Paths(path);
   }
 
-  public static void loadA1Paths(Performable<IFilePath> add) {
+  public static void loadA1Paths(Consumer<IFilePath> add) {
     config().loadA1Paths(add);
   }
 
-  public static void loadA3Paths(Performable<IFilePath> add) {
+  public static void loadA3Paths(Consumer<IFilePath> add) {
     config().loadA3Paths(add);
   }
 

@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -19,7 +20,6 @@ import com.github.signer4j.AllowedExtensions;
 import com.github.signer4j.IConfig;
 import com.github.signer4j.IConfigPersister;
 import com.github.signer4j.IFilePath;
-import com.github.signer4j.imp.function.Performable;
 
 public class ConfigPersister implements IConfigPersister {
   
@@ -49,12 +49,12 @@ public class ConfigPersister implements IConfigPersister {
   }
   
   @Override
-  public final void loadA1Paths(Performable<IFilePath> add) {
+  public final void loadA1Paths(Consumer<IFilePath> add) {
     load(add, CERTIFICATE_A1_LIST, AllowedExtensions.CERTIFICATES);
   }
   
   @Override
-  public final void loadA3Paths(Performable<IFilePath> add) {
+  public final void loadA3Paths(Consumer<IFilePath> add) {
     load(add, CERTIFICATE_A3_LIST, AllowedExtensions.LIBRARIES);
   }
   
@@ -73,7 +73,7 @@ public class ConfigPersister implements IConfigPersister {
     put(p -> "", CERTIFICATE_A1_LIST, path);
   }
   
-  private void load(Performable<IFilePath> add, String param, FileNameExtensionFilter filter) {
+  private void load(Consumer<IFilePath> add, String param, FileNameExtensionFilter filter) {
     Properties properties = new Properties();
     if (!open(properties))
       return;
@@ -81,7 +81,7 @@ public class ConfigPersister implements IConfigPersister {
     for(String path: pathList) {
       File p = Paths.get(path).toFile();
       if (p.exists() && p.isFile() && filter.accept(p)) {
-        add.perform(new FilePath(p.toPath()));
+        add.accept(new FilePath(p.toPath()));
       }
     }
   }
