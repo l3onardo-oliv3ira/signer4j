@@ -23,6 +23,7 @@ public abstract class ThreadContext implements IThreadContext {
     context = new Thread(name) {
       @Override
       public void run() {
+        beforeRun();
         doRun();
       }
     };
@@ -50,6 +51,8 @@ public abstract class ThreadContext implements IThreadContext {
   public final void stop() {
     stop(0);
   }
+  
+  protected void beforeRun() {}
 
   protected void onStoped() {}
 
