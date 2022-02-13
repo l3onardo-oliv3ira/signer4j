@@ -1,5 +1,7 @@
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.imp.Strings.text;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
@@ -95,6 +97,14 @@ public class Throwables {
       throwable = rootCause;
     }
     return throwable;
+  }
+  
+  public static String rootMessage(Throwable throwable) {
+    Throwable rootCause = rootCause(throwable);
+    if (rootCause == null)
+      return "Causa desconhecida";
+    String message = rootCause.getClass().getName();
+    return message + text(rootCause.getMessage(), "Causa desconhecida");
   }
   
   public static String rootString(Throwable throwable) {
