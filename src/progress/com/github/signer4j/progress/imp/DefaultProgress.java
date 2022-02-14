@@ -152,12 +152,12 @@ public class DefaultProgress implements IProgress {
   }
 
   @Override
-  public final BehaviorSubject<IStageEvent> stageObservable() {
+  public final Observable<IStageEvent> stageObservable() {
     return this.stageSubject;
   }
 
   @Override
-  public final BehaviorSubject<IProgress> disposeObservable() {
+  public final Observable<IProgress> disposeObservable() {
     return this.disposeSubject;
   }
   
