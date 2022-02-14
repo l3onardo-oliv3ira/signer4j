@@ -58,10 +58,8 @@ public class Streams {
   
   public static void consumeQuietly(InputStream s) {
     if (s != null) {
-      try {
-        byte[] buffer = new byte[512];
-        while((s.read(buffer)) != -1)
-          ;
+      try {        
+        s.skip(Long.MAX_VALUE);
       }catch(IOException e) {
         e.printStackTrace();
       }finally {
@@ -123,7 +121,7 @@ public class Streams {
   
   public static byte[] fromStream(InputStream is) throws IOException {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    byte[] data = new byte[512];
+    byte[] data = new byte[1024];
     int read;
     while ((read = is.read(data, 0, data.length)) != -1) {
       buffer.write(data, 0, read);

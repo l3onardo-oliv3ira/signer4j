@@ -1,6 +1,7 @@
 package com.github.signer4j.task.imp;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import com.github.signer4j.ITextReader;
 import com.github.signer4j.imp.Args;
@@ -9,21 +10,22 @@ import com.github.signer4j.imp.Params;
 import com.github.signer4j.task.IRequestReader;
 import com.github.signer4j.task.ITask;
 
-public abstract class AbstractRequestReader<P extends Params, O> implements IRequestReader<P>{
+public abstract class AbstractRequestReader<P extends Params, Pojo> implements IRequestReader<P>{
 
-  private ITextReader pojoReader;
+  private ITextReader pojoReader;  
   
-  public AbstractRequestReader(Class<O> jsonClass) {
+  public AbstractRequestReader(Class<?> jsonClass) {
     this(new JsonTextReader(jsonClass));
   }
-
+  
   public AbstractRequestReader(ITextReader pojoReader) {
-    this.pojoReader = Args.requireNonNull(pojoReader,  "pojoReader is null");
+    this.pojoReader = Args.requireNonNull(pojoReader,  "pojoReader is null");    
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public final P read(String text, P params) throws IOException {
-    ITask<?> task = createTask(params, pojoReader.read(text));
+  public final P read(String text, P params, Function<?,?> wrapper) throws IOException {    
+    ITask<?> task = createTask(params, (Pojo)wrapper.apply(pojoReader.read(text)));
     StringBuilder whyNot = new StringBuilder();
     if (!task.isValid(whyNot)) {
       throw new IOException("Unabled to create a valid task with parameter: " + text + " reason: " + whyNot);
@@ -31,5 +33,5 @@ public abstract class AbstractRequestReader<P extends Params, O> implements IReq
     return params;
   }
   
-  protected abstract ITask<?> createTask(P output, O pojo) throws IOException;
+  protected abstract ITask<?> createTask(P output, Pojo pojo) throws IOException;
 }

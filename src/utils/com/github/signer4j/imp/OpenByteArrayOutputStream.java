@@ -24,7 +24,7 @@ public class OpenByteArrayOutputStream extends ByteArrayOutputStream implements 
     return new String(super.buf, 0, super.size());
   }
 
-  public final synchronized String asStribng(String charset) {
+  public final synchronized String asString(String charset) {
     return asString(Charset.forName(charset));
   }
 
