@@ -148,6 +148,10 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
       this.showToFront(); 
     });
   }
+  
+  final void exit() {
+    invokeLater(super::close);
+  }
 
   final void unreveal() {
     invokeLater(() -> {
@@ -190,7 +194,13 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
   
   final synchronized void cancel() {
     cancels.entrySet().stream()
-      .peek(k -> k.getKey().interrupt())
+      .peek(k -> {
+        //currentThread será a DispatchThread que não deveria ser interrompida!
+        Thread key = k.getKey();
+        if (key != Thread.currentThread()) { 
+          key.interrupt();
+        }
+      })
       .map(k -> k.getValue())
       .flatMap(Collection::stream)
       .forEach(r -> tryRun(r::run));

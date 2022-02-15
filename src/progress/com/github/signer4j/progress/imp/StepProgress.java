@@ -35,7 +35,7 @@ class StepProgress extends ProgressWrapper implements IProgressView {
   @Override
   public void dispose() {
     super.dispose();
-    this.window.close();
+    this.window.exit();
   }
   
   @Override
