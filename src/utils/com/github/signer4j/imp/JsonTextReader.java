@@ -22,10 +22,7 @@ public class JsonTextReader implements ITextReader {
     this.charset = requireNonNull(charset, "charset is null");
   }
 
-  /** TODO
-   * We have to go back here to analyze if ObjectMapper can be used as attribute of JsonTextReader!
-   * Can i use ObjectMapper as a singleton, is it ThreadSafe? If it is, we have some issue with performance?
-   */
+  
   @Override
   @SuppressWarnings("unchecked")
   public <T> T read(String text) throws IOException {

@@ -11,12 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-/**
- * How to use
-  ButtonColumn bc = new ButtonColumn((arg) -> clickRemove(arg));
-  table.getColumnModel().getColumn(3).setCellRenderer( bc );
-  table.getColumnModel().getColumn(3).setCellEditor(bc);
- */
+
 public class ButtonRenderer extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
   private static final long serialVersionUID = -1L;
   
