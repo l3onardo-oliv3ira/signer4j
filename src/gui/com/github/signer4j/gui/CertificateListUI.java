@@ -65,7 +65,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setBounds(100, 100, 560, 287);
+    setBounds(100, 100, 660, 287);
     contentPane = new JPanel();
     contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
     contentPane.setLayout(new BorderLayout(0, 0));

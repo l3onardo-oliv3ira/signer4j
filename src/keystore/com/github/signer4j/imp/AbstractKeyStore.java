@@ -60,7 +60,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
     }
   }
   
-  private boolean checkIfHasPrivateKey() {
+  protected boolean checkIfHasPrivateKey() {
     try {
       Enumeration<String> e = keyStore.aliases();
       while (e.hasMoreElements()) {

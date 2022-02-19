@@ -13,7 +13,6 @@ import com.github.signer4j.TokenType;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
-import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 
 public class MSCAPIDevManager extends AbstractDeviceManager {
@@ -103,8 +102,6 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
     protected IToken loadCertificates(ICertificateFactory factory) throws DriverException {
       try(IKeyStore keyStore = loader.getKeyStore()) {
         this.device.setCertificates(this.certificates = new MSCAPICertificates(this, keyStore, factory));
-      } catch(PrivateKeyNotFound e) {
-        this.device.setCertificates(Unavailables.getCertificates(this));
       } catch (Exception e) {
         throw new DriverFailException("Não foi possível carregar os certificados", e);
       }

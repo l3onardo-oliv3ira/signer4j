@@ -73,7 +73,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
        * automaticamente por DISPOSE_ACTION e um novo login providenciará uma nova
        * instância não corrompida de SunPKCS11, mantendo a estabilidade do sistema.
        * */
-      if ("Token has been removed".equalsIgnoreCase(message))
+      if ("Token has been removed".equalsIgnoreCase(message) || message.contains("exception obtaining signature"))
         throw new NoTokenPresentException(e);
       if ("A operação foi cancelada pelo usuário.".equals(message))
         throw new LoginCanceledException(e);

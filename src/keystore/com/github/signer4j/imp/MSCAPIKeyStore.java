@@ -15,6 +15,11 @@ class MSCAPIKeyStore extends AbstractKeyStore {
   }
   
   @Override
+  protected boolean checkIfHasPrivateKey() {
+    return true;
+  }
+  
+  @Override
   public String getProvider() throws Signer4JException {
     checkIfAvailable();
     return BouncyCastleProvider.PROVIDER_NAME;
