@@ -54,7 +54,7 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
     
     @Override
     public final ISimpleSigner build() {
-      Providers.installBouncyCastleProvider();
+      ProviderInstaller.BC.install();
       SimpleSigner signer = new SimpleSigner(chooser, dispose);
       String aName = algorithm.getName();
       signer.signature = Throwables.tryRuntime(

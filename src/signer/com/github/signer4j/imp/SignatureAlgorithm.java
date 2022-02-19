@@ -37,7 +37,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   SHA512withRSA("SHA512WITHRSA", HashAlgorithm.SHA_512);
   
   static {
-    Providers.installBouncyCastleProvider();
+    ProviderInstaller.BC.install();
   }
   
   //do not create new array's instances for each call

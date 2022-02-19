@@ -52,7 +52,7 @@ public enum HashAlgorithm implements IHashAlgorithm {
  
   
   static {
-    Providers.installBouncyCastleProvider();
+    ProviderInstaller.BC.install();
   }
 
   @JsonCreator

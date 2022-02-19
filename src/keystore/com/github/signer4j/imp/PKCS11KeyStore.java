@@ -13,7 +13,7 @@ class PKCS11KeyStore extends AbstractKeyStore {
   
   @Override
   protected void doClose() throws Exception {
-    Providers.logoutAndUninstall(keyStore.getProvider());
+    ProviderInstaller.uninstall(keyStore.getProvider());
     super.doClose();
   }
 }

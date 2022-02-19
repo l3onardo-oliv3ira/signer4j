@@ -188,7 +188,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     
     @Override
     public final ICMSSigner build() {
-      Providers.installBouncyCastleProvider();
+      ProviderInstaller.BC.install();
       CMSSigner signer = new CMSSigner(chooser, dispose);
       signer.config = config;
       signer.memoryLimit = memoryLimit;

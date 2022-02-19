@@ -1,5 +1,6 @@
 package com.github.signer4j.imp;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -129,6 +130,12 @@ public class Args {
     if (Containers.isEmpty(collection))
       throw new IllegalArgumentException(message);
     return collection;
+  }
+
+  public static File requireExists(File input, String message) {
+    if (input == null || !input.exists())
+      throw new IllegalArgumentException(message);
+    return input;
   }
   
 }

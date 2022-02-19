@@ -13,7 +13,7 @@ public interface ICertificateListUI {
   }
   
   interface IChoice extends Supplier<Optional<ICertificateEntry>>{
-    IChoice NEED_RELOAD     = () -> Optional.empty();
+    IChoice NEED_RELOAD = () -> Optional.empty();
   }
   
   interface ICertificateEntry {

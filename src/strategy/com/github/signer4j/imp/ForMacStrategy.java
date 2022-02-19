@@ -12,6 +12,7 @@ class ForMacStrategy extends PreloadedStrategy {
     load("/usr/local/lib/libaetpkss.dylib");
     load("/usr/local/lib/libbanrisulpkcs11.so");
     load("/usr/local/lib/libdesktopID_Provider.dylib");
+    load("/usr/local/lib/opensc-pkcs11.so");
     load("/Applications/NeoID Desktop.app/Contents/Java/tools/macos/libneoidp11.dylib");
     load("/Applications/WatchKey USB Token Admin Tool.app/Contents/MacOS/lib/libWDP11_BR_GOV.dylib");
     load("/Applications/tokenadmin.app/Contents/Frameworks/libaetpkss.dylib");
