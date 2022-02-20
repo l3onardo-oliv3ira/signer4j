@@ -29,7 +29,9 @@ class ForLinuxStrategy extends PreloadedStrategy {
     load("/opt/ePass2003-Castle-20141128/i386/redist/libcastle.so.1.0.0");
     load("/usr/lib/libneoidp11.so");
     load("/usr/lib/opensc/opensc­pkcs11.so");
+    // firefox: load("/usr/lib/nss/libsoftokn3.so");
     //64bits
+    // firefox: load("/usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so");
     load("/usr/lib/x86_64-linux-gnu/opensc-pkcs11.so");
     load("/usr/lib/x86_64-linux-gnu/pkcs11/opensc-pkcs11.so");
     load("/usr/lib/x86_64-linux-gnu/pkcs11/opensc-pkcs11.so");

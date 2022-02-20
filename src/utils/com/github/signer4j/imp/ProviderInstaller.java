@@ -56,7 +56,7 @@ public enum ProviderInstaller implements IProviderInstaller{
       return;
     if (provider instanceof AuthProvider)
       tryRun(() -> ((AuthProvider)provider).logout());
-    tryRun(() -> provider.clear());
     tryRun(() -> Security.removeProvider(provider.getName()));
+    tryRun(() -> provider.clear());
   }
 }

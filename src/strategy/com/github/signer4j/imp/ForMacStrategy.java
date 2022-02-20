@@ -17,6 +17,8 @@ class ForMacStrategy extends PreloadedStrategy {
     load("/Applications/WatchKey USB Token Admin Tool.app/Contents/MacOS/lib/libWDP11_BR_GOV.dylib");
     load("/Applications/tokenadmin.app/Contents/Frameworks/libaetpkss.dylib");
     load("/Library/Frameworks/eToken.framework/Versions/A/libeToken.dylib");
+    load("/usr/local/ngsrv/libepsng_p11.so.1.2.2");
+    //firefox: load("/Applications/Firefox.app/Contents/MacOS/libsoftokn3.dylib");
     //64bits
     load("/Applications/Assistente Desktop birdID.app/Contents/resources/extraResources/osx/x64/vault-pkcs11.dylib");
   }

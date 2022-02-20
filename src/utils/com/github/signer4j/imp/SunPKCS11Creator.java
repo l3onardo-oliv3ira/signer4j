@@ -10,7 +10,7 @@ import java.security.AuthProvider;
 import java.security.Provider;
 import java.security.Security;
 
-class SunPKCS11Creator {
+final class SunPKCS11Creator {
   
   private static final String SUN_PKCS11_PROVIDERNAME = "SunPKCS11";
   
@@ -21,24 +21,23 @@ class SunPKCS11Creator {
   private SunPKCS11Creator() {}
   
   public static AuthProvider create(String configString) {
-    if (isJavaGreaterOrEquals9())
-      return createProviderJavaGreaterOrEquals9(configString);
+    Method configureMethod;
+    if ((configureMethod = isJavaGreaterOrEquals9()) != null)
+      return createProviderJavaGreaterOrEquals9(configureMethod, configString);
     return createProviderJavaLowerThan9(configString);
   }
   
-  private static boolean isJavaGreaterOrEquals9() {
+  private static Method isJavaGreaterOrEquals9() {
     try {
-      Method configureMethod = SUN_PKCS11_PROVIDER_CLASS.getMethod("configure", String.class);
-      return configureMethod != null;
+      return SUN_PKCS11_PROVIDER_CLASS.getMethod("configure", String.class);
     } catch (NoSuchMethodException e) {
+      return null;
     }
-    return false;
   }
 
-  private static AuthProvider createProviderJavaGreaterOrEquals9(String configString) {
+  private static AuthProvider createProviderJavaGreaterOrEquals9(Method configureMethod, String configString) {
     try {
       Provider provider = Security.getProvider(SUN_PKCS11_PROVIDERNAME);
-      Method configureMethod = SUN_PKCS11_PROVIDER_CLASS.getMethod("configure", String.class);
       // "--" is permitted in the constructor sun.security.pkcs11.Config
       return (AuthProvider)configureMethod.invoke(provider, "--" + configString);
     } catch (Exception e) {
