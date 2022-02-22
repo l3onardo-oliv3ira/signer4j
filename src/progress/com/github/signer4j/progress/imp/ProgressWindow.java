@@ -193,18 +193,22 @@ class ProgressWindow extends SimpleFrame implements ICanceller {
   }
   
   final synchronized void cancel() {
-    cancels.entrySet().stream()
-      .peek(k -> {
-        //currentThread será a DispatchThread que não deveria ser interrompida!
-        Thread key = k.getKey();
-        if (key != Thread.currentThread()) { 
-          key.interrupt();
-        }
-      })
-      .map(k -> k.getValue())
-      .flatMap(Collection::stream)
-      .forEach(r -> tryRun(r::run));
-    cancels.clear();
+    Runnable cancelCode = () -> {
+      cancels.entrySet().stream()
+        .peek(k -> {
+          //currentThread poderá ser a DispatchThread que não deveria ser interrompida!
+          Thread key = k.getKey();
+          if (key != Thread.currentThread()) { 
+            key.interrupt();
+          }
+        })
+        .map(k -> k.getValue())
+        .flatMap(Collection::stream)
+        //falhas na execução de códigos de cancelamentos (r::run) não podem influenciar na execução dos demais códigos da iteração
+        .forEach(r -> tryRun(r::run)); 
+      cancels.clear();
+    };
+    invokeLater(cancelCode);
   }
   
   @Override

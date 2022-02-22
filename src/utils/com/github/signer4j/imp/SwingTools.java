@@ -17,23 +17,29 @@ public class SwingTools {
   
   private SwingTools() {}
   
-  public static void invokeLater(Runnable r) {
-    SwingUtilities.invokeLater(r);
-  }
-  
   public static boolean isTrue(Supplier<Boolean> supplier){
     return invokeAndWait(supplier).orElse(Boolean.FALSE);
   }
   
-  public static boolean invokeAndWait(Runnable r) {
-    return invokeAndWait(r, false);
+  public static boolean invokeAndWait(Runnable code) {
+    return invokeAndWait(code, false);
   }
 
-  public static boolean invokeAndWait(Runnable r, boolean defaultIfFail) {
+  public static boolean invokeAndWait(Runnable code, boolean defaultIfFail) {
+    Args.requireNonNull(code, "code is null");    
     Procedure<Boolean, ?> p = SwingUtilities.isEventDispatchThread() ? 
-        () -> { r.run(); return true; } : 
-        () -> { SwingUtilities.invokeAndWait(r); return true;};
+      () -> { code.run(); return true; } : 
+      () -> { SwingUtilities.invokeAndWait(code); return true;};
     return tryCall(p, defaultIfFail);
+  }
+
+  public static void invokeLater(Runnable code) {
+    Args.requireNonNull(code, "code is null");
+    if (SwingUtilities.isEventDispatchThread()) {
+      code.run();
+    } else {
+      SwingUtilities.invokeLater(code);
+    }
   }
 
   public static <T> Optional<T> invokeAndWait(Supplier<T> supplier){

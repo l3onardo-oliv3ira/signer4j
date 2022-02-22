@@ -57,8 +57,8 @@ class ForWindowsStrategy extends PreloadedStrategy {
     load("C:/Program Files/Assistente Desktop birdID/resources/extraResources/windows/x64/vault-pkcs11.dll");
     load("C:/Program Files/Oberthur Technologies/AuthentIC Webpack/DLLs/OCSCryptoki.dll");
     load("C:/Program Files/CSP Banrisul Multiplo/PKCS11.dll");
-    load("C:/Windows/SysWOW64/aetpkss1.dll"); //certsign
-    load("C:/Windows/SysWOW64/opensc-pkcs11.dll");
+    load(winRoot.concat("/SysWOW64/aetpkss1.dll")); //certsign
+    load(winRoot.concat("/SysWOW64/opensc-pkcs11.dll"));
     load(winRoot.concat("/SysWOW64/WDICP_P11_CCID_v34.dll"));
   }
 }
