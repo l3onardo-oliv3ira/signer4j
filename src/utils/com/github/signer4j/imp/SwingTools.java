@@ -43,6 +43,7 @@ public class SwingTools {
   }
 
   public static <T> Optional<T> invokeAndWait(Supplier<T> supplier){
+    Args.requireNonNull(supplier, "supplier is null");
     Procedure<Optional<T>, ?> p = SwingUtilities.isEventDispatchThread() ? 
       () -> ofNullable(supplier.get()) : 
       () -> {
