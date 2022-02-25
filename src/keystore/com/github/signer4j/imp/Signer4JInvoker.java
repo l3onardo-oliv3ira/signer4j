@@ -76,12 +76,13 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
        * automaticamente por DISPOSE_ACTION e um novo login providenciará uma nova
        * instância não corrompida de SunPKCS11, mantendo a estabilidade do sistema.
        * */
-      if ("Token has been removed".equalsIgnoreCase(message) || message.contains("exception obtaining signature"))
+      if ("Token has been removed".equalsIgnoreCase(message) || message.contains("exception obtaining signature") || message.contains("Acesso Negado"))
         throw new NoTokenPresentException(e);
       if ("A operação foi cancelada pelo usuário.".equals(message))
         throw new LoginCanceledException(e);
       if ("O cartão não pode ser acessado porque foi atingido o número máximo de tentativas para digitar o PIN.".equals(message))
         throw new TokenLockedException(message, e);
+
       if ("keystore password was incorrect".equalsIgnoreCase(message) || 
           Throwables.hasCause(e, FailedLoginException.class) ||
           Throwables.hasCause(e, UnrecoverableKeyException.class) ||

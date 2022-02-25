@@ -9,7 +9,7 @@ public class NoTokenPresentException extends Signer4JException {
   }
   
   public NoTokenPresentException(Throwable cause) {
-    super("No token present.");
+    super("No token present.", cause);
   }
 
   public NoTokenPresentException(String message, Throwable cause) {
