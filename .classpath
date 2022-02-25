@@ -7,7 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src/main/test"/>
-	<classpathentry kind="src" path="src/progress"/>
 	<classpathentry kind="src" path="src/certificate"/>
 	<classpathentry kind="src" path="src/keystore"/>
 	<classpathentry kind="src" path="src/strategy"/>
@@ -25,13 +24,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="test" value="true"/>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/utils4j"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/progress4j"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
