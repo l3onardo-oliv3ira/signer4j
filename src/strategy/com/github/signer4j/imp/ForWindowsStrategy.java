@@ -1,5 +1,7 @@
 package com.github.signer4j.imp;
 
+import com.github.utils4j.imp.Jvms;
+
 class ForWindowsStrategy extends PreloadedStrategy {
 
   public ForWindowsStrategy() {

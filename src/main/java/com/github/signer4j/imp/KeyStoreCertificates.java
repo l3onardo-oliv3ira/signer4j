@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Args.requireNonNull;
 
 import java.security.cert.CertificateException;
 import java.util.Enumeration;

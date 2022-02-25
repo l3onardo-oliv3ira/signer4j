@@ -4,6 +4,7 @@ import java.security.KeyStore;
 
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
+import com.github.utils4j.imp.ProviderInstaller;
 
 class PKCS11KeyStore extends AbstractKeyStore {
   

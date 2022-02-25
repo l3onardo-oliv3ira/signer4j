@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Args.requireNonNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IDriverLookupStrategy;
 import com.github.signer4j.IDriverVisitor;
+import com.github.utils4j.imp.Strings;
 
 class FileStrategy extends AbstractStrategy implements IDriverLookupStrategy {
 

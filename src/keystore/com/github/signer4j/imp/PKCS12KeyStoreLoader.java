@@ -1,9 +1,9 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
 import static com.github.signer4j.imp.PKCS12KeyStoreLoaderParams.CERTIFICATE_PATH_PARAM;
 import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
-import static com.github.signer4j.imp.Strings.space;
+import static com.github.utils4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Strings.space;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,10 +16,10 @@ import java.util.function.Supplier;
 import javax.security.auth.callback.PasswordCallback;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IParams;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.Pkcs12FileNotFoundException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.IParams;
 
 class PKCS12KeyStoreLoader implements IKeyStoreLoader {
   

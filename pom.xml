@@ -39,30 +39,6 @@
 	</dependency>
 	
 	<dependency>
-      <groupId>io.reactivex.rxjava2</groupId>
-      <artifactId>rxjava</artifactId>
-      <version>2.2.20</version>
-	</dependency>
-	
-	<dependency>
-   	  <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>2.12.1</version>
-    </dependency>
-    
-	<dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.12.1</version>
-	</dependency>
-	
-	<dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>2.12.1</version>
-	</dependency>
-	
-	<dependency>
     	<groupId>net.java.dev.jna</groupId>
     	<artifactId>jna</artifactId>
     	<version>5.6.0</version>
@@ -81,10 +57,22 @@
 	</dependency>
 	
 	<dependency>
-	  <groupId>org.apache.httpcomponents.client5</groupId>
-	  <artifactId>httpclient5-fluent</artifactId>
-	  <version>5.1</version>
-	</dependency>	
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.12.1</version>
+	</dependency>
+	
+	<dependency>
+   	  <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.12.1</version>
+    </dependency>
+
+	<dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>2.12.1</version>
+	</dependency>
 	
   </dependencies>
 

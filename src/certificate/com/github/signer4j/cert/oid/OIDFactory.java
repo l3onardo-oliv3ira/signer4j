@@ -13,7 +13,7 @@ import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DLSequence;
 
-import com.github.signer4j.imp.Constants;
+import com.github.utils4j.IConstants;
 
 import sun.security.util.DerValue;
 import sun.security.x509.OtherName;
@@ -384,7 +384,7 @@ class OIDFactory {
     if (content instanceof ASN1String)
       return ((ASN1String)content).getString();
     if (content instanceof ASN1OctetString)
-      return new String(((ASN1OctetString)content).getOctets(), Constants.ISO_8859_1);
+      return new String(((ASN1OctetString)content).getOctets(), IConstants.ISO_8859_1);
     throw new RuntimeException("Unabled to read content from ASN1TaggedObject tag");
   }
 

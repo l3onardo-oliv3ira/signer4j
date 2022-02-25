@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.github.signer4j.IConfig;
+import com.github.utils4j.imp.Args;
 
 public class SignerConfig implements IConfig {
   

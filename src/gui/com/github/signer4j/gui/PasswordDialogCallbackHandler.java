@@ -1,8 +1,8 @@
 package com.github.signer4j.gui;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.GuiTools.mouseTracker;
-import static com.github.signer4j.imp.Strings.trim;
+import static com.github.utils4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.GuiTools.mouseTracker;
+import static com.github.utils4j.imp.Strings.trim;
 import static java.lang.String.format;
 
 import java.awt.event.ComponentAdapter;
@@ -19,8 +19,8 @@ import com.github.signer4j.IGadget;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IPasswordCollector;
 import com.github.signer4j.imp.Config;
-import com.github.signer4j.imp.GuiTools;
 import com.github.signer4j.imp.ResponseCallback;
+import com.github.utils4j.imp.GuiTools;
 
 public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
 

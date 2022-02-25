@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 import javax.swing.ImageIcon;
 
+import com.github.utils4j.imp.IPicture;
+
 public enum Images implements IPicture {
   
   ICON_A1("/a1.png"),

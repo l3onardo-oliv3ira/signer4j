@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Args.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 import com.github.signer4j.ICMSSignerBuilder;
@@ -19,6 +19,7 @@ import com.github.signer4j.cert.imp.CertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.NotAuthenticatedException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Strings;
 
 abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements IToken {
   

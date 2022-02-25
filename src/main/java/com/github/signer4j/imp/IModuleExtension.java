@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import com.github.signer4j.IExtensionProvider;
+import com.github.utils4j.IExtensionProvider;
 
 interface IModuleExtension extends IExtensionProvider {
   default String defaultModule() {

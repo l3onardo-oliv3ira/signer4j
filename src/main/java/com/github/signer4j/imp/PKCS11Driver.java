@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Args.requireNonNull;
 
 import java.beans.Transient;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
+import com.github.utils4j.imp.Streams;
 
 import sun.security.pkcs11.wrapper.CK_C_INITIALIZE_ARGS;
 import sun.security.pkcs11.wrapper.PKCS11;

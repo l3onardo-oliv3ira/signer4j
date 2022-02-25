@@ -8,7 +8,7 @@ import com.github.signer4j.cert.ICertificatePJ;
 import com.github.signer4j.cert.ISubjectAlternativeNames;
 import com.github.signer4j.cert.oid.OIDReader;
 import com.github.signer4j.cert.oid.OID_1_3_6_1_4_1_311_20_2_3;
-import com.github.signer4j.imp.Strings;
+import com.github.utils4j.imp.Strings;
 
 class SubjectAlternativeNames implements ISubjectAlternativeNames {
 

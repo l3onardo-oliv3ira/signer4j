@@ -1,7 +1,7 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.Containers.toUnmodifiableList;
+import static com.github.utils4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Containers.toUnmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -15,6 +15,8 @@ import java.util.function.Predicate;
 
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IDeviceManager;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Containers;
 
 abstract class AbstractDeviceManager extends LoadCycle implements IDeviceManager {
 

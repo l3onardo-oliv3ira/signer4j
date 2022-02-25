@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Throwables.tryCall;
+import static com.github.utils4j.imp.Throwables.tryCall;
 import static com.sun.jna.platform.win32.Kernel32Util.formatMessage;
 
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IWindowLockDettector;
 import com.github.signer4j.IWorkstationLockListener;
+import com.github.utils4j.imp.Throwables;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;

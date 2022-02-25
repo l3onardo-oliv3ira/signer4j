@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.SwingTools.isTrue;
+import static com.github.utils4j.imp.SwingTools.isTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -20,6 +20,8 @@ import com.github.signer4j.gui.utils.InvalidPinAlert;
 import com.github.signer4j.imp.exception.InvalidPinException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Containers;
+import com.github.utils4j.imp.Streams;
 
 class PKCS12Driver extends AbstractDriver {
 

@@ -11,6 +11,7 @@ import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
 import com.github.signer4j.exception.DriverSessionException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Params;
 
 import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 import sun.security.pkcs11.wrapper.PKCS11;

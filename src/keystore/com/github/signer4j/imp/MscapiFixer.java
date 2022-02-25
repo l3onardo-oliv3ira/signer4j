@@ -7,6 +7,8 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Containers;
+import com.github.utils4j.imp.Jvms;
 
 enum MscapiFixer implements IKeyStoreBugFixer {
   /**

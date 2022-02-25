@@ -32,13 +32,13 @@ import javax.swing.table.TableCellRenderer;
 import com.github.signer4j.AllowedExtensions;
 import com.github.signer4j.ICertificateListUI.IA1A3ConfigSaved;
 import com.github.signer4j.IFilePath;
-import com.github.signer4j.gui.utils.ButtonRenderer;
-import com.github.signer4j.gui.utils.DefaultFileChooser;
 import com.github.signer4j.gui.utils.Images;
-import com.github.signer4j.gui.utils.SimpleDialog;
-import com.github.signer4j.imp.Args;
 import com.github.signer4j.imp.Config;
 import com.github.signer4j.imp.FilePath;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.ButtonRenderer;
+import com.github.utils4j.imp.DefaultFileChooser;
+import com.github.utils4j.imp.SimpleDialog;
 
 class CertificateInstaller extends SimpleDialog {
 
@@ -61,7 +61,7 @@ class CertificateInstaller extends SimpleDialog {
   }
 
   CertificateInstaller(IA1A3ConfigSaved onSaved) {
-    super("Configuração de certificado", true);
+    super("Configuração de certificado", Config.getIcon(), true);
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
     Config.loadA3Paths(listA3::add);
     Config.loadA1Paths(listA1::add);

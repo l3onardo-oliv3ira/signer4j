@@ -2,6 +2,7 @@ package com.github.signer4j.imp;
 
 import com.github.signer4j.IDriverLookupStrategy;
 import com.github.signer4j.IWindowLockDettector;
+import com.github.utils4j.imp.Jvms;
 
 enum SystemSupport implements IModuleExtension {
   WINDOWS(".dll") {

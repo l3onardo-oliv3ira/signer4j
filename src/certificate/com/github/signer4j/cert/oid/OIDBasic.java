@@ -1,7 +1,7 @@
 package com.github.signer4j.cert.oid;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
-import static com.github.signer4j.imp.Args.requireText;
+import static com.github.utils4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Args.requireText;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
 

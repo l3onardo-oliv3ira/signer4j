@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
-import com.github.signer4j.imp.Args;
-import com.github.signer4j.imp.Constants;
-import com.github.signer4j.imp.OpenByteArrayOutputStream;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.IConstants;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.OpenByteArrayOutputStream;
 
 public interface IByteProcessor {
   
@@ -27,7 +27,7 @@ public interface IByteProcessor {
   }
   
   default ISignedData process(String content) throws Signer4JException {
-    return process(content, Constants.DEFAULT_CHARSET);
+    return process(content, IConstants.DEFAULT_CHARSET);
   }
   
   default ISignedData process(String content, Charset charset) throws Signer4JException {
@@ -41,7 +41,7 @@ public interface IByteProcessor {
   }
 
   default byte[] processRaw(String content) throws Signer4JException {
-    return processRaw(content, Constants.DEFAULT_CHARSET);
+    return processRaw(content, IConstants.DEFAULT_CHARSET);
   }
   
   default byte[] processRaw(String content, Charset charset) throws Signer4JException {
@@ -53,7 +53,7 @@ public interface IByteProcessor {
   }
 
   default String process64(String content) throws Signer4JException {
-    return process64(content, Constants.DEFAULT_CHARSET);
+    return process64(content, IConstants.DEFAULT_CHARSET);
   }
   
   default String process64(String content, Charset charset) throws Signer4JException {

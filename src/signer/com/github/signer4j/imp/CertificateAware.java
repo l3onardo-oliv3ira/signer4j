@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Base64.base64Encode;
+import static com.github.utils4j.imp.Base64.base64Encode;
 
 import java.security.cert.CertificateException;
 import java.util.Arrays;

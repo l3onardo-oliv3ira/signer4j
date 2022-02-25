@@ -7,6 +7,7 @@ import org.bouncycastle.cms.CMSSignedDataStreamGenerator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IHashAlgorithm;
+import com.github.utils4j.imp.ProviderInstaller;
 
 public enum HashAlgorithm implements IHashAlgorithm {
   ASN1MD5("nullMD5"),

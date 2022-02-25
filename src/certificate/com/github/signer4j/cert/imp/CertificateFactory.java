@@ -6,7 +6,7 @@ import java.security.cert.X509Certificate;
 
 import com.github.signer4j.ICertificate;
 import com.github.signer4j.cert.ICertificateFactory;
-import com.github.signer4j.imp.Args;
+import com.github.utils4j.imp.Args;
 
 public enum CertificateFactory implements ICertificateFactory {
   DEFAULT;

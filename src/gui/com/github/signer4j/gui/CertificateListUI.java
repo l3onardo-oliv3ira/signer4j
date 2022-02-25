@@ -31,9 +31,9 @@ import javax.swing.table.TableCellRenderer;
 import com.github.signer4j.ICertificateListUI;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
-import com.github.signer4j.gui.utils.SimpleDialog;
-import com.github.signer4j.imp.Args;
 import com.github.signer4j.imp.Config;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.SimpleDialog;
 
 public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
@@ -61,7 +61,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   private IChoice choice = UNDEFINED_CHOICE;
 
   private CertificateListUI(String defaultAlias, IA1A3ConfigSaved onSaved) {
-    super("Seleção de certificado", true);
+    super("Seleção de certificado", Config.getIcon(), true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

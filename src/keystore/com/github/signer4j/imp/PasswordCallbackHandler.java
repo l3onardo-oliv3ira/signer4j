@@ -5,6 +5,8 @@ import java.util.Scanner;
 import javax.security.auth.callback.PasswordCallback;
 
 import com.github.signer4j.IPasswordCallbackHandler;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Strings;
 
 public enum PasswordCallbackHandler implements IPasswordCallbackHandler {
   NULL() {

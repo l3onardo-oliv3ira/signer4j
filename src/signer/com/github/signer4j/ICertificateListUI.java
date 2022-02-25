@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.github.signer4j.imp.function.BiProcedure;
+import com.github.utils4j.imp.function.BiProcedure;
 
 public interface ICertificateListUI {
   

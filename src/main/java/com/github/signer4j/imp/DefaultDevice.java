@@ -3,6 +3,8 @@ package com.github.signer4j.imp;
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.ISlot;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Strings;
 
 class DefaultDevice implements IDevice {
 

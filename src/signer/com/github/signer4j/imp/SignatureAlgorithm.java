@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
+import com.github.utils4j.imp.ProviderInstaller;
 
 public enum SignatureAlgorithm implements ISignatureAlgorithm {
   ASN1MD5withRSA("ASN1MD5withRSA", HashAlgorithm.ASN1MD5),

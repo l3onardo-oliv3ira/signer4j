@@ -8,6 +8,7 @@ import com.github.signer4j.TokenType;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Params;
 
 class PKCS12Token extends AbstractToken<PKCS12Slot>{
 

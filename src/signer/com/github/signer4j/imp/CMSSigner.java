@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Args.requireNonNull;
+import static com.github.utils4j.imp.Args.requireNonNull;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -28,6 +28,8 @@ import com.github.signer4j.ISignatureAlgorithm;
 import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.ProviderInstaller;
 
 class CMSSigner extends SecurityObject implements ICMSSigner {
   

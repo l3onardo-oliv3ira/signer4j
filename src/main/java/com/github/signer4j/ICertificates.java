@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.github.utils4j.IStreamProvider;
+
 public interface ICertificates extends Iterable<ICertificate>, IStreamProvider<ICertificate> {
   IToken getToken();
 
