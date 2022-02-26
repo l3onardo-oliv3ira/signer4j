@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
 import static com.github.utils4j.imp.Args.requireNonNull;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -98,7 +98,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   private final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
-    return INVOKER.invoke(tryBlock, (e) -> this.dispose.run());  //automaticaly logout if exception occurr!
+    return SIGNER4J.invoke(tryBlock, (e) -> this.dispose.run());  //automaticaly logout if exception occurr!
   }
   
   @Override

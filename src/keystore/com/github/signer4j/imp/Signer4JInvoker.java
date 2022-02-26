@@ -26,7 +26,7 @@ import com.github.utils4j.imp.function.Supplier;
 
 public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   
-  public static final Signer4JInvoker INVOKER = new Signer4JInvoker();
+  public static final Signer4JInvoker SIGNER4J = new Signer4JInvoker();
   
   private Signer4JInvoker() {}
   
@@ -70,22 +70,26 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       /**
        * O provider SunPKCS11 do JAVA tem um bug em PKCS11 que lança NullPointerException e corrompe a instância 
        * quando se remove o token após exibir a tela para digitação da senha (antes de informá-la).
-       * Embora uma ação atípica e não recomendada (remover o token enquanto estiver em uso), o mala
+       * Embora uma ação atípica e não recomendada (remover enquanto o driver aguarda a informação da senha), o mala
        * do usuário sempre poderá fazer isso, portanto, infelizmente um NullPointerException 
        * esta sendo interpretado como um NoTokenPresent. O provider será reciclado 
        * automaticamente por DISPOSE_ACTION e um novo login providenciará uma nova
        * instância não corrompida de SunPKCS11, mantendo a estabilidade do sistema.
        * */
-      if ("Token has been removed".equalsIgnoreCase(message) || message.contains("exception obtaining signature") || message.contains("Acesso Negado"))
+      if ("Token has been removed".equalsIgnoreCase(message) || 
+          message.contains("exception obtaining signature")  || 
+          message.contains("Acesso Negado"))
         throw new NoTokenPresentException(e);
+      
       if ("A operação foi cancelada pelo usuário.".equals(message))
         throw new LoginCanceledException(e);
+      
       if ("O cartão não pode ser acessado porque foi atingido o número máximo de tentativas para digitar o PIN.".equals(message))
         throw new TokenLockedException(message, e);
-
+      
       if ("keystore password was incorrect".equalsIgnoreCase(message) || 
-          Throwables.hasCause(e, FailedLoginException.class) ||
-          Throwables.hasCause(e, UnrecoverableKeyException.class) ||
+          Throwables.hasCause(e, FailedLoginException.class)          ||
+          Throwables.hasCause(e, UnrecoverableKeyException.class)     ||
           Throwables.hasCause(e, BadPaddingException.class))
         throw new InvalidPinException(e); 
       throw new ModuleException(e);

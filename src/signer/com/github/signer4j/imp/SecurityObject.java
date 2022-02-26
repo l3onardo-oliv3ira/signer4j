@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
 import static com.github.utils4j.imp.Args.requireNonNull;
 
 import com.github.signer4j.ICertificateChooser;
@@ -19,7 +19,7 @@ public abstract class SecurityObject {
   }
   
   protected final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
-    return INVOKER.invoke(tryBlock, (e) -> dispose.run());
+    return SIGNER4J.invoke(tryBlock, (e) -> dispose.run());
   }
   
   protected final IChoice choose() throws Signer4JException {

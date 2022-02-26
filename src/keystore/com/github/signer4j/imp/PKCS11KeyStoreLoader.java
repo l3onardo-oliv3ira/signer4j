@@ -2,7 +2,7 @@ package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
-import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
 import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.Args.requireText;
 import static com.github.utils4j.imp.Args.requireZeroPositive;
@@ -79,7 +79,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   
   private IKeyStore getKeyStore(String providerName, String configString) throws Signer4JException {
     final AuthProvider provider = (AuthProvider)SUNPKCS11.install(providerName, configString);
-    return INVOKER.invoke(
+    return SIGNER4J.invoke(
       () -> { //try
         provider.login(null, this.handler);
         KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);

@@ -1,7 +1,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.PKCS12KeyStoreLoaderParams.CERTIFICATE_PATH_PARAM;
-import static com.github.signer4j.imp.Signer4JInvoker.INVOKER;
+import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
 import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.Strings.space;
 
@@ -47,7 +47,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
   private IKeyStore getKeyStore(File input) throws Signer4JException {
     try(InputStream stream = new FileInputStream(input)) {
       final PasswordCallback callback = new PasswordCallback(space(), false);
-      return INVOKER.invoke(() -> {
+      return SIGNER4J.invoke(() -> {
         handler.handle(callback);
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(stream, callback.getPassword());
