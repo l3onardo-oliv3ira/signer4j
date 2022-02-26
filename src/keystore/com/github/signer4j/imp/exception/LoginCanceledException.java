@@ -1,6 +1,6 @@
 package com.github.signer4j.imp.exception;
 
-import com.github.signer4j.progress.IProgress;
+import com.github.progress4j.IProgress;
 
 public class LoginCanceledException extends Signer4JException {
 
