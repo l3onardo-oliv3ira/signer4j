@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.security.Signature;
 
 import com.github.signer4j.ICertificateChooser;
@@ -45,13 +43,13 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
     private final ICertificateChooser chooser;
     
     public Builder(ICertificateChooser chooser, Runnable dispose) {
-      this.chooser = requireNonNull(chooser, "chooser is null");
-      this.dispose = requireNonNull(dispose, "dispose is null");
+      this.chooser = Args.requireNonNull(chooser, "chooser is null");
+      this.dispose = Args.requireNonNull(dispose, "dispose is null");
     }
 
     @Override
     public final ISignerBuilder usingAlgorigthm(ISignatureAlgorithm algorithm) {
-      this.algorithm = requireNonNull(algorithm, "Unabled to using null algorigthm");
+      this.algorithm = Args.requireNonNull(algorithm, "Unabled to using null algorigthm");
       return this;
     }
     

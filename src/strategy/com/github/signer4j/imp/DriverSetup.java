@@ -1,12 +1,11 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
 import com.github.signer4j.IDriverSetup;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Streams;
 
 class DriverSetup implements IDriverSetup {
@@ -24,7 +23,7 @@ class DriverSetup implements IDriverSetup {
   private final Path library;
   
   private DriverSetup(Path library) throws IOException {
-    this.library = requireNonNull(library, "Unabled to create driversupport with null library");
+    this.library = Args.requireNonNull(library, "Unabled to create driversupport with null library");
     this.md5 = Streams.checkMd5Sum(library.toFile());
   }
   

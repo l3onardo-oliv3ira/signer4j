@@ -1,6 +1,5 @@
 package com.github.signer4j.cert.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 import java.io.InputStream;
@@ -30,6 +29,7 @@ import com.github.signer4j.cert.ICertificatePF;
 import com.github.signer4j.cert.ICertificatePJ;
 import com.github.signer4j.cert.IDistinguishedName;
 import com.github.signer4j.cert.ISubjectAlternativeNames;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Certificates;
 import com.github.utils4j.imp.Strings;
 
@@ -47,7 +47,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   public BrazilianCertificate(X509Certificate certificate) {
-    this.certificate = requireNonNull(certificate, "certificate is null");
+    this.certificate = Args.requireNonNull(certificate, "certificate is null");
   }
 
   @Override

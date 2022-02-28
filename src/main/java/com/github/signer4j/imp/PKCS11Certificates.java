@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
@@ -13,6 +11,7 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
+import com.github.utils4j.imp.Args;
 
 import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 import sun.security.pkcs11.wrapper.PKCS11;
@@ -28,7 +27,7 @@ class PKCS11Certificates extends AbstractCertificates {
   
   protected PKCS11Certificates(PKCS11Token token, long session, ICertificateFactory factory) throws DriverException {
     super(factory);
-    this.token = requireNonNull(token, "token is null");
+    this.token = Args.requireNonNull(token, "token is null");
     this.setup(session);
   }
   

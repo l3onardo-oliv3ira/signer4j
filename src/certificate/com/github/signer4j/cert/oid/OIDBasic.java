@@ -1,6 +1,5 @@
 package com.github.signer4j.cert.oid;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.Args.requireText;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
@@ -8,6 +7,8 @@ import static java.util.Optional.ofNullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import com.github.utils4j.imp.Args;
 
 class OIDBasic {
 
@@ -18,7 +19,7 @@ class OIDBasic {
   
   protected OIDBasic(String id, String content) {
     this.id = requireText(id, "Unabled to create OID with empty id");
-    this.content = requireNonNull(content, "Unabled to create OID with null data");
+    this.content = Args.requireNonNull(content, "Unabled to create OID with null data");
   }
 
   public final String getOid() {

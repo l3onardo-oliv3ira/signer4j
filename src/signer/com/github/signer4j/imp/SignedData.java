@@ -1,7 +1,6 @@
 package com.github.signer4j.imp;
 
 import static com.github.utils4j.imp.Args.requireNonEmpty;
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.Base64.base64Encode;
 
 import java.io.IOException;
@@ -14,6 +13,7 @@ import java.util.List;
 import com.github.signer4j.IPersonalData;
 import com.github.signer4j.ISignedData;
 import com.github.utils4j.IConstants;
+import com.github.utils4j.imp.Args;
 
 public class SignedData extends CertificateAware implements ISignedData {
 
@@ -36,7 +36,7 @@ public class SignedData extends CertificateAware implements ISignedData {
   
   private SignedData(byte[] signedBytes, IPersonalData personalData) {
     this.signedData = requireNonEmpty(signedBytes, "empty signed bytes");
-    this.personalData = requireNonNull(personalData, "personalData is null");
+    this.personalData = Args.requireNonNull(personalData, "personalData is null");
   }
   
   @Override

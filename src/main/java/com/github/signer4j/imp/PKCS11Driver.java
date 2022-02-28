@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.beans.Transient;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -11,6 +9,7 @@ import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Streams;
 
 import sun.security.pkcs11.wrapper.CK_C_INITIALIZE_ARGS;
@@ -25,7 +24,7 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
   private final String library;
   
   PKCS11Driver(Path library) {
-    this.library = requireNonNull(library, "null library")
+    this.library = Args.requireNonNull(library, "null library")
       .toFile()
       .getAbsolutePath()
       .replace('\\', '/');

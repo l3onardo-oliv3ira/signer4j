@@ -35,7 +35,7 @@ public class SignerConfig implements IConfig {
   @Override
   public File getConfigFile() throws IOException {
     if (!config.exists() && !config.createNewFile()) {
-      throw new IOException("Não foi possível criar o arquivo de configuração em: " + config.getAbsolutePath());
+      throw new IOException("Não foi possível criar o arquivo de configuração em: " + config.getCanonicalPath());
     }
     return config;
   }

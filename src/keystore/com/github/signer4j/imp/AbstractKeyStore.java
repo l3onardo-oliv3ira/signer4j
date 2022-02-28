@@ -1,7 +1,6 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.ofNullable;
@@ -17,6 +16,7 @@ import java.util.Optional;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.function.Supplier;
 
 abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
@@ -38,8 +38,8 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   }
   
   protected AbstractKeyStore(KeyStore keystore, Runnable dispose, IDevice device) throws PrivateKeyNotFound  {
-    this.keyStore = requireNonNull(keystore, "null keystore is not supported");
-    this.dispose = requireNonNull(dispose, "dispose is null");
+    this.keyStore = Args.requireNonNull(keystore, "null keystore is not supported");
+    this.dispose = Args.requireNonNull(dispose, "dispose is null");
     this.device = Optional.ofNullable(device);
     this.setup();
   }

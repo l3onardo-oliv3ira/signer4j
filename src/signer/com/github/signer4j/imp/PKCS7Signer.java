@@ -1,6 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static org.bouncycastle.util.Arrays.copyOfRange;
 
 import java.security.MessageDigest;
@@ -142,8 +141,8 @@ class PKCS7Signer extends SecurityObject implements IPKCS7Signer {
     private final ICertificateChooser chooser;
 
     public Builder(ICertificateChooser chooser, Runnable dispose) {
-      this.chooser = requireNonNull(chooser, "chooser is null");
-      this.dispose = requireNonNull(dispose, "dispose is null");
+      this.chooser = Args.requireNonNull(chooser, "chooser is null");
+      this.dispose = Args.requireNonNull(dispose, "dispose is null");
     }
 
     @Override

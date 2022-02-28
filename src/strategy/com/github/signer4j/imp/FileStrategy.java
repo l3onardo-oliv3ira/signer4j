@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IDriverLookupStrategy;
 import com.github.signer4j.IDriverVisitor;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Strings;
 
 class FileStrategy extends AbstractStrategy implements IDriverLookupStrategy {
@@ -22,7 +21,7 @@ class FileStrategy extends AbstractStrategy implements IDriverLookupStrategy {
   private final File file;
 
   public FileStrategy(File file) {
-    this.file = requireNonNull(file, "file can't be null");
+    this.file = Args.requireNonNull(file, "file can't be null");
   }
 
   @Override

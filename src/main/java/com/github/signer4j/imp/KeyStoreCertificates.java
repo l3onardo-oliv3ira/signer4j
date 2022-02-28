@@ -9,6 +9,7 @@ import com.github.signer4j.ICertificate;
 import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificateFactory;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Args;
 
 class KeyStoreCertificates extends AbstractCertificates {
 
@@ -16,7 +17,7 @@ class KeyStoreCertificates extends AbstractCertificates {
   
   KeyStoreCertificates(IToken token, IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
     super(factory);
-    this.token = requireNonNull(token, "token is null");
+    this.token = Args.requireNonNull(token, "token is null");
     this.setup(keyStore, factory);
   }
   

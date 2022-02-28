@@ -1,6 +1,5 @@
 package com.github.signer4j.gui;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static com.github.utils4j.imp.GuiTools.mouseTracker;
 import static com.github.utils4j.imp.Strings.trim;
 import static java.lang.String.format;
@@ -20,6 +19,7 @@ import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IPasswordCollector;
 import com.github.signer4j.imp.Config;
 import com.github.signer4j.imp.ResponseCallback;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.GuiTools;
 
 public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
@@ -42,8 +42,8 @@ public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
 
   public PasswordDialogCallbackHandler(IGadget gadget, String title, IPasswordCollector collector) {
     this.title = trim(title, DEFAULT_PIN_TITLE);
-    this.gadget = requireNonNull(gadget, "token is null");
-    this.collector = requireNonNull(collector, "collector is null");
+    this.gadget = Args.requireNonNull(gadget, "token is null");
+    this.collector = Args.requireNonNull(collector, "collector is null");
   }
 
   @Override

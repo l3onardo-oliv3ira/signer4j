@@ -1,12 +1,11 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import com.github.signer4j.IDevice;
 import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Objects;
 
 import sun.security.pkcs11.wrapper.CK_SLOT_INFO;
@@ -33,7 +32,7 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
   
   PKCS11Slot(PKCS11Driver driver, long number) throws DriverException {
     super(number);
-    this.driver = requireNonNull(driver, "Unabled to create slot with null driver instance");
+    this.driver = Args.requireNonNull(driver, "Unabled to create slot with null driver instance");
     this.setup();
   }
   

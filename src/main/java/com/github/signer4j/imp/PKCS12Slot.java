@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -11,6 +9,7 @@ import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.IToken;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.DriverFailException;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Streams;
 
 class PKCS12Slot extends VirtualSlot implements ILibraryAware {
@@ -21,7 +20,7 @@ class PKCS12Slot extends VirtualSlot implements ILibraryAware {
   
   PKCS12Slot(Path certPath) throws DriverException {
     super(-1, "Pkcs12");
-    this.certPath = requireNonNull(certPath, "cert path can't be null");
+    this.certPath = Args.requireNonNull(certPath, "cert path can't be null");
     this.setup();
   }
   

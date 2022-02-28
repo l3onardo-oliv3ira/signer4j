@@ -18,6 +18,7 @@ import com.github.signer4j.IDevice;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.IParams;
+import com.github.utils4j.imp.Args;
 
 class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   
@@ -38,8 +39,8 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   }
   
   PKCS11KeyStoreLoader(IPasswordCallbackHandler handler, Runnable dispose, IDevice device) {
-    this.handler = requireNonNull(handler, "Unabled to create loader with null handler");
-    this.dispose = requireNonNull(dispose, "dispose is null");
+    this.handler = Args.requireNonNull(handler, "Unabled to create loader with null handler");
+    this.dispose = Args.requireNonNull(dispose, "dispose is null");
     this.device = device;
   }
   
@@ -80,13 +81,13 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   private IKeyStore getKeyStore(String providerName, String configString) throws Signer4JException {
     final AuthProvider provider = (AuthProvider)SUNPKCS11.install(providerName, configString);
     return SIGNER4J.invoke(
-      () -> { //try
+      () -> {
         provider.login(null, this.handler);
         KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
         keyStore.load(null, null);
         return new PKCS11KeyStore(keyStore, dispose, device);
       }, 
-      (exception) -> { //catch
+      (exception) -> {
         try {
           handleException(exception);
         }finally {

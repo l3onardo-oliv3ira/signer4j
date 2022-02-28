@@ -19,6 +19,7 @@ import com.github.signer4j.cert.imp.CertificateFactory;
 import com.github.signer4j.exception.DriverException;
 import com.github.signer4j.exception.NotAuthenticatedException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Strings;
 
 abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements IToken {
@@ -43,8 +44,8 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   protected transient IPasswordCallbackHandler passwordCallback;
 
   protected AbstractToken(S slot, TokenType type) {
-    this.slot = requireNonNull(slot, "slot is null");
-    this.type = requireNonNull(type, "type is null");
+    this.slot = Args.requireNonNull(slot, "slot is null");
+    this.type = Args.requireNonNull(type, "type is null");
   }
   
   protected final Runnable getDispose() {
@@ -198,7 +199,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
     private IPasswordCallbackHandler passwordCallback = PasswordCallbackHandler.CONSOLE;
     
     Builder(S slot) {
-      this.slot = requireNonNull(slot, "Unabled to create token with null slot");
+      this.slot = Args.requireNonNull(slot, "Unabled to create token with null slot");
     }  
     
     public final Builder<S, T> withLabel(String label) {

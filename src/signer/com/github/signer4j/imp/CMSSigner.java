@@ -1,7 +1,5 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -154,8 +152,8 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     private final Runnable dispose;
     
     public Builder(ICertificateChooser chooser, Runnable dispose) {
-      this.chooser = requireNonNull(chooser, "chooser is null");
-      this.dispose = requireNonNull(dispose, "dispose is null");
+      this.chooser = Args.requireNonNull(chooser, "chooser is null");
+      this.dispose = Args.requireNonNull(dispose, "dispose is null");
     }
     
     @Override
@@ -172,13 +170,13 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
 
     @Override
     public final ICMSSignerBuilder usingSignatureAlgorithm(ISignatureAlgorithm algorithm) { 
-      this.algorithm = requireNonNull(algorithm, "Unabled to using null algorithm");
+      this.algorithm = Args.requireNonNull(algorithm, "Unabled to using null algorithm");
       return this;
     }
     
     @Override
     public final ICMSSignerBuilder usingSignatureType(ISignatureType signatureType) {
-      this.signatureType = requireNonNull(signatureType, "signatureType is null");
+      this.signatureType = Args.requireNonNull(signatureType, "signatureType is null");
       return this;
     }
     

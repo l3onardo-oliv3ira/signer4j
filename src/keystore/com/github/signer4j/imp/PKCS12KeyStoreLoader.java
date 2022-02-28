@@ -20,6 +20,7 @@ import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.Pkcs12FileNotFoundException;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.IParams;
+import com.github.utils4j.imp.Args;
 
 class PKCS12KeyStoreLoader implements IKeyStoreLoader {
   
@@ -28,9 +29,9 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
   private final Runnable dispose;
   
   public PKCS12KeyStoreLoader(IPasswordCallbackHandler handler, IDevice device, Runnable dispose) {
-    this.handler = requireNonNull(handler, "Unabled to create loader with null handler");
-    this.device = requireNonNull(device, "device is null");
-    this.dispose = requireNonNull(dispose, "dispose is null");
+    this.handler = Args.requireNonNull(handler, "Unabled to create loader with null handler");
+    this.device = Args.requireNonNull(device, "device is null");
+    this.dispose = Args.requireNonNull(dispose, "dispose is null");
   }
   
   @Override
