@@ -1,11 +1,5 @@
 package com.github.signer4j.gui.utils;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.io.InputStream;
-
-import javax.swing.ImageIcon;
-
 import com.github.utils4j.imp.IPicture;
 
 public enum Images implements IPicture {
@@ -27,20 +21,10 @@ public enum Images implements IPicture {
   Images(String path) {
     this.path = path;
   }
-  
-  @Override
-  public InputStream asStream() {
-    return getClass().getResourceAsStream(path);
-  }
-  
-  @Override
-  public Image asImage() {
-    return Toolkit.getDefaultToolkit().createImage(getClass().getResource(path));
-  }
 
   @Override
-  public ImageIcon asIcon() {
-    return new ImageIcon(getClass().getResource(path));
+  public String path() {
+    return path;
   }
 }
 

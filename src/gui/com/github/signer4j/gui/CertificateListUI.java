@@ -143,7 +143,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     pnlNorth.add(pnlNorthEast, BorderLayout.EAST);
 
     lblCertificateList = new JLabel("Certificados Disponíveis");
-    lblCertificateList.setIcon(Images.CERTIFICATE.asIcon());
+    lblCertificateList.setIcon(Images.CERTIFICATE.asIcon().orElse(null));
     lblCertificateList.setHorizontalAlignment(SwingConstants.LEFT);
     lblCertificateList.setFont(new Font("Tahoma", Font.BOLD, 15));
     pnlNorth.add(lblCertificateList);
@@ -165,7 +165,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);
     
     lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
-    lblRefresh.setIcon(Images.REFRESH.asIcon());
+    lblRefresh.setIcon(Images.REFRESH.asIcon().orElse(null));
     lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lblRefresh.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {

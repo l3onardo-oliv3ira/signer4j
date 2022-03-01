@@ -24,7 +24,7 @@ public final class TokenUseAlert {
       MESSAGE_FORMAT,
       JOptionPane.QUESTION_MESSAGE, 
       JOptionPane.OK_OPTION, 
-      Images.CERTIFICATE.asIcon(), 
+      Images.CERTIFICATE.asIcon().orElse(null), 
       OPTIONS, 
       OPTIONS[1]
     );

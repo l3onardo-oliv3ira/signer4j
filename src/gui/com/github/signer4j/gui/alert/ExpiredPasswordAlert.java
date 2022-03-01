@@ -25,7 +25,7 @@ public final class ExpiredPasswordAlert {
       MESSAGE_FORMAT,
       JOptionPane.INFORMATION_MESSAGE, 
       JOptionPane.OK_OPTION, 
-      Images.LOCK.asIcon(), 
+      Images.LOCK.asIcon().orElse(null), 
       OPTIONS, 
       OPTIONS[0]
     );
