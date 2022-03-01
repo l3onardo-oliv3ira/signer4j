@@ -70,7 +70,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
     return getKeyStore(
       providerName,
       format(//TODO we have to go back here for aditional parameters
-        "name = %s\r\nlibrary = %s\r\nslot = %s\r\sattributes = compatibility", 
+        "name = %s\r\nlibrary = %s\r\nslot = %s\rattributes = compatibility", 
         providerName,
         libraryPath,
         slot
