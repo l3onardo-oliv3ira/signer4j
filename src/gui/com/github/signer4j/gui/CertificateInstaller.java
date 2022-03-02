@@ -35,10 +35,10 @@ import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
 import com.github.signer4j.imp.FilePath;
+import com.github.utils4j.gui.imp.ButtonRenderer;
+import com.github.utils4j.gui.imp.DefaultFileChooser;
+import com.github.utils4j.gui.imp.SimpleDialog;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.ButtonRenderer;
-import com.github.utils4j.imp.DefaultFileChooser;
-import com.github.utils4j.imp.SimpleDialog;
 
 class CertificateInstaller extends SimpleDialog {
 

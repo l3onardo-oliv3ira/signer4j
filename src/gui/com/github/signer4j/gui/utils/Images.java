@@ -1,6 +1,6 @@
 package com.github.signer4j.gui.utils;
 
-import com.github.utils4j.imp.IPicture;
+import com.github.utils4j.gui.IPicture;
 
 public enum Images implements IPicture {
   

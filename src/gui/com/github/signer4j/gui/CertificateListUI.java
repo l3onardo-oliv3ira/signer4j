@@ -32,8 +32,8 @@ import com.github.signer4j.ICertificateListUI;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
+import com.github.utils4j.gui.imp.SimpleDialog;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.SimpleDialog;
 
 public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
