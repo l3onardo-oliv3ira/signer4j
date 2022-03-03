@@ -1,6 +1,6 @@
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.SwingTools.isTrue;
+import static com.github.cutplayer4j.gui.imp.SwingTools.isTrue;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
