@@ -237,6 +237,7 @@ class CertificateInstaller extends SimpleDialog {
     layout.setRows(2);
     contentPane.add(pnlStep2);
     contentPane.revalidate();
+    contentPane.updateUI();
     boolean center = current == null;
     loadData(current = type, actual);
     setBounds(getX(), getY(), getWidth(),  510);
