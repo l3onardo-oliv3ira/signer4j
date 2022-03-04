@@ -23,7 +23,7 @@ public class EnvironmentStrategy extends AbstractStrategy {
 
   @Override
   public void lookup(IDriverVisitor visitor) {
-    Optional<Path> path = Environment.pathFrom(VAR_PKCS11_DRIVER, support.defaultModule());
+    Optional<Path> path = Environment.resolveTo(VAR_PKCS11_DRIVER, support.defaultModule(), true, true);
     if (path.isPresent()) {
       createAndVisit(path.get(), visitor);
     }

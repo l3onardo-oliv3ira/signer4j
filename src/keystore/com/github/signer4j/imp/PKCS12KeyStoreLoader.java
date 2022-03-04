@@ -53,7 +53,7 @@ class PKCS12KeyStoreLoader implements IKeyStoreLoader {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(stream, callback.getPassword());
         return new PKCS12KeyStore(keyStore, dispose, device, callback.getPassword());
-      }, () -> callback.clearPassword());
+      }, callback::clearPassword);
     } catch (FileNotFoundException e) {
       throw new Pkcs12FileNotFoundException("Arquivo não encontrado: " + input.getAbsolutePath(), e);
     } catch (IOException e) {

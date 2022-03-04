@@ -65,9 +65,7 @@ class PKCS12Driver extends AbstractDriver {
   final void uninstall() {
     passwords.clear();
     certPaths.clear();
-    if (isLoaded()) {
-      unload();
-    }
+    unload();
   }
   
   final boolean uninstall(Path... paths) {

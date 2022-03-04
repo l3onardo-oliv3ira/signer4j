@@ -11,7 +11,7 @@ public final class TokenUseAlert {
   private static final String MESSAGE_FORMAT = "Há uma solicitação de uso do seu "
       + "certificado digital!";
   
-  private static final String[] OPTIONS = {"Ok! Fui eu mesmo que solicitei", "Não reconheço esta solicitação"};
+  private static final String[] OPTIONS = {"Ok! Reconheço e autorizo o uso", "Não reconheço esta solicitação"};
   
   public static boolean display() {
     return new TokenUseAlert().show();
