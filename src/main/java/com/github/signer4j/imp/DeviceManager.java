@@ -53,7 +53,8 @@ public class DeviceManager extends AbstractDeviceManager {
 
   @Override
   protected final void load(Set<IDriver> drivers) {
-    if (autoDettect)
+    if (autoDettect) {
       strategy.lookup(setup -> drivers.add(new PKCS11Driver(setup.getLibrary())));
+    }
   }
 }
