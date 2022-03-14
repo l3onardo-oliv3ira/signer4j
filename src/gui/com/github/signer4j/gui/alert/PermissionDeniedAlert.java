@@ -1,5 +1,7 @@
 package com.github.signer4j.gui.alert;
 
+import static com.github.utils4j.gui.imp.SwingTools.invokeLater;
+
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -8,6 +10,10 @@ import com.github.signer4j.imp.Config;
 
 public final class PermissionDeniedAlert {
 
+  public static void showInfo(String message) {
+    invokeLater(() -> display(message));
+  }
+  
   public static boolean display(String message) {
     return new PermissionDeniedAlert(message).show();
   }
