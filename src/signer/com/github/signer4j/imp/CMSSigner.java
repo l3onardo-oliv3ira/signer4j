@@ -119,10 +119,11 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
       File tmp = Files.createTempFile("pje_office_tmp", ".pjeoffice").toFile();
       try {
         try(OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp), 32 * 1024)) {
-          data.toASN1Structure().encodeTo(out);
+          data.toASN1Structure().encodeTo(out, ASN1Encoding.DER);
         } finally {
           data = null; //this is very important!
           generator = null;
+          System.gc(); //sugestão de limpeza!
         }
         return SignedData.from(
           Files.readAllBytes(tmp.toPath()), 

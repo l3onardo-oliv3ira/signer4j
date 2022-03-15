@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import com.github.signer4j.imp.Config;
+import com.github.utils4j.imp.Strings;
 
 public final class MessageAlert {
 
@@ -57,7 +58,7 @@ public final class MessageAlert {
 
   private MessageAlert(String message, String[] options, int optionPane) {
     jop = new JOptionPane(
-      message,
+      Strings.trim(message),
       optionPane, 
       JOptionPane.OK_OPTION, 
       null, 
