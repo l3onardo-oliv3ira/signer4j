@@ -45,7 +45,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   private static final SignatureAlgorithm[] VALUES = SignatureAlgorithm.values(); 
   
   @JsonCreator
-  public static IAlgorithm fromString(final String key) {
+  public static SignatureAlgorithm fromString(final String key) {
     return get(key).orElse(null);
   }
 
@@ -73,7 +73,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
     return hash.getStandardName();
   }
   
-  public static ISignatureAlgorithm getDefault() {
+  public static SignatureAlgorithm getDefault() {
     return SHA1withRSA;
   }
   
@@ -81,7 +81,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
     return getOfDefault(name, getDefault());
   }
   
-  public static ISignatureAlgorithm getOfDefault(String name, ISignatureAlgorithm defaultIfNot) {
+  public static SignatureAlgorithm getOfDefault(String name, SignatureAlgorithm defaultIfNot) {
     return get(name).orElse(defaultIfNot);
   }
   
@@ -93,7 +93,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
     return algorithm != null && get(algorithm.getName()).isPresent();
   }
   
-  public static Optional<ISignatureAlgorithm> get(String name) {
+  public static Optional<SignatureAlgorithm> get(String name) {
     for(SignatureAlgorithm a: VALUES) {
       if (a.name.equalsIgnoreCase(name))
         return Optional.of(a);

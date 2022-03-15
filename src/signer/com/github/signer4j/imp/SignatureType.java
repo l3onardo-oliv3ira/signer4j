@@ -18,7 +18,7 @@ public enum SignatureType implements ISignatureType {
   }
   
   @JsonCreator
-  public static ISignatureType fromString(final String key) {
+  public static SignatureType fromString(final String key) {
     return get(key).orElse(null);
   }
 
@@ -27,15 +27,15 @@ public enum SignatureType implements ISignatureType {
     return this.name();
   }
   
-  public static ISignatureType getDefault() {
+  public static SignatureType getDefault() {
     return ATTACHED;
   }
   
-  public static ISignatureType getOrDefault(String name) {
+  public static SignatureType getOrDefault(String name) {
     return getOfDefault(name, getDefault());
   }
   
-  public static ISignatureType getOfDefault(String name, ISignatureType defaultIfNot) {
+  public static SignatureType getOfDefault(String name, SignatureType defaultIfNot) {
     return get(name).orElse(defaultIfNot);
   }
   
@@ -47,8 +47,8 @@ public enum SignatureType implements ISignatureType {
     return algorithm != null && get(algorithm.getName()).isPresent();
   }
   
-  public static Optional<ISignatureType> get(String name) {
-    for(ISignatureType a: VALUES) {
+  public static Optional<SignatureType> get(String name) {
+    for(SignatureType a: VALUES) {
       if (a.getName().equalsIgnoreCase(name))
         return Optional.of(a);
     }
