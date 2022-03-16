@@ -5,7 +5,7 @@ public class InvalidPinException extends Signer4JException {
   private static final long serialVersionUID = 1L;
   
   public InvalidPinException(Throwable cause) {
-    super("Invalid pin!");
+    super("Senha incorreta.");
   }
 
   public InvalidPinException(String message, Throwable cause) {

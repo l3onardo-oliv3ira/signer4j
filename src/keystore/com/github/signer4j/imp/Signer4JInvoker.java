@@ -1,5 +1,8 @@
 package com.github.signer4j.imp;
 
+import static com.github.utils4j.imp.Strings.trim;
+import static com.github.utils4j.imp.Throwables.hasCause;
+
 import java.security.UnrecoverableKeyException;
 import java.util.function.Consumer;
 
@@ -20,7 +23,6 @@ import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.TokenLockedException;
 import com.github.utils4j.imp.InvokeHandler;
-import com.github.utils4j.imp.Strings;
 import com.github.utils4j.imp.Throwables;
 import com.github.utils4j.imp.function.Supplier;
 
@@ -50,48 +52,49 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       catchBlock.accept(e);
       throw new InvalidPinException(e);
     } catch (LoginException e) {
-      catchBlock.accept(e);
-      final String message = Strings.trim(e.getMessage());
-      if ("No token present".equalsIgnoreCase(message) || "Token is not present".equalsIgnoreCase(message)) 
-        throw new NoTokenPresentException(e);
-      if ("Unable to perform password callback".equalsIgnoreCase(message) || 
-          Throwables.hasCause(e, CanceledOperationException.class))
+      catchBlock.accept(e);      
+
+      if (isLoginCanceled(e))
         throw new LoginCanceledException(e);
-      Throwable cause = e.getCause();
-      if (cause != null && "CKR_PIN_LOCKED".equals(cause.getMessage()))
-        throw new TokenLockedException(cause);
+      
+      if (isTokenLocked(e))
+        throw new TokenLockedException(e);
+      
+      if (isNoTokenPresent(e))
+        throw new NoTokenPresentException(e);
+      
       throw new InvalidPinException(e);
     } catch(Signer4JException e) {
       catchBlock.accept(e);
       throw e;
     } catch (Exception e) {
       catchBlock.accept(e);
-      String message = Strings.trim(e instanceof NullPointerException ? "Token has been removed" : e.getMessage());
+
+      if (isLoginCanceled(e))
+        throw new LoginCanceledException(e);
+
+      if (isTokenLocked(e))
+        throw new TokenLockedException(e);
+
       /**
-       * O provider SunPKCS11 do JAVA tem um bug em PKCS11 que lança NullPointerException e corrompe a instância 
+       * O provider SunPKCS11 do JAVA tem um bug em mscapi que lança NullPointerException e corrompe a instância 
        * quando se remove o token após exibir a tela para digitação da senha (antes de informá-la).
-       * Embora uma ação atípica e não recomendada (remover enquanto o driver aguarda a informação da senha), o mala
-       * do usuário sempre poderá fazer isso, portanto, infelizmente um NullPointerException 
+       * Embora uma ação atípica e não recomendada (remover enquanto o driver aguarda a informação da senha),  
+       * nada impede que o usuário faça isso, portanto, infelizmente um NullPointerException 
        * esta sendo interpretado como um NoTokenPresent. O provider será reciclado 
        * automaticamente por DISPOSE_ACTION e um novo login providenciará uma nova
-       * instância não corrompida de SunPKCS11, mantendo a estabilidade do sistema.
+       * instância não corrompida de SunPKCS11, mantendo a estabilidade da aplicação.
        * */
-      if ("Token has been removed".equalsIgnoreCase(message) || 
-          message.contains("exception obtaining signature")  || 
-          message.contains("Acesso Negado"))
+      
+      boolean noTokenPresent = e instanceof NullPointerException || isNoTokenPresent(e);
+
+      if (noTokenPresent)
         throw new NoTokenPresentException(e);
-      
-      if ("A operação foi cancelada pelo usuário.".equals(message))
-        throw new LoginCanceledException(e);
-      
-      if ("O cartão não pode ser acessado porque foi atingido o número máximo de tentativas para digitar o PIN.".equals(message))
-        throw new TokenLockedException(message, e);
-      
-      if ("keystore password was incorrect".equalsIgnoreCase(message) || 
-          Throwables.hasCause(e, FailedLoginException.class)          ||
-          Throwables.hasCause(e, UnrecoverableKeyException.class)     ||
-          Throwables.hasCause(e, BadPaddingException.class))
+
+
+      if (isPasswordIncorrect(e))
         throw new InvalidPinException(e); 
+      
       throw new ModuleException(e);
     } catch (OutOfMemoryError e) {
       catchBlock.accept(e);
@@ -99,5 +102,46 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
     } finally {
       finallyBlock.run();
     }
+  }
+  
+  private boolean isPasswordIncorrect(Throwable e) {
+    return Throwables.streamTrace(e)
+        .map(t -> trim(t.getMessage()).toLowerCase())
+        .anyMatch(m -> m.contains("keystore password was incorrect")) ||  
+        hasCause(e, FailedLoginException.class)          ||
+        hasCause(e, UnrecoverableKeyException.class)     ||
+        hasCause(e, BadPaddingException.class);
+  }
+
+  private static boolean isLoginCanceled(Throwable e) {
+    return hasCause(e, CanceledOperationException.class) || Throwables.streamTrace(e)
+      .map(t -> trim(t.getMessage()).toLowerCase())
+      .anyMatch(m -> 
+        m.contains("unable to perform password callback") ||
+        m.contains("a operação foi cancelada pelo usuário")
+      );
+  }
+
+  private static boolean isNoTokenPresent(Throwable e) {
+    return Throwables.streamTrace(e)
+      .map(t -> trim(t.getMessage()).toLowerCase())
+      .anyMatch(m -> 
+        m.contains("token has been removed") || 
+        m.contains("no token present")       || 
+        m.contains("token is not present")   || 
+        m.contains("ckr_token_not_present")  ||
+        //block específico (catch Exception)
+        m.contains("exception obtaining signature") ||
+        m.contains("acesso negado")
+      );
+  }  
+  
+  private static boolean isTokenLocked(Throwable e) {
+    return Throwables.streamTrace(e)
+      .map(t -> trim(t.getMessage()).toLowerCase())
+      .anyMatch(m ->
+        m.contains("ckr_pin_locked") ||
+        m.contains("número máximo de tentativas para digitar o pin")                
+      );
   }
 }
