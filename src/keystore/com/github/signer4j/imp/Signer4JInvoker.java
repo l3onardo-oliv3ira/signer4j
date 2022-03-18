@@ -106,11 +106,11 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   
   private boolean isPasswordIncorrect(Throwable e) {
     return Throwables.streamTrace(e)
-        .map(t -> trim(t.getMessage()).toLowerCase())
-        .anyMatch(m -> m.contains("keystore password was incorrect")) ||  
-        hasCause(e, FailedLoginException.class)          ||
-        hasCause(e, UnrecoverableKeyException.class)     ||
-        hasCause(e, BadPaddingException.class);
+      .map(t -> trim(t.getMessage()).toLowerCase())
+      .anyMatch(m -> m.contains("keystore password was incorrect")) ||  
+      hasCause(e, FailedLoginException.class)          ||
+      hasCause(e, UnrecoverableKeyException.class)     ||
+      hasCause(e, BadPaddingException.class);
   }
 
   private static boolean isLoginCanceled(Throwable e) {
