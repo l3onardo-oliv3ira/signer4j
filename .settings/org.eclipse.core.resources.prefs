@@ -1,3 +1,9 @@
 eclipse.preferences.version=1
+encoding//src/certificate=UTF-8
+encoding//src/gui=UTF-8
+encoding//src/keystore=UTF-8
 encoding//src/main/java=UTF-8
+encoding//src/signer=UTF-8
+encoding//src/strategy=UTF-8
+encoding//src/workstation=UTF-8
 encoding/<project>=UTF-8

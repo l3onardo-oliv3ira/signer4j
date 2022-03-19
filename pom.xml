@@ -6,7 +6,7 @@
 
   <groupId>com.github</groupId>
   <artifactId>signer4j</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>signer4j</name>
   <!-- FIXME change it to the project's website -->
@@ -74,6 +74,12 @@
       <version>2.12.1</version>
 	</dependency>
 	
+	<dependency>
+	  	<groupId>com.github</groupId>
+  		<artifactId>progress4j</artifactId>
+  		<version>1.0</version>
+	</dependency>
+	
   </dependencies>
 
   <build>
@@ -120,5 +126,31 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    
+    <plugins>
+    	<plugin>
+    		<groupId>org.codehaus.mojo</groupId>
+    		<artifactId>build-helper-maven-plugin</artifactId>
+    		<version>3.3.0</version>
+    		<executions>
+		        <execution>
+		            <phase>generate-sources</phase>
+		            <goals>
+		                <goal>add-source</goal>
+		            </goals>
+		            <configuration>
+		                <sources>
+		                    <source>src/certificate</source>
+		                    <source>src/keystore</source>
+		                    <source>src/strategy</source>
+		                    <source>src/signer</source>
+		                    <source>src/gui</source>
+		                    <source>src/workstation</source>
+		                </sources>
+		            </configuration>
+		        </execution>
+		    </executions>
+    	</plugin>
+    </plugins>
   </build>
 </project>
