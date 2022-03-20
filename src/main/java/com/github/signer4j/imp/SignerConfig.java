@@ -1,16 +1,17 @@
 package com.github.signer4j.imp;
 
-import static java.lang.System.getProperty;
-import static java.nio.file.Paths.get;
-
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.github.signer4j.IConfig;
 import com.github.utils4j.imp.Args;
 
 public class SignerConfig implements IConfig {
-  
+
+  private static final Path HOME = Paths.get(System.getProperty("user.home"));
+      
   private final File config;
   
   public SignerConfig() {
@@ -18,13 +19,13 @@ public class SignerConfig implements IConfig {
   }
 
   public SignerConfig(String configName) {
-    this(get(getProperty("user.home"), "." + configName, configName + ".config").toFile());
+    this(HOME.resolve("." + configName).resolve(configName + ".config").toFile());
   }
-
-  public SignerConfig(File config) {
-    Args.requireNonNull(config, "config is null");
-    config.getParentFile().mkdirs();
-    this.config = config;
+  
+  public SignerConfig(File configFile) {
+    Args.requireNonNull(configFile, "config is null");
+    configFile.getParentFile().mkdirs();
+    this.config = configFile;
   }
   
   @Override
