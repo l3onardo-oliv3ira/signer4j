@@ -15,8 +15,8 @@ import com.github.signer4j.ICertificates;
 import com.github.signer4j.IChoice;
 import com.github.signer4j.IDevice;
 import com.github.signer4j.IKeyStoreAccess;
+import com.github.signer4j.imp.exception.InterruptedSigner4JRuntimeException;
 import com.github.signer4j.imp.exception.Signer4JException;
-import com.github.signer4j.imp.exception.Signer4JRuntimeException;
 import com.github.utils4j.imp.Args;
 
 public abstract class AbstractCertificateChooser implements ICertificateChooser {
@@ -70,7 +70,7 @@ public abstract class AbstractCertificateChooser implements ICertificateChooser 
     if (this.options == null) {
       this.options = certificates.stream()
         .filter(getPredicate())
-        .map(c -> tryRuntime(() -> new CertificateEntry(getDevice(), getAliasFrom(c), c), Signer4JRuntimeException::of)
+        .map(c -> tryRuntime(() -> new CertificateEntry(getDevice(), getAliasFrom(c), c), InterruptedSigner4JRuntimeException::of)
       ).collect(toList());
     }
     return doChoose(options);
