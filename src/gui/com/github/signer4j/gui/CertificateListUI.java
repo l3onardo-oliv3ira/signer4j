@@ -205,7 +205,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     pnlNorthEast.add(lblConfigInstall, BorderLayout.CENTER);
     pnlNorthEast.add(lblRefresh, BorderLayout.EAST);
 
-    setLocationRelativeTo(null);
+    setLocationRelativeTo(null);    
   }
 
   private static class CertificateModel extends AbstractTableModel {
@@ -290,7 +290,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
   
   private void clickConfig() {
-    new CertificateInstaller(this::onConfigSaved).setVisible(true);
+    new CertificateInstaller(this::onConfigSaved).showToFront();
     if (this.choice == IChoice.NEED_RELOAD) {
       this.close();
     }
@@ -319,7 +319,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     this.chkRememberMe.setSelected(false);
     this.chkRememberMe.setEnabled(false);
     ((CertificateModel)table.getModel()).load(entries);
-    this.setVisible(true);  
+    this.showToFront();
     if (this.selectedEntry.isPresent()) {
       ICertificateEntry selectedEntry = this.selectedEntry.get();
       if (this.defaultAlias.equals(selectedEntry.getId())) {
