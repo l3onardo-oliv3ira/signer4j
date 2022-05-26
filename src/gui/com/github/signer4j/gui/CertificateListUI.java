@@ -194,6 +194,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
     lblRefresh.setIcon(Images.REFRESH.asIcon().orElse(null));
     lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    lblRefresh.setToolTipText("Atualiza a lista de certificados abaixo");
     lblRefresh.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         refresh();
