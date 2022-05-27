@@ -401,7 +401,7 @@ class CertificateInstaller extends SimpleDialog {
   private static enum CertType {
     A1(new A1PathModel()) {
       String labelTitle() {
-        return "Selecione o certificado A1:";
+        return "Localize o certificado A1:";
       }
 
       @Override
@@ -432,7 +432,7 @@ class CertificateInstaller extends SimpleDialog {
     A3(new A3PathModel()){
       @Override
       String labelTitle() {
-        return "Selecione o(s) driver(s) A3:";
+        return "Localize o(s) driver(s) A3:";
       }
 
       @Override
