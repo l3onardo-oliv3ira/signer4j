@@ -104,9 +104,10 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         throw new TokenLockedException(e);
 
       /**
-       * O provider SunPKCS11 do JAVA tem um bug em mscapi que lança NullPointerException e corrompe a instância 
-       * quando se remove o token após exibir a tela para digitação da senha (antes de informá-la).
-       * Embora uma ação atípica e não recomendada (remover enquanto o driver aguarda a informação da senha),  
+       * O provider SunPKCS11 do JAVA tem um bug em alguns driver's rodando em MSCAPI que lança 
+       * NullPointerException e corrompe a instância quando se remove o token após exibir a 
+       * tela para digitação da senha (mas antes de informá-la).
+       * Embora uma ação atípica e não recomendada (remover o token enquanto o driver aguarda a informação da senha),  
        * nada impede que o usuário faça isso, portanto, infelizmente um NullPointerException 
        * esta sendo interpretado como um NoTokenPresent. O provider será reciclado 
        * automaticamente por DISPOSE_ACTION e um novo login providenciará uma nova
@@ -134,7 +135,10 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   private boolean isPasswordIncorrect(Throwable e) {
     return Throwables.traceStream(e)
       .map(t -> trim(t.getMessage()).toLowerCase())
-      .anyMatch(m -> m.contains("keystore password was incorrect")) ||  
+      .anyMatch(m -> 
+        m.contains("keystore password was incorrect") || 
+        m.contains("ckr_pin_len_range")
+      ) ||  
       hasCause(e, FailedLoginException.class)          ||
       hasCause(e, UnrecoverableKeyException.class)     ||
       hasCause(e, BadPaddingException.class);
