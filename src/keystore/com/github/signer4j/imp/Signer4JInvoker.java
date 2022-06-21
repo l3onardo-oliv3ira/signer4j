@@ -29,6 +29,7 @@ package com.github.signer4j.imp;
 
 import static com.github.utils4j.imp.Strings.trim;
 import static com.github.utils4j.imp.Throwables.hasCause;
+import static com.github.utils4j.imp.Throwables.traceStream;
 
 import java.security.UnrecoverableKeyException;
 import java.util.function.Consumer;
@@ -133,7 +134,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   }
   
   private boolean isPasswordIncorrect(Throwable e) {
-    return Throwables.traceStream(e)
+    return traceStream(e)
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m -> 
         m.contains("keystore password was incorrect") || 
@@ -145,7 +146,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   }
 
   private static boolean isLoginCanceled(Throwable e) {
-    return hasCause(e, CanceledOperationException.class) || Throwables.traceStream(e)
+    return hasCause(e, CanceledOperationException.class) || traceStream(e)
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m -> 
         m.contains("unable to perform password callback") ||
@@ -154,7 +155,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   }
 
   private static boolean isNoTokenPresent(Throwable e) {
-    return Throwables.traceStream(e)
+    return traceStream(e)
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m -> 
         m.contains("token has been removed") || 
@@ -168,7 +169,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   }  
   
   private static boolean isTokenLocked(Throwable e) {
-    return Throwables.traceStream(e)
+    return traceStream(e)
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m ->
         m.contains("ckr_pin_locked") ||
