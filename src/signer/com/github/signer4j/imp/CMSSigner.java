@@ -54,7 +54,6 @@ import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.ProviderInstaller;
 
 class CMSSigner extends SecurityObject implements ICMSSigner {
   

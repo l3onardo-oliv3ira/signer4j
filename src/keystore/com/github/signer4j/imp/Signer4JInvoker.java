@@ -51,7 +51,6 @@ import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.TokenLockedException;
 import com.github.utils4j.imp.InvokeHandler;
-import com.github.utils4j.imp.Throwables;
 import com.github.utils4j.imp.function.Supplier;
 
 public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
