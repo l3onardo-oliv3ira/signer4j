@@ -95,16 +95,13 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
       throw new DriverFailException("Unabled to list slot from driver: " + this, e);
     }
     
-    if (slots.length >= 1) {
-
-      for(final long slot: slots) {
-        try {
-          PKCS11Slot s = new PKCS11Slot(this, slot);
-          output.add(s);
-          addDevice(s.toDevice());
-        }catch(DriverException e) {
-          handleException(e);
-        }
+    for(final long slot: slots) {
+      try {
+        PKCS11Slot s = new PKCS11Slot(this, slot);
+        output.add(s);
+        addDevice(s.toDevice());
+      }catch(DriverException e) {
+        handleException(e);
       }
     }
   }

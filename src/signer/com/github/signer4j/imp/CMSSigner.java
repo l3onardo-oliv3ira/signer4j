@@ -105,6 +105,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
       generator.addSignerInfoGenerator(
         new JcaSimpleSignerInfoGeneratorBuilder()
           .setDirectSignature(hasNoSignedAttributes)
+          .setProvider(choice.getProvider())
           .build(
             algorithm.getName(), 
             choice.getPrivateKey(), 
@@ -216,7 +217,6 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     
     @Override
     public final ICMSSigner build() {
-      ProviderInstaller.BC.install();
       CMSSigner signer = new CMSSigner(chooser, dispose);
       signer.config = config;
       signer.memoryLimit = memoryLimit;
