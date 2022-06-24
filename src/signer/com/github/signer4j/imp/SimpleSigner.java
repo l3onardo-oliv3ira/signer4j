@@ -75,7 +75,7 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
     }
 
     @Override
-    public final ISignerBuilder usingAlgorigthm(ISignatureAlgorithm algorithm) {
+    public final ISignerBuilder usingAlgorithm(ISignatureAlgorithm algorithm) {
       this.algorithm = Args.requireNonNull(algorithm, "Unabled to using null algorigthm");
       return this;
     }

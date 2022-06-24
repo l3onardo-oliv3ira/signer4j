@@ -122,7 +122,7 @@ public class GetStarted {
       
       String message = "Hello world!";
       
-      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorigthm(SignatureAlgorithm.SHA1withRSA).build();
+      ISimpleSigner simpleSigner = token.signerBuilder().usingAlgorithm(SignatureAlgorithm.SHA1withRSA).build();
       
       ISignedData data = simpleSigner.process(message);
       

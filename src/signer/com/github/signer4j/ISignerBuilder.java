@@ -28,7 +28,7 @@
 package com.github.signer4j;
 
 public interface ISignerBuilder {
-  ISignerBuilder usingAlgorigthm(ISignatureAlgorithm algorithm);
+  ISignerBuilder usingAlgorithm(ISignatureAlgorithm algorithm);
   
   ISimpleSigner build();
 }

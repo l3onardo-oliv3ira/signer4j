@@ -27,30 +27,10 @@
 
 package com.github.signer4j.imp;
 
-class ForMacStrategy extends UnixStrategy {
+abstract class UnixStrategy extends PreloadedStrategy {
 
-  //TODO revisar libraries 64bits
-  
-  public ForMacStrategy() {
-    add("libwdpkcs.dylib");
-    add("libwdpkcs.dylib"); 
-    add("libsfntpkcs11.dylib"); 
-    add("libeTPkcs11.dylib");
-    add("libetpkcs11.dylib");
-    add("libaetpkss.dylib");
-    add("libbanrisulpkcs11.so");
-    add("libdesktopID_Provider.dylib");
-    add("opensc-pkcs11.so");
-    
-    load("/usr/local/ngsrv/libepsng_p11.so.1.2.2");
-    load("/Applications/NeoID Desktop.app/Contents/Java/tools/macos/libneoidp11.dylib");
-    load("/Applications/WatchKey USB Token Admin Tool.app/Contents/MacOS/lib/libWDP11_BR_GOV.dylib");
-    load("/Applications/tokenadmin.app/Contents/Frameworks/libaetpkss.dylib");
-    load("/Library/Frameworks/eToken.framework/Versions/A/libeToken.dylib");
-    load("/Library/Application Support/CSSI/libcmP11.dylib");
-    load("/Library/OpenSC/lib/opensc-pkcs11.so");
-    //firefox: load("/Applications/Firefox.app/Contents/MacOS/libsoftokn3.dylib");
-    //64bits
-    load("/Applications/Assistente Desktop birdID.app/Contents/resources/extraResources/osx/x64/vault-pkcs11.dylib");
+  protected final void add(String library) {
+    load("/usr/lib/" + library);
+    load("/usr/local/lib/" + library);
   }
 }
