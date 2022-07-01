@@ -27,8 +27,6 @@
 
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
-
 import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
@@ -54,7 +52,7 @@ class KeyStoreCertificates extends AbstractCertificates {
   }
   
   private void setup(IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
-    requireNonNull(keyStore, "keyStore is null");
+    Args.requireNonNull(keyStore, "keyStore is null");
     Enumeration<String> aliases = keyStore.getAliases();
     while(aliases.hasMoreElements()) {
       String aliasName = aliases.nextElement();
