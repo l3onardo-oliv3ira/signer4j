@@ -45,7 +45,7 @@ public final class PermissionDeniedAlert {
     return new PermissionDeniedAlert(message).show();
   }
   
-  private static final String[] OPTIONS = {"ENTENDI"};
+  private static final String[] OPTIONS = {"OK"};
   
   private final JOptionPane jop;
   
