@@ -67,6 +67,8 @@ class ForLinuxStrategy extends UnixStrategy {
     // firefox: load("/usr/lib/nss/libsoftokn3.so");
     //64bits
     // firefox: load("/usr/lib/x86_64-linux-gnu/nss/libsoftokn3.so");
+    // load("/usr/lib64/libeTPkcs11.so");
+    // load("/usr/lib64/libaetpkss.so.3.0.x");
   }
 }
 

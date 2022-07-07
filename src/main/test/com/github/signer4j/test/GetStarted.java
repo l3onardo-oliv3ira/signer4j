@@ -170,7 +170,7 @@ public class GetStarted {
     } catch (Signer4JException e) {
       System.out.println(e.getMessage());
     } catch (IOException e) {
-      System.out.println("Unabled to read input file");
+      System.out.println("Unabled to read input file: " + e.getMessage());
     } finally {
       token.logout(); 
     }
@@ -204,7 +204,7 @@ public class GetStarted {
     } catch (Signer4JException e) {
       System.out.println(e.getMessage());
     } catch (IOException e) {
-      System.out.println("Unabled to read input file");
+      System.out.println("Unabled to read input file: " + e.getMessage());
     } finally {
       token.logout(); 
     }
