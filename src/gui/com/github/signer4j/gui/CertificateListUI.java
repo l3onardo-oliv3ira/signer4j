@@ -92,7 +92,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setBounds(100, 100, 660, 287);
+    setBounds(100, 100, 740, 287);
     contentPane = new JPanel();
     contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
     contentPane.setLayout(new BorderLayout(0, 0));
@@ -142,7 +142,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     pnlSouthInner = new JPanel();
     pnlSouth.add(pnlSouthInner);
 
-    chkRememberMe = new JCheckBox("Memorizar e não perguntar novamente");
+    chkRememberMe = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente");
+    
     chkRememberMe.setEnabled(false);
     chkRememberMe.setSelected(false);
     pnlSouthInner.setLayout(new GridLayout(0, 2, 0, 0));
@@ -298,7 +299,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
   
   protected void onConfigSaved(List<IFilePath> a1list, List<IFilePath> a3List) {
-    this.choice = IChoice.NEED_RELOAD;
+    this.choice = IChoice.NEED_RELOAD;    
     this.table.getSelectionModel().clearSelection();
     this.onSaved.call(a1list, a3List);
   }
@@ -320,6 +321,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     this.chkRememberMe.setSelected(false);
     this.chkRememberMe.setEnabled(false);
     ((CertificateModel)table.getModel()).load(entries);
+    if (this.table.getModel().getRowCount() == 1)
+      this.table.setRowSelectionInterval(0, 0);
     this.showToFront();
     if (this.selectedEntry.isPresent()) {
       ICertificateEntry selectedEntry = this.selectedEntry.get();
