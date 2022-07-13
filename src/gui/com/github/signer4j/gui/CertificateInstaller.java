@@ -33,7 +33,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.File;
@@ -66,6 +65,8 @@ import com.github.utils4j.gui.imp.ButtonRenderer;
 import com.github.utils4j.gui.imp.DefaultFileChooser;
 import com.github.utils4j.gui.imp.SimpleDialog;
 import com.github.utils4j.imp.Args;
+
+import net.miginfocom.swing.MigLayout;
 
 class CertificateInstaller extends SimpleDialog {
 
@@ -167,24 +168,19 @@ class CertificateInstaller extends SimpleDialog {
     pnlStep2.add(pnlStep2Center, BorderLayout.CENTER);
     pnlStep2Center.setLayout(new CardLayout(0, 0));
     
-    JPanel pnlOkCancel = new JPanel();
-    pnlStep2.add(pnlOkCancel, BorderLayout.SOUTH);
-    pnlOkCancel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-    
-    JPanel pnlLiteralOkCancel = new JPanel();
-    pnlOkCancel.add(pnlLiteralOkCancel);
-    pnlLiteralOkCancel.setLayout(new GridLayout(0, 2, 30, 0));
-    
-    JButton btnSave = new JButton("OK");
-    btnSave.addActionListener(e -> onSave());
-    pnlLiteralOkCancel.add(btnSave);
-    
+    JPanel pnlOkCancel = new JPanel();    
+    pnlStep2.add(pnlOkCancel, BorderLayout.SOUTH);   
+    pnlOkCancel.setLayout(new MigLayout("fillx", "push[][]", "[][]"));    
     JButton btnCancel = new JButton("Cancelar");
-    btnCancel.addActionListener(e -> close());
-    pnlLiteralOkCancel.add(btnCancel);
-    
-    table = new JTable();
-    
+    btnCancel.addActionListener(e -> close());    
+    JButton btnSave = new JButton("OK");
+    btnSave.setPreferredSize(btnCancel.getPreferredSize());
+    btnSave.addActionListener(e -> onSave());        
+    pnlOkCancel.add(btnSave);
+    pnlOkCancel.add(btnCancel);
+        
+
+    table = new JTable();    
     table.setModel(type.model);
     table.getColumnModel().getColumn(0).setPreferredWidth(370);
     table.getColumnModel().getColumn(1).setPreferredWidth(30);
