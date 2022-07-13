@@ -31,9 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -51,6 +49,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -62,24 +61,17 @@ import com.github.signer4j.imp.Config;
 import com.github.utils4j.gui.imp.SimpleDialog;
 import com.github.utils4j.imp.Args;
 
+import net.miginfocom.swing.MigLayout;
+
 public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
 
   private static final long serialVersionUID = -1L;
 
   private static IChoice UNDEFINED_CHOICE  = () -> Optional.empty();
   
-  private JPanel contentPane;
   private JTable table;
-  private JPanel pnlCenter;
-  private JPanel pnlSouth;
-  private JPanel pnlSouthInner;
   private JCheckBox chkRememberMe;
-  private JPanel btnButtons;
   private JButton btnOk;
-  private JButton btnCancel;
-  private JPanel pnlNorth;
-  private JLabel lblCertificateList;
-  private JLabel lblConfigInstall;
   private final String defaultAlias;
   private final IA1A3ConfigSaved onSaved;
   
@@ -91,15 +83,77 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     super("Seleção de certificado", Config.getIcon(), true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
+
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 740, 287);
-    contentPane = new JPanel();
+    setContentPane(createContentPane());
+    setLocationRelativeTo(null);    
+  }
+
+  private JPanel createContentPane() {
+    JPanel contentPane = new JPanel();
     contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
     contentPane.setLayout(new BorderLayout(0, 0));
-    setContentPane(contentPane);
+    contentPane.add(createNorth(), BorderLayout.NORTH);
+    contentPane.add(createCenter(), BorderLayout.CENTER);
+    contentPane.add(createSouth(), BorderLayout.SOUTH);
+    return contentPane;
+  }
 
-    pnlCenter = new JPanel();
-    contentPane.add(pnlCenter, BorderLayout.CENTER);
+  private JPanel createNorth() {
+    JPanel pnlNorth = new JPanel();    
+    pnlNorth.setLayout(new BorderLayout(0, 0)); 
+    pnlNorth.add(createCertListLabel());    
+    JPanel pnlNorthEast = new JPanel();
+    pnlNorthEast.setLayout(new BorderLayout(0, 0));
+    pnlNorthEast.add(createConfigInstall(), BorderLayout.CENTER);
+    pnlNorthEast.add(createRefresh(), BorderLayout.EAST);
+    pnlNorth.add(pnlNorthEast, BorderLayout.EAST);
+    return pnlNorth;
+  }
+
+  private JLabel createCertListLabel() {
+    JLabel lblCertificateList = new JLabel("Certificados Disponíveis");
+    lblCertificateList.setIcon(Images.CERTIFICATE.asIcon().orElse(null));
+    lblCertificateList.setHorizontalAlignment(SwingConstants.LEFT);
+    lblCertificateList.setFont(new Font("Tahoma", Font.BOLD, 15));
+    return lblCertificateList;
+  }
+
+  private JLabel createRefresh() {
+    JLabel lblRefresh = new JLabel("");
+    lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);    
+    lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
+    lblRefresh.setIcon(Images.REFRESH.asIcon().orElse(null));
+    lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    lblRefresh.setToolTipText("Atualiza a lista de certificados abaixo");
+    lblRefresh.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        refresh();
+      }
+    });
+    lblRefresh.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
+    return lblRefresh;
+  }
+
+  private JLabel createConfigInstall() {
+    JLabel lblConfigInstall = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
+    lblConfigInstall.setVerticalAlignment(SwingConstants.BOTTOM);
+    lblConfigInstall.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    lblConfigInstall.setForeground(Color.BLUE);
+    lblConfigInstall.setFont(new Font("Tahoma", Font.ITALIC, 12));
+    lblConfigInstall.setHorizontalAlignment(SwingConstants.LEFT);
+    lblConfigInstall.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        clickConfig();
+      }
+    });
+    lblConfigInstall.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
+    return lblConfigInstall;
+  }
+
+  private JPanel createCenter() {
+    JPanel pnlCenter = new JPanel();
     pnlCenter.setLayout(new CardLayout(0, 0));
     table = new JTable();
     table.setModel(new CertificateModel());
@@ -114,102 +168,48 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     table.setFont(new Font("Tahoma", Font.PLAIN, 13));
     table.setFillsViewportHeight(true);
     table.setBorder(null);
-    table.getSelectionModel().addListSelectionListener((e) -> {
-      int selectedRow = table.getSelectedRow();
-      boolean enabled = false;
-      if (selectedRow < 0) {
-        this.selectedEntry = Optional.empty();
-        this.chkRememberMe.setSelected(false);
-      }else {
-        CertificateModel model = (CertificateModel)table.getModel();
-        ICertificateEntry rowEntry = model.getEntryAt(selectedRow);
-        this.selectedEntry = Optional.of(rowEntry);
-        enabled |= !rowEntry.isExpired();
-        this.chkRememberMe.setSelected(defaultAlias.equals(rowEntry.getId()) && enabled);
-        rowEntry.setRemembered(this.chkRememberMe.isSelected());
-      }
-      btnOk.setEnabled(enabled);
-      chkRememberMe.setEnabled(enabled);
-    });
-
+    table.getSelectionModel().addListSelectionListener(this::onCertificateSelected);
     JScrollPane scrollPane = new JScrollPane(table);
     pnlCenter.add(scrollPane);
-
-    pnlSouth = new JPanel();
-    contentPane.add(pnlSouth, BorderLayout.SOUTH);
-    pnlSouth.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-
-    pnlSouthInner = new JPanel();
-    pnlSouth.add(pnlSouthInner);
-
-    chkRememberMe = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente");
-    
-    chkRememberMe.setEnabled(false);
-    chkRememberMe.setSelected(false);
-    pnlSouthInner.setLayout(new GridLayout(0, 2, 0, 0));
-    pnlSouthInner.add(chkRememberMe);
-
-    btnButtons = new JPanel();
-    pnlSouthInner.add(btnButtons);
-    btnButtons.setLayout(new GridLayout(1, 0, 30, 0));
-
-    btnOk = new JButton("OK");
-    btnOk.setEnabled(false);
-    btnOk.addActionListener((arg) -> close());
-    btnButtons.add(btnOk);
-
-    btnCancel = new JButton("Cancelar");
-    btnCancel.addActionListener((e) -> clickCancel(e));
-    btnButtons.add(btnCancel);
-    
-    pnlNorth = new JPanel();
-    contentPane.add(pnlNorth, BorderLayout.NORTH);
-    pnlNorth.setLayout(new BorderLayout(0, 0));
-    
-    JPanel pnlNorthEast = new JPanel();
-    
-    pnlNorth.add(pnlNorthEast, BorderLayout.EAST);
-
-    lblCertificateList = new JLabel("Certificados Disponíveis");
-    lblCertificateList.setIcon(Images.CERTIFICATE.asIcon().orElse(null));
-    lblCertificateList.setHorizontalAlignment(SwingConstants.LEFT);
-    lblCertificateList.setFont(new Font("Tahoma", Font.BOLD, 15));
-    pnlNorth.add(lblCertificateList);
-
-    lblConfigInstall = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
-    lblConfigInstall.setVerticalAlignment(SwingConstants.BOTTOM);
-    lblConfigInstall.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    lblConfigInstall.setForeground(Color.BLUE);
-    lblConfigInstall.setFont(new Font("Tahoma", Font.ITALIC, 12));
-    lblConfigInstall.setHorizontalAlignment(SwingConstants.LEFT);
-    lblConfigInstall.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        clickConfig();
-      }
-    });
-    lblConfigInstall.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
-    
-    JLabel lblRefresh = new JLabel("");
-    lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);
-    
-    lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
-    lblRefresh.setIcon(Images.REFRESH.asIcon().orElse(null));
-    lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    lblRefresh.setToolTipText("Atualiza a lista de certificados abaixo");
-    lblRefresh.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        refresh();
-      }
-    });
-    lblRefresh.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
-    
-    pnlNorthEast.setLayout(new BorderLayout(0, 0));
-    pnlNorthEast.add(lblConfigInstall, BorderLayout.CENTER);
-    pnlNorthEast.add(lblRefresh, BorderLayout.EAST);
-
-    setLocationRelativeTo(null);    
+    return pnlCenter;
   }
 
+  private void onCertificateSelected(ListSelectionEvent e) {
+    int selectedRow = table.getSelectedRow();
+    boolean enabled = false;
+    if (selectedRow < 0) {
+      this.selectedEntry = Optional.empty();
+      this.chkRememberMe.setSelected(false);
+    }else {
+      CertificateModel model = (CertificateModel)table.getModel();
+      ICertificateEntry rowEntry = model.getEntryAt(selectedRow);
+      this.selectedEntry = Optional.of(rowEntry);
+      enabled |= !rowEntry.isExpired();
+      this.chkRememberMe.setSelected(defaultAlias.equals(rowEntry.getId()) && enabled);
+      rowEntry.setRemembered(this.chkRememberMe.isSelected());
+    }
+    btnOk.setEnabled(enabled);
+    chkRememberMe.setEnabled(enabled);
+  }
+
+  private JPanel createSouth() {
+    JPanel southPane = new JPanel();   
+    chkRememberMe = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente");    
+    chkRememberMe.setEnabled(false);
+    chkRememberMe.setSelected(false);
+    JButton cancelButton = new JButton("Cancelar");
+    cancelButton.addActionListener(this::clickCancel);
+    btnOk = new JButton("OK");
+    btnOk.setPreferredSize(cancelButton.getPreferredSize());
+    btnOk.setEnabled(false);
+    btnOk.addActionListener(arg -> close());
+    southPane.setLayout(new MigLayout("fillx", "push[][][]", "[][][]"));
+    southPane.add(chkRememberMe);
+    southPane.add(btnOk);
+    southPane.add(cancelButton);
+    return southPane;
+  }
+  
   private static class CertificateModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
