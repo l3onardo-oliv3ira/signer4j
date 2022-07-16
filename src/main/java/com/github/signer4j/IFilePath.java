@@ -35,6 +35,6 @@ public interface IFilePath {
   String getPath();
   
   static Path[] toPaths(List<IFilePath> list) {
-    return list.stream().map(fp -> fp.getPath()).map(Paths::get).toArray(Path[]::new);
+    return list.stream().map(IFilePath::getPath).map(Paths::get).toArray(Path[]::new);
   }
 }

@@ -31,9 +31,7 @@ import com.github.signer4j.gui.PasswordDialogCallbackHandler;
 import com.github.signer4j.imp.LiteralPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.Signer4JException;
 
-import io.reactivex.Observable;
-
-public interface IToken extends IGadget {
+public interface IToken extends IGadget, IStatusMonitor {
   
   String getManufacturer();
   
@@ -46,8 +44,6 @@ public interface IToken extends IGadget {
   TokenType getType();
 
   ISlot getSlot();
-  
-  Observable<Boolean> getStatus();
   
   IKeyStoreAccess getKeyStoreAccess();
   
