@@ -54,7 +54,6 @@ class ForLinuxStrategy extends UnixStrategy {
     add("watchdata/lib/libwdpkcs.so");
     add("x86_64-linux-gnu/opensc-pkcs11.so");
     add("x86_64-linux-gnu/pkcs11/opensc-pkcs11.so");
-    add("x86_64-linux-gnu/pkcs11/opensc-pkcs11.so");
     
     load("/usr/local/ngsrv/libepsng_p11.so.1.2.2");
     load("/usr/local/ngsrv/libepsng_p11.so.1");

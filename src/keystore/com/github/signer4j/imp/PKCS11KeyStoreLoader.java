@@ -76,7 +76,7 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
 
   private IKeyStore getKeyStore(String libraryPath, long slot) throws Signer4JException {
     Args.requireZeroPositive(slot, "slot must be 0 or positive value");
-    libraryPath = requireText(libraryPath, "driver path can't be null").trim().replace('\\',  '/');
+    libraryPath = Args.requireText(libraryPath, "driver path can't be null").trim().replace('\\',  '/');
     int s = libraryPath.lastIndexOf('/');
     s = s <= -1 ? 0 : s + 1;
     String fileName = libraryPath.substring(s, libraryPath.length());
