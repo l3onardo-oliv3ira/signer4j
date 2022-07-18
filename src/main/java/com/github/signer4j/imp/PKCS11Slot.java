@@ -110,7 +110,7 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
     try {
       slotInfo = pk.C_GetSlotInfo(getNumber());
     }catch(PKCS11Exception e) {
-      throw new DriverFailException("Unabled to get slot information on " + this, e);
+      throw new DriverFailException("Unabled to get slot information from number " + getNumber() + " driver: " + driver, e);
     }
 
     this.description = Objects.toString(slotInfo.slotDescription, UNKNOWN_INFORMATION).trim();
