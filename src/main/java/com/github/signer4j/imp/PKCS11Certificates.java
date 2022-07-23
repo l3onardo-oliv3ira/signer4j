@@ -118,7 +118,7 @@ class PKCS11Certificates extends AbstractCertificates {
         }
         
         try (ByteArrayInputStream cert = new ByteArrayInputStream((byte[])value)) {
-          this.certificates.add(factory.call(cert));
+          this.certificates.add(factory.create(cert));
         } catch (CertificateException | IOException e) {
           LOGGER.debug("Unabled to create certificate instance from byte[]", e);
           continue;

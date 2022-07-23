@@ -43,7 +43,7 @@ import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.function.Supplier;
+import com.github.utils4j.imp.function.IProvider;
 
 abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
   
@@ -119,7 +119,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
     return closed;
   }
   
-  private final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
+  private final <T> T invoke(IProvider<T> tryBlock) throws Signer4JException {
     return SIGNER4J.invoke(tryBlock, (e) -> this.dispose.run());  //automaticaly logout if exception occurr!
   }
   

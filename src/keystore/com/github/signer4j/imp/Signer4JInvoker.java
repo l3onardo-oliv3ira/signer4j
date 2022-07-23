@@ -51,7 +51,7 @@ import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.TokenLockedException;
 import com.github.utils4j.imp.InvokeHandler;
-import com.github.utils4j.imp.function.Supplier;
+import com.github.utils4j.imp.function.IProvider;
 
 public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   
@@ -60,7 +60,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
   private Signer4JInvoker() {}
   
   @Override
-  public <T> T invoke(Supplier<T> tryBlock, Consumer<Throwable> catchBlock, Runnable finallyBlock) throws Signer4JException {
+  public <T> T invoke(IProvider<T> tryBlock, Consumer<Throwable> catchBlock, Runnable finallyBlock) throws Signer4JException {
     try {
       return tryBlock.get();
     } catch (CanceledOperationException e) {
@@ -118,7 +118,6 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
 
       if (noTokenPresent)
         throw new NoTokenPresentException(e);
-
 
       if (isPasswordIncorrect(e))
         throw new InvalidPinException(e); 

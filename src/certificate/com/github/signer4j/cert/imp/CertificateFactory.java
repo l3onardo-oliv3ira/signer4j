@@ -39,7 +39,7 @@ public enum CertificateFactory implements ICertificateFactory {
   DEFAULT;
   
   @Override
-  public ICertificate call(Object input) throws CertificateException {
+  public ICertificate create(Object input) throws CertificateException {
     Args.requireNonNull(input, "input is null");
     if (input instanceof InputStream)
       return new BrazilianCertificate((InputStream)input);

@@ -58,7 +58,7 @@ class KeyStoreCertificates extends AbstractCertificates {
       String aliasName = aliases.nextElement();
       ICertificate certificate;
       try {
-        certificate = factory.call(keyStore.getCertificate(aliasName));
+        certificate = factory.create(keyStore.getCertificate(aliasName));
       } catch (CertificateException e) {
         reset();
         throw new Signer4JException(e);

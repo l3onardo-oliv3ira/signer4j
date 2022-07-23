@@ -33,7 +33,7 @@ import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.IChoice;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.function.Supplier;
+import com.github.utils4j.imp.function.IProvider;
 
 public abstract class SecurityObject {
   
@@ -45,7 +45,7 @@ public abstract class SecurityObject {
     this.dispose = Args.requireNonNull(dispose, "dispose is null");
   }
   
-  protected final <T> T invoke(Supplier<T> tryBlock) throws Signer4JException {
+  protected final <T> T invoke(IProvider<T> tryBlock) throws Signer4JException {
     return SIGNER4J.invoke(tryBlock, (e) -> dispose.run());
   }
   

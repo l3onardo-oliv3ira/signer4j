@@ -27,6 +27,6 @@
 
 package com.github.signer4j;
 
-import com.github.utils4j.imp.function.BiProcedure;
+import com.github.utils4j.imp.function.IBiProcedure;
 
-public interface ICMSConfigSetup extends BiProcedure<IByteProcessor, Object> {}
+public interface ICMSConfigSetup extends IBiProcedure<IByteProcessor, Object> {}

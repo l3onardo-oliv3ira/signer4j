@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.github.utils4j.imp.function.BiProcedure;
+import com.github.utils4j.imp.function.IBiProcedure;
 
 public interface ICertificateListUI {
   
-  interface IA1A3ConfigSaved extends BiProcedure<List<IFilePath>, List<IFilePath>> {
+  interface IA1A3ConfigSaved extends IBiProcedure<List<IFilePath>, List<IFilePath>> {
     IA1A3ConfigSaved NOTHING = (a, b) -> {};
   }
   
