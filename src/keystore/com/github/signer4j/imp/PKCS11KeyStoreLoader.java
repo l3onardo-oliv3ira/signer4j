@@ -30,7 +30,6 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
-import static com.github.utils4j.imp.Args.requireText;
 import static com.github.utils4j.imp.ProviderInstaller.SUNPKCS11;
 import static com.github.utils4j.imp.ProviderInstaller.uninstall;
 import static java.lang.String.format;
