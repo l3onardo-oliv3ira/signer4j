@@ -100,7 +100,6 @@ public final class MessageAlert {
     dialog.setModal(true);
     dialog.setIconImage(Config.getIcon());
     dialog.setVisible(true);
-    dialog.toFront();
     dialog.dispose();
     Object selectedValue = jop.getValue();
     return options[0].equals(selectedValue);
