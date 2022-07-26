@@ -114,7 +114,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
   private JLabel createCertListLabel() {
     JLabel lblCertificateList = new JLabel("Certificados Disponíveis");
-    lblCertificateList.setIcon(Images.CERTIFICATE.asIcon().orElse(null));
+    lblCertificateList.setIcon(Images.CERTIFICATE.asIcon());
     lblCertificateList.setHorizontalAlignment(SwingConstants.LEFT);
     lblCertificateList.setFont(new Font("Tahoma", Font.BOLD, 15));
     return lblCertificateList;
@@ -124,7 +124,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     JLabel lblRefresh = new JLabel("");
     lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);    
     lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
-    lblRefresh.setIcon(Images.REFRESH.asIcon().orElse(null));
+    lblRefresh.setIcon(Images.REFRESH.asIcon());
     lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     lblRefresh.setToolTipText("Atualiza a lista de certificados abaixo");
     lblRefresh.addMouseListener(new MouseAdapter() {

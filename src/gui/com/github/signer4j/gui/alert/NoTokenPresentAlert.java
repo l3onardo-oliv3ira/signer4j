@@ -55,7 +55,7 @@ public final class NoTokenPresentAlert {
       MESSAGE_FORMAT,
       JOptionPane.QUESTION_MESSAGE, 
       JOptionPane.YES_NO_OPTION, 
-      Images.CERTIFICATE.asIcon().orElse(null), 
+      Images.CERTIFICATE.asIcon(), 
       OPTIONS, 
       OPTIONS[0]
     );

@@ -53,7 +53,7 @@ public final class InvalidPinAlert {
   }
   
   public static boolean display(int times) {
-    return display(times, Images.LOCK.asImage().orElse(null));
+    return display(times, Images.LOCK.asImage());
   }
 
   public static boolean display(int times, Image icon) {
@@ -70,7 +70,7 @@ public final class InvalidPinAlert {
       format(times <= 2 ? MESSAGE_FORMAT : MESSAGE_FORMAT_ALERT, times),
       JOptionPane.QUESTION_MESSAGE, 
       JOptionPane.YES_NO_OPTION, 
-      Images.LOCK.asIcon().orElse(null), 
+      Images.LOCK.asIcon(), 
       OPTIONS, 
       OPTIONS[1]
     );

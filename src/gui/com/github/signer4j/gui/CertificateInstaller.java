@@ -126,14 +126,14 @@ class CertificateInstaller extends SimpleDialog {
     
     btnA1 = new JButton("A1");
     btnA1.addActionListener(e -> onClickA1());
-    btnA1.setIcon(new ImageIcon(Images.ICON_A1.asImage().orElse(null)));
+    btnA1.setIcon(new ImageIcon(Images.ICON_A1.asImage()));
     Cursor hands = new Cursor(Cursor.HAND_CURSOR);
     btnA1.setCursor(hands);
     pnlStep1a3a1.add(btnA1);
     
     btnA3 = new JButton("A3");
     btnA3.addActionListener(e -> onClickA3());
-    btnA3.setIcon(new ImageIcon(Images.ICON_A3.asImage().orElse(null)));
+    btnA3.setIcon(new ImageIcon(Images.ICON_A3.asImage()));
     btnA3.setCursor(hands);
     pnlStep1a3a1.add(btnA3);
   }

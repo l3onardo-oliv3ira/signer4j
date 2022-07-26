@@ -40,9 +40,9 @@ public class Config{
   
   private static IConfigPersister config;
   
-  private static Optional<Image> icon = Optional.empty();
+  private static Image icon ;
   
-  protected static void setup(Optional<Image> image, IConfigPersister conf) {
+  protected static void setup(Image image, IConfigPersister conf) {
     Config.icon = image;
     Config.config = conf != null ? conf: config;
     setupA3();
@@ -53,7 +53,7 @@ public class Config{
   }
 
   public static Image getIcon() {
-    return icon.orElse(null);
+    return icon;
   }
   
   public static Optional<String> defaultCertificate() {
