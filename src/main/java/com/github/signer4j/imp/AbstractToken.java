@@ -27,7 +27,6 @@
 
 package com.github.signer4j.imp;
 
-import static com.github.utils4j.imp.Args.requireNonNull;
 import static java.util.Optional.ofNullable;
 
 import com.github.signer4j.ICMSSignerBuilder;
@@ -172,7 +171,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   
   @Override
   public final ISignerBuilder signerBuilder(ICertificateChooserFactory factory) {
-    requireNonNull(factory, "factory is null");
+    Args.requireNonNull(factory, "factory is null");
     checkIfAvailable();
     return createBuilder(createChooser(factory));
   }
@@ -184,32 +183,32 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
   }
   
   @Override
-  public ICMSSignerBuilder cmsSignerBuilder() {
+  public final ICMSSignerBuilder cmsSignerBuilder() {
     return cmsSignerBuilder(ICertificateChooserFactory.DEFAULT);
   }
 
   @Override
-  public ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory) {
-    requireNonNull(factory, "factory is null");
+  public final ICMSSignerBuilder cmsSignerBuilder(ICertificateChooserFactory factory) {
+    Args.requireNonNull(factory, "factory is null");
     checkIfAvailable();
     return createCMSSignerBuilder(createChooser(factory));
   }
 
   @Override
-  public ICertificateChooser createChooser(ICertificateChooserFactory factory) {
-    requireNonNull(factory, "factory is null");
+  public final ICertificateChooser createChooser(ICertificateChooserFactory factory) {
+    Args.requireNonNull(factory, "factory is null");
     checkIfAvailable();
     return factory.apply(this.keyStore, this.certificates);
   }
   
   @Override
-  public IPKCS7SignerBuilder pkcs7SignerBuilder() {
+  public final IPKCS7SignerBuilder pkcs7SignerBuilder() {
     return pkcs7SignerBuilder(ICertificateChooserFactory.DEFAULT);
   }
 
   @Override
-  public IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory) {
-    requireNonNull(factory, "factory is null");
+  public final IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory) {
+    Args.requireNonNull(factory, "factory is null");
     checkIfAvailable();
     return createPKCS7SignerBuilder(createChooser(factory));
   }
