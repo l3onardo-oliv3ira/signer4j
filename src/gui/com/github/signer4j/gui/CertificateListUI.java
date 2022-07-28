@@ -31,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -69,10 +70,16 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
   private static IChoice UNDEFINED_CHOICE  = () -> Optional.empty();
   
+  private static final Dimension MININUM_SIZE = new Dimension(740, 287);
+
   private JTable table;
-  private JCheckBox chkRememberMe;
+  
   private JButton btnOk;
+
+  private JCheckBox chkRememberMe;
+  
   private final String defaultAlias;
+  
   private final IA1A3ConfigSaved onSaved;
   
   private Optional<ICertificateEntry> selectedEntry = Optional.empty();
@@ -85,7 +92,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setBounds(100, 100, 740, 287);
+    setMinimumSize(MININUM_SIZE);
     setContentPane(createContentPane());
     setLocationRelativeTo(null);    
   }
