@@ -44,7 +44,7 @@ import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.IParams;
 import com.github.utils4j.imp.Args;
 
-class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
+class PKCS11KeyStoreLoader implements IKeyStoreLoader {
   
   private final IPasswordCallbackHandler handler;
   private final IDevice device;
@@ -99,21 +99,20 @@ class PKCS11KeyStoreLoader extends ExceptionExpert implements IKeyStoreLoader {
   }
   
   private IKeyStore getKeyStore(String providerName, String configString) throws Signer4JException {
-    final AuthProvider provider = (AuthProvider)SUNPKCS11.install(providerName, configString);
     return SIGNER4J.invoke(
       () -> {
-        provider.login(null, this.handler);
-        KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
-        keyStore.load(null, null);
-        return new PKCS11KeyStore(keyStore, device, dispose);
-      }, 
-      (exception) -> {
+        final AuthProvider provider = (AuthProvider)SUNPKCS11.install(providerName, configString);
         try {
-          handleException(exception);
-        }finally {
+          provider.login(null, this.handler);
+          KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
+          keyStore.load(null, null);
+          return new PKCS11KeyStore(keyStore, device, dispose);
+        } catch(Throwable e) {
           uninstall(provider);
+          throw e;
         }
-      });
+      }
+    );
   }
 
   private static Supplier<? extends IllegalArgumentException> validate() {

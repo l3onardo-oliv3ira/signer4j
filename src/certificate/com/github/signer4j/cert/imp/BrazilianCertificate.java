@@ -62,7 +62,8 @@ import com.github.utils4j.imp.Strings;
 
 class BrazilianCertificate implements ICertificate {
 
-  private X509Certificate certificate = null;
+  private final X509Certificate certificate;
+  
   private IDistinguishedName certificateFor = null;
   private IDistinguishedName certificateFrom = null;
   private KeyUsage keyUsage = null;

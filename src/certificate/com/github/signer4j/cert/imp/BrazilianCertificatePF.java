@@ -37,6 +37,7 @@ import com.github.signer4j.cert.ICertificatePF;
 import com.github.signer4j.cert.oid.OID_2_16_76_1_3_1;
 import com.github.signer4j.cert.oid.OID_2_16_76_1_3_5;
 import com.github.signer4j.cert.oid.OID_2_16_76_1_3_6;
+import com.github.utils4j.imp.Args;
 
 class BrazilianCertificatePF implements ICertificatePF {
   
@@ -45,9 +46,9 @@ class BrazilianCertificatePF implements ICertificatePF {
   private OID_2_16_76_1_3_6 id_2_16_76_1_3_6 = null;
 
   public BrazilianCertificatePF(OID_2_16_76_1_3_1 oid1, OID_2_16_76_1_3_5 oid2, OID_2_16_76_1_3_6 oid3) {
-    this.id_2_16_76_1_3_1 = oid1;
-    this.id_2_16_76_1_3_5 = oid2;
-    this.id_2_16_76_1_3_6 = oid3;
+    this.id_2_16_76_1_3_1 = Args.requireNonNull(oid1, "oid1 is null");
+    this.id_2_16_76_1_3_5 = Args.requireNonNull(oid2, "oid2 is null");
+    this.id_2_16_76_1_3_6 = Args.requireNonNull(oid3, "oid3 is null");
   }
 
   @Override

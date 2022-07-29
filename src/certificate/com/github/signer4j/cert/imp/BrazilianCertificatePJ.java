@@ -35,6 +35,7 @@ import com.github.signer4j.cert.oid.OID_2_16_76_1_3_3;
 import com.github.signer4j.cert.oid.OID_2_16_76_1_3_4;
 import com.github.signer4j.cert.oid.OID_2_16_76_1_3_7;
 import com.github.signer4j.cert.oid.OID_2_16_76_1_3_8;
+import com.github.utils4j.imp.Args;
 
 class BrazilianCertificatePJ implements ICertificatePJ {
 
@@ -45,11 +46,11 @@ class BrazilianCertificatePJ implements ICertificatePJ {
   private OID_2_16_76_1_3_8 id_2_16_76_1_3_8 = null;
 
   public BrazilianCertificatePJ(OID_2_16_76_1_3_2 oid1, OID_2_16_76_1_3_3 oid2, OID_2_16_76_1_3_4 oid3, OID_2_16_76_1_3_7 oid4, OID_2_16_76_1_3_8 oid5) {
-    this.id_2_16_76_1_3_2 = oid1;
-    this.id_2_16_76_1_3_3 = oid2;
-    this.id_2_16_76_1_3_4 = oid3;
-    this.id_2_16_76_1_3_7 = oid4;
-    this.id_2_16_76_1_3_8 = oid5;
+    this.id_2_16_76_1_3_2 = Args.requireNonNull(oid1, "oid1 is null");
+    this.id_2_16_76_1_3_3 = Args.requireNonNull(oid2, "oid2 is null");
+    this.id_2_16_76_1_3_4 = Args.requireNonNull(oid3, "oid3 is null");
+    this.id_2_16_76_1_3_7 = Args.requireNonNull(oid4, "oid4 is null");
+    this.id_2_16_76_1_3_8 = Args.requireNonNull(oid5, "oid5 is null");
   }
 
   @Override

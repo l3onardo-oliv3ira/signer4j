@@ -39,13 +39,18 @@ import java.security.cert.Certificate;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.function.IProvider;
 
-abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
+abstract class AbstractKeyStore implements IKeyStore {
+  
+  protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractKeyStore.class);
   
   private boolean closed = false;
   
@@ -92,7 +97,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
         }
       }
     } catch (Exception ex) {
-      handleException(ex);
+      LOGGER.warn("Unabled to checkIfHasPrivateKey gracefully. False considered", ex);
     }
     return false;
   }
@@ -161,7 +166,7 @@ abstract class AbstractKeyStore extends ExceptionExpert implements IKeyStore {
       try {
         doClose();
       } catch(Exception e) {
-        handleException(e);
+        LOGGER.warn("Unabled to close keystore gracefully", e);
       }finally {
         this.closed = true;
       }

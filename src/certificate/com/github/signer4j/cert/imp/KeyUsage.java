@@ -29,6 +29,8 @@ package com.github.signer4j.cert.imp;
 
 import java.security.cert.X509Certificate;
 
+import com.github.utils4j.imp.Args;
+
 
 /***
  * JAVADOC: 
@@ -59,6 +61,7 @@ public final class KeyUsage {
   }
 
   public KeyUsage(X509Certificate cert) {
+    Args.requireNonNull(cert, "cert is null");
     this.usages = cert.getKeyUsage();
   }
 

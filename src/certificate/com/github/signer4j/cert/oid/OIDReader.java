@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.github.utils4j.imp.Args;
+
 public class OIDReader {
 
   static final Integer HEADER = 0;
@@ -108,6 +110,7 @@ public class OIDReader {
   }
   
   private void setup(X509Certificate certificate) {
+    Args.requireNonNull(certificate, "certificate is null");
     Collection<List<?>> alternativeNames = null;
     try {
       alternativeNames = certificate.getSubjectAlternativeNames();

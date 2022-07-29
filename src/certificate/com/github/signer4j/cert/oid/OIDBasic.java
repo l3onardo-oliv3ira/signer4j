@@ -27,7 +27,6 @@
 
 package com.github.signer4j.cert.oid;
 
-import static com.github.utils4j.imp.Args.requireText;
 import static java.lang.Math.min;
 import static java.util.Optional.ofNullable;
 
@@ -45,7 +44,7 @@ class OIDBasic {
   private final Map<IMetadata, String> properties = new HashMap<IMetadata, String>();
   
   protected OIDBasic(String id, String content) {
-    this.id = requireText(id, "Unabled to create OID with empty id");
+    this.id = Args.requireText(id, "Unabled to create OID with empty id");
     this.content = Args.requireNonNull(content, "Unabled to create OID with null data");
   }
 
@@ -69,6 +68,7 @@ class OIDBasic {
   }
   
   protected void setup(IMetadata[] fields) {
+    Args.requireNonNull(fields, "fields is null");
     int it = 0;
     for(IMetadata f: fields) {
       int length = f.length();

@@ -101,7 +101,7 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
         output.add(s);
         addDevice(s.toDevice());
       }catch(DriverException e) {
-        handleException(e);
+        LOGGER.warn("Unabled to loadSlots gracefully", e);
       }
     }
   }

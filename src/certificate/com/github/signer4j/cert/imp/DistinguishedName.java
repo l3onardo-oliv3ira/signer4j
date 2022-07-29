@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 import com.github.signer4j.cert.IDistinguishedName;
+import com.github.utils4j.imp.Args;
 
 class DistinguishedName implements IDistinguishedName {
 
@@ -41,7 +42,7 @@ class DistinguishedName implements IDistinguishedName {
   private final Properties properties = new Properties();
 
   public DistinguishedName(String fullName){
-    this.fullName = fullName;
+    this.fullName = Args.requireNonNull(fullName, "fullName is null");
     this.setup();
   }
   

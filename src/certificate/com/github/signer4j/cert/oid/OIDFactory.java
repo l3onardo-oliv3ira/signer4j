@@ -48,7 +48,7 @@ import sun.security.x509.OtherName;
 @SuppressWarnings("restriction")
 class OIDFactory {
 
-  //we have to go back here!
+  //WE HAVE TO GO BACK HERE!
   /*
   private static final String[][] OIDs = new String[][] { 
     { "2.16.76.1.1", "OID para Declarações de Práticas de Certificação" },

@@ -29,6 +29,9 @@ package com.github.signer4j.imp;
 
 import static java.util.Optional.ofNullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.signer4j.ICMSSignerBuilder;
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificateChooserFactory;
@@ -51,7 +54,9 @@ import com.github.utils4j.imp.Strings;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements IToken {
+abstract class AbstractToken<S extends ISlot> implements IToken {
+  
+  protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractToken.class);
   
   private final transient S slot;
   
@@ -156,7 +161,7 @@ abstract class AbstractToken<S extends ISlot> extends ExceptionExpert implements
       try {
         this.keyStore.close();
       } catch (Exception e) {
-        handleException(e);
+        LOGGER.warn("Unabled to logout gracefully", e);
       }finally {
         this.keyStore = null;
         this.status.onNext(false);

@@ -27,8 +27,13 @@
 
 package com.github.signer4j.imp;
 
-abstract class LoadCycle extends ExceptionExpert implements ILoadCycle {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+abstract class LoadCycle implements ILoadCycle {
+
+  protected static final Logger LOGGER = LoggerFactory.getLogger(LoadCycle.class);
+  
   private boolean loaded = false;
   
   @Override
@@ -48,7 +53,7 @@ abstract class LoadCycle extends ExceptionExpert implements ILoadCycle {
       try {
         this.doUnload();
       }catch(Exception e) {
-        handleException(e);
+        LOGGER.warn("Unabled to unload gracefully", e);
       }finally {
         this.loaded = false;
       }
@@ -61,7 +66,7 @@ abstract class LoadCycle extends ExceptionExpert implements ILoadCycle {
       try {
         doLoad();
       }catch(Exception e) {
-        handleException(e);
+        LOGGER.warn("Unabled to load gracefully", e);
       }finally {
         loaded = true;
       }

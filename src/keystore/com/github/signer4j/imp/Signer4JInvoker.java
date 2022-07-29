@@ -139,7 +139,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         m.contains("ckr_pin_len_range")
       ) ||  
       hasCause(e, FailedLoginException.class)          ||
-      hasCause(e, UnrecoverableKeyException.class)     ||
+      //TODO: Estudar se estas duas últimas podem ser mais adequadas no cenário NoTokenPresentException
+      hasCause(e, UnrecoverableKeyException.class)     || 
       hasCause(e, BadPaddingException.class);
   }
 
@@ -170,8 +171,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
     return traceStream(e)
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m ->
-        m.contains("ckr_pin_locked") ||
-        m.contains("número máximo de tentativas para digitar o pin")                
+        m.contains("ckr_pin_locked") || //pkcs11
+        m.contains("número máximo de tentativas para digitar o pin") //mscapi               
       );
   }
 }

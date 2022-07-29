@@ -36,9 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.signer4j.IPasswordCollector;
 import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
@@ -52,8 +49,6 @@ import com.github.utils4j.imp.Streams;
 
 class PKCS12Driver extends AbstractDriver {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PKCS12Driver.class);
-  
   private static final PKCS12Driver INSTANCE = new PKCS12Driver();
 
   public static final PKCS12Driver getInstance() {
@@ -152,7 +147,7 @@ class PKCS12Driver extends AbstractDriver {
           }
         }while(true);
       }catch(DriverException e) {
-        handleException(e);
+        LOGGER.warn("Unabled to loadSlots gracefully", e);
       }
     }
   }
