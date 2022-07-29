@@ -96,7 +96,7 @@ class CertificateInstaller extends SimpleDialog {
     
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setBounds(100, 100, 474, 249); 
-    setLocationRelativeTo(null);
+    toCenter();
     contentPane = new JPanel();
     contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
     setContentPane(contentPane);
@@ -264,7 +264,7 @@ class CertificateInstaller extends SimpleDialog {
     boolean center = current == null;
     loadData(current = type, actual);
     setBounds(getX(), getY(), getWidth(),  510);
-    if (center) setLocationRelativeTo(null);
+    if (center) toCenter();
   }
   
   private void loadData(CertType type, List<IFilePath> actual) {

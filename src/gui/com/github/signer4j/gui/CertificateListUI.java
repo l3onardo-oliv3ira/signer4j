@@ -90,21 +90,24 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     super("Seleção de certificado", Config.getIcon(), true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
-
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setMinimumSize(MININUM_SIZE);
-    setContentPane(createContentPane());
-    setLocationRelativeTo(null);    
+    setup();    
   }
 
-  private JPanel createContentPane() {
+  private void setup() {
+    setupLayout();
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setMinimumSize(MININUM_SIZE);
+    toCenter();
+  }
+
+  private void setupLayout() {
     JPanel contentPane = new JPanel();
     contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
     contentPane.setLayout(new BorderLayout(0, 0));
     contentPane.add(createNorth(), BorderLayout.NORTH);
     contentPane.add(createCenter(), BorderLayout.CENTER);
     contentPane.add(createSouth(), BorderLayout.SOUTH);
-    return contentPane;
+    setContentPane(contentPane);
   }
 
   private JPanel createNorth() {
@@ -201,7 +204,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
   private JPanel createSouth() {
     JPanel southPane = new JPanel();   
-    chkRememberMe = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente");    
+    chkRememberMe = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente.");    
     chkRememberMe.setEnabled(false);
     chkRememberMe.setSelected(false);
     JButton cancelButton = new JButton("Cancelar");
