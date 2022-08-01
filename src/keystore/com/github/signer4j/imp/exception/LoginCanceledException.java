@@ -27,11 +27,11 @@
 
 package com.github.signer4j.imp.exception;
 
-import com.github.progress4j.IProgress;
+import com.github.signer4j.gui.alert.CancelAlert;
 
 public class LoginCanceledException extends Signer4JException {
 
-  private static final String DEFAULT_MESSAGE = IProgress.CANCELED_OPERATION_MESSAGE;
+  private static final String DEFAULT_MESSAGE = CancelAlert.CANCELED_OPERATION_MESSAGE;
   
   private static final long serialVersionUID = 1L;
 

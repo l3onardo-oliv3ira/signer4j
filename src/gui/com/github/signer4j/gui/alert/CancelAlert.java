@@ -34,20 +34,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
 
-public final class PermissionDeniedAlert {
+public final class CancelAlert {
 
+  public static String CANCELED_OPERATION_MESSAGE = "Operação cancelada!";
+  
   private static final AtomicBoolean showed = new AtomicBoolean(false);
   
-  public static void showInfo(String message) {
-    invokeLater(() -> display(message));
+  public static void show() {
+    invokeLater(() -> display());
   }
   
-  public static boolean display(String message) {
+  public static boolean display() {
     if (!showed.getAndSet(true)) {
-      return new PermissionDeniedAlert(message).show();
+      return new CancelAlert(CANCELED_OPERATION_MESSAGE).reveal();
     }
     return false;
   }
@@ -56,19 +57,19 @@ public final class PermissionDeniedAlert {
   
   private final JOptionPane jop;
   
-  private PermissionDeniedAlert(String message) {
+  private CancelAlert(String message) {
     jop = new JOptionPane(
       message,
-      JOptionPane.INFORMATION_MESSAGE, 
+      JOptionPane.ERROR_MESSAGE, 
       JOptionPane.OK_OPTION, 
-      Images.LOCK.asIcon(), 
+      null, 
       OPTIONS, 
       OPTIONS[0]
     );
   }
 
-  private boolean show() {
-    JDialog dialog = jop.createDialog("Permissão Negada!");
+  private boolean reveal() {
+    JDialog dialog = jop.createDialog("Atenção!");
     dialog.setAlwaysOnTop(true);
     dialog.setModal(true);
     dialog.setIconImage(Config.getIcon());
