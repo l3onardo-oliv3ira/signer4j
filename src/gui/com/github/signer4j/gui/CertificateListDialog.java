@@ -64,7 +64,7 @@ import com.github.utils4j.imp.Args;
 
 import net.miginfocom.swing.MigLayout;
 
-public class CertificateListUI extends SimpleDialog implements ICertificateListUI {
+public class CertificateListDialog extends SimpleDialog implements ICertificateListUI {
 
   private static final long serialVersionUID = -1L;
 
@@ -74,22 +74,22 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
   private JTable table;
   
-  private JButton btnOk;
+  private JButton okButton;
 
-  private JCheckBox chkRememberMe;
+  private JCheckBox rememberMeCheckbox;
   
   private final String defaultAlias;
   
-  private final IA1A3ConfigSaved onSaved;
+  private final IA1A3ConfigSavedCallback savedCallback;
   
   private Optional<ICertificateEntry> selectedEntry = Optional.empty();
   
   private IChoice choice = UNDEFINED_CHOICE;
 
-  private CertificateListUI(String defaultAlias, IA1A3ConfigSaved onSaved) {
+  private CertificateListDialog(String defaultAlias, IA1A3ConfigSavedCallback savedCallback) {
     super("Seleção de certificado", Config.getIcon(), true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
-    this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
+    this.savedCallback = Args.requireNonNull(savedCallback, "onSaved is null");
     setup();    
   }
 
@@ -131,40 +131,40 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
 
   private JLabel createRefresh() {
-    JLabel lblRefresh = new JLabel("");
-    lblRefresh.setVerticalAlignment(SwingConstants.BOTTOM);    
-    lblRefresh.setHorizontalAlignment(SwingConstants.RIGHT);
-    lblRefresh.setIcon(Images.REFRESH.asIcon());
-    lblRefresh.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    lblRefresh.setToolTipText("Atualiza a lista de certificados abaixo");
-    lblRefresh.addMouseListener(new MouseAdapter() {
+    JLabel refreshLabel = new JLabel("");
+    refreshLabel.setVerticalAlignment(SwingConstants.BOTTOM);    
+    refreshLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    refreshLabel.setIcon(Images.REFRESH.asIcon());
+    refreshLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    refreshLabel.setToolTipText("Atualiza a lista de certificados abaixo");
+    refreshLabel.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         refresh();
       }
     });
-    lblRefresh.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
-    return lblRefresh;
+    refreshLabel.setVisible(savedCallback != IA1A3ConfigSavedCallback.NOTHING);
+    return refreshLabel;
   }
 
   private JLabel createConfigInstall() {
-    JLabel lblConfigInstall = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
-    lblConfigInstall.setVerticalAlignment(SwingConstants.BOTTOM);
-    lblConfigInstall.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    lblConfigInstall.setForeground(Color.BLUE);
-    lblConfigInstall.setFont(new Font("Tahoma", Font.ITALIC, 12));
-    lblConfigInstall.setHorizontalAlignment(SwingConstants.LEFT);
-    lblConfigInstall.addMouseListener(new MouseAdapter() {
+    JLabel instalLabel = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
+    instalLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+    instalLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    instalLabel.setForeground(Color.BLUE);
+    instalLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
+    instalLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    instalLabel.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         clickConfig();
       }
     });
-    lblConfigInstall.setVisible(onSaved != IA1A3ConfigSaved.NOTHING);
-    return lblConfigInstall;
+    instalLabel.setVisible(savedCallback != IA1A3ConfigSavedCallback.NOTHING);
+    return instalLabel;
   }
 
   private JPanel createCenter() {
-    JPanel pnlCenter = new JPanel();
-    pnlCenter.setLayout(new CardLayout(0, 0));
+    JPanel centerPane = new JPanel();
+    centerPane.setLayout(new CardLayout(0, 0));
     table = new JTable();
     table.setModel(new CertificateModel());
     table.getColumnModel().getColumn(0).setPreferredWidth(70);
@@ -180,8 +180,8 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     table.setBorder(null);
     table.getSelectionModel().addListSelectionListener(this::onCertificateSelected);
     JScrollPane scrollPane = new JScrollPane(table);
-    pnlCenter.add(scrollPane);
-    return pnlCenter;
+    centerPane.add(scrollPane);
+    return centerPane;
   }
 
   private void onCertificateSelected(ListSelectionEvent e) {
@@ -189,33 +189,33 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
     boolean enabled = false;
     if (selectedRow < 0) {
       this.selectedEntry = Optional.empty();
-      this.chkRememberMe.setSelected(false);
+      this.rememberMeCheckbox.setSelected(false);
     }else {
       CertificateModel model = (CertificateModel)table.getModel();
       ICertificateEntry rowEntry = model.getEntryAt(selectedRow);
       this.selectedEntry = Optional.of(rowEntry);
       enabled |= !rowEntry.isExpired();
-      this.chkRememberMe.setSelected(defaultAlias.equals(rowEntry.getId()) && enabled);
-      rowEntry.setRemembered(this.chkRememberMe.isSelected());
+      this.rememberMeCheckbox.setSelected(enabled && defaultAlias.equals(rowEntry.getId()));
+      rowEntry.setRemembered(this.rememberMeCheckbox.isSelected());
     }
-    btnOk.setEnabled(enabled);
-    chkRememberMe.setEnabled(enabled);
+    okButton.setEnabled(enabled);
+    rememberMeCheckbox.setEnabled(enabled);
   }
 
   private JPanel createSouth() {
     JPanel southPane = new JPanel();   
-    chkRememberMe = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente.");    
-    chkRememberMe.setEnabled(false);
-    chkRememberMe.setSelected(false);
+    rememberMeCheckbox = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente.");    
+    rememberMeCheckbox.setEnabled(false);
+    rememberMeCheckbox.setSelected(false);
     JButton cancelButton = new JButton("Cancelar");
     cancelButton.addActionListener(this::clickCancel);
-    btnOk = new JButton("OK");
-    btnOk.setPreferredSize(cancelButton.getPreferredSize());
-    btnOk.setEnabled(false);
-    btnOk.addActionListener(arg -> close());
+    okButton = new JButton("OK");
+    okButton.setPreferredSize(cancelButton.getPreferredSize());
+    okButton.setEnabled(false);
+    okButton.addActionListener(arg -> close());
     southPane.setLayout(new MigLayout("fillx", "push[][][]", "[][][]"));
-    southPane.add(chkRememberMe);
-    southPane.add(btnOk);
+    southPane.add(rememberMeCheckbox);
+    southPane.add(okButton);
     southPane.add(cancelButton);
     return southPane;
   }
@@ -224,7 +224,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
 
     private static final long serialVersionUID = 1L;
 
-    private List<ICertificateEntry> entries;
+    private final List<ICertificateEntry> entries;
 
     public CertificateModel() {
       this.entries = new LinkedList<>();
@@ -290,7 +290,7 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
       fireTableDataChanged();
     }
 
-    public void load(List<ICertificateEntry> entry) {
+    public CertificateModel load(List<ICertificateEntry> entry) {
       clear();
       int i = 0;
       while(i < entry.size()) {
@@ -298,20 +298,21 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
         fireTableRowsInserted(i, i);
         i++;
       }
+      return this;
     }
   }
   
   private void clickConfig() {
-    new CertificateInstaller(this::onConfigSaved).showToFront();
+    new CertificateInstallerDialog(this::saveCallback).showToFront(); //wait user interaction
     if (this.choice == IChoice.NEED_RELOAD) {
       this.close();
     }
   }
   
-  protected void onConfigSaved(List<IFilePath> a1list, List<IFilePath> a3List) {
+  protected void saveCallback(List<IFilePath> a1list, List<IFilePath> a3List) {
     this.choice = IChoice.NEED_RELOAD;    
     this.table.getSelectionModel().clearSelection();
-    this.onSaved.call(a1list, a3List);
+    this.savedCallback.call(a1list, a3List); //response callback
   }
   
   private void refresh() {
@@ -328,21 +329,25 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   @Override
   public IChoice choose(List<ICertificateEntry> entries) {
     Args.requireNonNull(entries, "entries is null");
-    this.chkRememberMe.setSelected(false);
-    this.chkRememberMe.setEnabled(false);
-    ((CertificateModel)table.getModel()).load(entries);
-    if (this.table.getModel().getRowCount() == 1)
+    this.rememberMeCheckbox.setSelected(false);
+    this.rememberMeCheckbox.setEnabled(false);
+    
+    CertificateModel model = (CertificateModel)table.getModel();
+    if (model.load(entries).getRowCount() == 1) { //auto select unique entry
       this.table.setRowSelectionInterval(0, 0);
-    this.showToFront();
-    if (this.selectedEntry.isPresent()) {
-      ICertificateEntry selectedEntry = this.selectedEntry.get();
-      if (this.defaultAlias.equals(selectedEntry.getId())) {
-        if (!this.chkRememberMe.isSelected())
-          Config.save("");
-      }else if (this.chkRememberMe.isSelected()) {
-        Config.save(selectedEntry.getId());
-      }
     }
+    
+    this.showToFront();
+    
+    this.selectedEntry.ifPresent(entry -> {
+      if (this.defaultAlias.equals(entry.getId())) {
+        if (!this.rememberMeCheckbox.isSelected())
+          Config.save("");
+      } else if (this.rememberMeCheckbox.isSelected()) {
+        Config.save(entry.getId());
+      }
+    });
+
     this.close();
     return this.choice == IChoice.NEED_RELOAD ? this.choice : () -> this.selectedEntry;
   }
@@ -352,12 +357,12 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
   }
 
   public static IChoice display(List<ICertificateEntry> entries, boolean auto) {
-    return display(entries, auto, IA1A3ConfigSaved.NOTHING);
+    return display(entries, auto, IA1A3ConfigSavedCallback.NOTHING);
   }
   
-  public static IChoice display(List<ICertificateEntry> entries, boolean auto, IA1A3ConfigSaved onSaved) {
+  public static IChoice display(List<ICertificateEntry> entries, boolean auto, IA1A3ConfigSavedCallback saveCallback) {
     Args.requireNonNull(entries, "entries is null");
-    Args.requireNonNull(onSaved, "onSaved is null");
+    Args.requireNonNull(saveCallback, "onSaved is null");
     String defaultAlias = Config.defaultAlias().orElse("$not_found$");
     if (auto) {
       Optional<ICertificateEntry> defaultEntry = entries
@@ -368,6 +373,6 @@ public class CertificateListUI extends SimpleDialog implements ICertificateListU
         return () -> defaultEntry;
       }
     }
-    return new CertificateListUI(defaultAlias, onSaved).choose(entries);
+    return new CertificateListDialog(defaultAlias, saveCallback).choose(entries);
   }
 }

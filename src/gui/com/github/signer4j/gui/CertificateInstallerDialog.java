@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.io.File;
@@ -53,10 +54,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 
 import com.github.signer4j.AllowedExtensions;
-import com.github.signer4j.ICertificateListUI.IA1A3ConfigSaved;
+import com.github.signer4j.ICertificateListUI.IA1A3ConfigSavedCallback;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
@@ -68,123 +68,130 @@ import com.github.utils4j.imp.Args;
 
 import net.miginfocom.swing.MigLayout;
 
-class CertificateInstaller extends SimpleDialog {
+class CertificateInstallerDialog extends SimpleDialog {
 
   private static final long serialVersionUID = 1L;
-
+  
+  private static final Dimension MININUM_SIZE = new Dimension(474, 249);
+  
   private static final Color SELECTED = new Color(234, 248, 229);
   
   private JPanel contentPane;
   private JTable table;
-  private JButton btnA1;
-  private JButton btnA3;
+  private JButton a1Button;
+  private JButton a3Button;
   private CertType current = null;
-  private List<IFilePath> listA1 = new ArrayList<>();
-  private List<IFilePath> listA3 = new ArrayList<>();
+  private List<IFilePath> a1List = new ArrayList<>();
+  private List<IFilePath> a3List = new ArrayList<>();
   
-  private IA1A3ConfigSaved onSaved;
+  private final IA1A3ConfigSavedCallback savedCallback;
 
-  CertificateInstaller() {
-    this(IA1A3ConfigSaved.NOTHING);
+  CertificateInstallerDialog() {
+    this(IA1A3ConfigSavedCallback.NOTHING);
   }
 
-  CertificateInstaller(IA1A3ConfigSaved onSaved) {
+  CertificateInstallerDialog(IA1A3ConfigSavedCallback savedCallback) {
     super("Configuração de certificado", Config.getIcon(), true);
-    this.onSaved = Args.requireNonNull(onSaved, "onSaved is null");
-    Config.loadA3Paths(listA3::add);
-    Config.loadA1Paths(listA1::add);
-    
+    this.savedCallback = Args.requireNonNull(savedCallback, "onSaved is null");
+    Config.loadA3Paths(a3List::add);
+    Config.loadA1Paths(a1List::add);
+    setup();
+  }
+
+  private void setup() {
+    setupLayout();
+    setupFrame();
+  }
+
+  private void setupFrame() {
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setBounds(100, 100, 474, 249); 
+    setFixedMinimumSize(MININUM_SIZE);
     toCenter();
+  }
+
+  private void setupLayout() {
     contentPane = new JPanel();
-    contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-    setContentPane(contentPane);
     contentPane.setLayout(new GridLayout(1, 0, 0, 5)); 
-    
-    JPanel pnlStep1 = new JPanel();
-    pnlStep1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-    contentPane.add(pnlStep1);
-    pnlStep1.setLayout(new BorderLayout(0, 0));
-    
-    JLabel lblStep1 = new JLabel("Passo 1");
-    lblStep1.setFont(new Font("Tahoma", Font.PLAIN, 20));
-    pnlStep1.add(lblStep1, BorderLayout.NORTH);
-    
-    JPanel pngStep1Center = new JPanel();
-    pnlStep1.add(pngStep1Center, BorderLayout.CENTER);
-    pngStep1Center.setLayout(new BorderLayout(0, 0));
-    
-    JLabel lblStep1Title = new JLabel("Meu certificado é do tipo:");
-    lblStep1Title.setFont(new Font("Tahoma", Font.PLAIN, 16));
-    pngStep1Center.add(lblStep1Title, BorderLayout.NORTH);
-    
-    JPanel pnlStep1a3a1 = new JPanel();
-    pnlStep1a3a1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-    pngStep1Center.add(pnlStep1a3a1, BorderLayout.CENTER);
-    pnlStep1a3a1.setLayout(new GridLayout(0, 2, 10, 10));
-    
-    btnA1 = new JButton("A1");
-    btnA1.addActionListener(e -> onClickA1());
-    btnA1.setIcon(new ImageIcon(Images.ICON_A1.asImage()));
-    Cursor hands = new Cursor(Cursor.HAND_CURSOR);
-    btnA1.setCursor(hands);
-    pnlStep1a3a1.add(btnA1);
-    
-    btnA3 = new JButton("A3");
-    btnA3.addActionListener(e -> onClickA3());
-    btnA3.setIcon(new ImageIcon(Images.ICON_A3.asImage()));
-    btnA3.setCursor(hands);
-    pnlStep1a3a1.add(btnA3);
+    contentPane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+    contentPane.add(createStep1());
+    setContentPane(contentPane);
+  }
+
+  private JPanel createStep1() {
+    JPanel step1Pane = new JPanel();
+    step1Pane.setLayout(new BorderLayout(0, 0));
+    step1Pane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+    step1Pane.add(createStep1_Title(), BorderLayout.NORTH);
+    step1Pane.add(createStep1_Center(), BorderLayout.CENTER);
+    return step1Pane;
+  }
+
+  private JPanel createStep1_Center() {
+    JPanel step1CenterPane = new JPanel();
+    step1CenterPane.setLayout(new BorderLayout(0, 0));
+    step1CenterPane.add(createStep1_CertificateType(), BorderLayout.NORTH);
+    step1CenterPane.add(createStep1_A1A3Pane(), BorderLayout.CENTER);
+    return step1CenterPane;
+  }
+
+  private JLabel createStep1_Title() {
+    JLabel step1Label = new JLabel("Passo 1");
+    step1Label.setFont(new Font("Tahoma", Font.PLAIN, 20));
+    return step1Label;
+  }
+
+  private JPanel createStep1_A1A3Pane() {
+    JPanel step1_a1a3_Pane = new JPanel();
+    step1_a1a3_Pane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+    step1_a1a3_Pane.setLayout(new GridLayout(0, 2, 10, 10));
+    step1_a1a3_Pane.add(createStep1_A1Button());
+    step1_a1a3_Pane.add(createStep1_A3Button());
+    return step1_a1a3_Pane;
+  }
+
+  private JLabel createStep1_CertificateType() {
+    JLabel step1TitleLabel = new JLabel("Meu certificado é do tipo:");
+    step1TitleLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+    return step1TitleLabel;
+  }
+
+  private JButton createStep1_A3Button() {
+    a3Button = new JButton("A3");
+    a3Button.addActionListener(e -> onClickA3());
+    a3Button.setIcon(new ImageIcon(Images.ICON_A3.asImage()));
+    a3Button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    return a3Button;
+  }
+
+  private JButton createStep1_A1Button() {
+    a1Button = new JButton("A1");
+    a1Button.addActionListener(e -> onClickA1());
+    a1Button.setIcon(new ImageIcon(Images.ICON_A1.asImage()));
+    a1Button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    return a1Button;
   }
   
   private JPanel createStep2(CertType type) {
-    JPanel pnlStep2 = new JPanel();
-    pnlStep2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-    pnlStep2.setLayout(new BorderLayout(0, 0));
-    
-    JPanel pnlStep2North = new JPanel();
-    pnlStep2.add(pnlStep2North, BorderLayout.NORTH);
-    pnlStep2North.setLayout(new GridLayout(2, 0, 0, 0));
-    
-    JLabel lblStep2 = new JLabel("Passo 2");
-    lblStep2.setFont(new Font("Tahoma", Font.PLAIN, 20));
-    pnlStep2North.add(lblStep2);
-    
-    JPanel pnlFinder = new JPanel();
-    pnlFinder.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-    pnlStep2North.add(pnlFinder);
-    pnlFinder.setLayout(new GridLayout(0, 2, 0, 0));
-    
-    JLabel lblSelecionarNovoCertificado = new JLabel(type.labelTitle());
-    lblSelecionarNovoCertificado.setFont(new Font("Tahoma", Font.PLAIN, 16));
-    pnlFinder.add(lblSelecionarNovoCertificado);
-    
-    JButton btnA1Locate = new JButton("Localizar");
-    btnA1Locate.addActionListener(e -> onLocate());
-    pnlFinder.add(btnA1Locate);
-    
-    JPanel pnlStep2Center = new JPanel();
-    pnlStep2.add(pnlStep2Center, BorderLayout.CENTER);
-    pnlStep2Center.setLayout(new CardLayout(0, 0));
-    
-    JPanel pnlOkCancel = new JPanel();    
-    pnlStep2.add(pnlOkCancel, BorderLayout.SOUTH);   
-    pnlOkCancel.setLayout(new MigLayout("fillx", "push[][]", "[][]"));    
-    JButton btnCancel = new JButton("Cancelar");
-    btnCancel.addActionListener(e -> close());    
-    JButton btnSave = new JButton("OK");
-    btnSave.setPreferredSize(btnCancel.getPreferredSize());
-    btnSave.addActionListener(e -> onSave());        
-    pnlOkCancel.add(btnSave);
-    pnlOkCancel.add(btnCancel);
-        
+    JPanel step2Pane = new JPanel();
+    step2Pane.setLayout(new BorderLayout(0, 0));
+    step2Pane.add(createStep2_NorthPane(type), BorderLayout.NORTH);
+    step2Pane.add(createStep2_CenterPane(type), BorderLayout.CENTER);
+    step2Pane.add(createStep2_OkCancelPane(), BorderLayout.SOUTH); 
+    return step2Pane;
+  }
 
+  private JPanel createStep2_CenterPane(CertType type) {
+    JPanel step2CenterPane = new JPanel();
+    step2CenterPane.setLayout(new CardLayout(0, 0));
+    step2CenterPane.add(createStep2_TablePane(type));
+    return step2CenterPane;
+  }
+
+  private JScrollPane createStep2_TablePane(CertType type) {
     table = new JTable();    
     table.setModel(type.model);
-    table.getColumnModel().getColumn(0).setPreferredWidth(370);
-    table.getColumnModel().getColumn(1).setPreferredWidth(30);
-
+    table.getColumnModel().getColumn(0).setPreferredWidth(340);
+    table.getColumnModel().getColumn(1).setPreferredWidth(60);
     ButtonRenderer bc = new ButtonRenderer((arg) -> current.remove(table.getSelectedRow()));
     table.getColumnModel().getColumn(1).setCellRenderer(bc);
     table.getColumnModel().getColumn(1).setCellEditor(bc);
@@ -193,13 +200,59 @@ class CertificateInstaller extends SimpleDialog {
     table.setFillsViewportHeight(true);
     table.setFillsViewportHeight(true);
     table.setRowHeight(table.getRowHeight() + 10);
-   
-    TableCellRenderer renderer = (TableCellRenderer) table.getTableHeader().getDefaultRenderer();
-    ((DefaultTableCellRenderer)renderer).setHorizontalAlignment(JLabel.LEFT);
-    
+    DefaultTableCellRenderer renderer = (DefaultTableCellRenderer)
+    table.getTableHeader().getDefaultRenderer();
+    renderer.setHorizontalAlignment(JLabel.LEFT);
     JScrollPane scrollPane = new JScrollPane(table);
-    pnlStep2Center.add(scrollPane);
-    return pnlStep2;
+    return scrollPane;
+  }
+
+  private JPanel createStep2_NorthPane(CertType type) {
+    JPanel step2NorthPane = new JPanel();
+    step2NorthPane.setLayout(new GridLayout(2, 0, 0, 0));
+    step2NorthPane.add(createStep2_Title());
+    step2NorthPane.add(createStep2_FinderPane(type));
+    return step2NorthPane;
+  }
+
+  private JPanel createStep2_OkCancelPane() {
+    JButton cancelButton = new JButton("Cancelar");
+    cancelButton.addActionListener(e -> close());    
+    JButton saveButton = new JButton("OK");
+    saveButton.setPreferredSize(cancelButton.getPreferredSize());
+    saveButton.addActionListener(e -> onSave());        
+
+    JPanel okCancelPane = new JPanel();    
+    okCancelPane.setLayout(new MigLayout("fillx", "push[][]", "[][]"));  
+    okCancelPane.add(saveButton);
+    okCancelPane.add(cancelButton);
+    return okCancelPane;
+  }
+
+  private JPanel createStep2_FinderPane(CertType type) {
+    JPanel finderPane = new JPanel();
+    finderPane.setLayout(new GridLayout(0, 2, 0, 0));
+    finderPane.add(createStep2_Title(type));
+    finderPane.add(createStep2_A1LocateButton());
+    return finderPane;
+  }
+
+  private JLabel createStep2_Title() {
+    JLabel step2Label = new JLabel("Passo 2");
+    step2Label.setFont(new Font("Tahoma", Font.PLAIN, 20));
+    return step2Label;
+  }
+
+  private JButton createStep2_A1LocateButton() {
+    JButton a1LocateButton = new JButton("Localizar");
+    a1LocateButton.addActionListener(e -> onLocate());
+    return a1LocateButton;
+  }
+
+  private JLabel createStep2_Title(CertType type) {
+    JLabel certificateTile = new JLabel(type.labelTitle());
+    certificateTile.setFont(new Font("Tahoma", Font.PLAIN, 16));
+    return certificateTile;
   }
   
   private void onLocate() {
@@ -223,42 +276,42 @@ class CertificateInstaller extends SimpleDialog {
 
   private void onSave() {
     if (current != null) { 
-      current.save(listA1, listA3);
+      current.save(a1List, a3List);
     }
     this.close();
-    this.onSaved.call(
-      unmodifiableList(listA1), 
-      unmodifiableList(listA3)
+    this.savedCallback.call(
+      unmodifiableList(a1List), 
+      unmodifiableList(a3List)
     );
   }
 
   private void onClickA1() {
     if (CertType.A1.equals(current))
       return;
-    btnA1.setBackground(SELECTED);
-    btnA3.setBackground(null);
+    a1Button.setBackground(SELECTED);
+    a3Button.setBackground(null);
     if (current != null)
-      listA3 = new ArrayList<>(current.model.entries);
-    setComponent(CertType.A1, listA1);
+      a3List = new ArrayList<>(current.model.entries);
+    setComponent(CertType.A1, a1List);
   }
 
   private void onClickA3() {
     if (CertType.A3.equals(current))
       return;
-    btnA3.setBackground(SELECTED);
-    btnA1.setBackground(null);
+    a3Button.setBackground(SELECTED);
+    a1Button.setBackground(null);
     if (current != null)
-      listA1 = new ArrayList<>(current.model.entries);
-    setComponent(CertType.A3, listA3);
+      a1List = new ArrayList<>(current.model.entries);
+    setComponent(CertType.A3, a3List);
   }
   
   private void setComponent(CertType type, List<IFilePath> actual) {
     GridLayout layout = (GridLayout)contentPane.getLayout();
     if (current != null)
       contentPane.remove(contentPane.getComponentCount() - 1);
-    JPanel pnlStep2 = createStep2(type);
+    JPanel step2Pane = createStep2(type);
     layout.setRows(2);
-    contentPane.add(pnlStep2);
+    contentPane.add(step2Pane);
     contentPane.revalidate();
     contentPane.updateUI();
     boolean center = current == null;
@@ -276,7 +329,7 @@ class CertificateInstaller extends SimpleDialog {
     
     @Override
     public String toString() {
-      return "X";
+      return "Remover";
     }
   }
   
@@ -326,7 +379,7 @@ class CertificateInstaller extends SimpleDialog {
       case 0:
         return itemPath;
       case 1:
-        return "Remover";
+        return "Ação";
       }
       return "?";  
     }
@@ -428,7 +481,7 @@ class CertificateInstaller extends SimpleDialog {
     A3(new A3PathModel()){
       @Override
       String labelTitle() {
-        return "Localize o(s) driver(s) A3:";
+        return "Localize o driver A3:";
       }
 
       @Override

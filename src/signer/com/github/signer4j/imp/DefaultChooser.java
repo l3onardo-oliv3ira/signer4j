@@ -34,7 +34,7 @@ import com.github.signer4j.ICertificateListUI.ICertificateEntry;
 import com.github.signer4j.ICertificates;
 import com.github.signer4j.IChoice;
 import com.github.signer4j.IKeyStoreAccess;
-import com.github.signer4j.gui.CertificateListUI;
+import com.github.signer4j.gui.CertificateListDialog;
 import com.github.signer4j.imp.exception.Signer4JException;
 
 public class DefaultChooser extends AbstractCertificateChooser {
@@ -46,7 +46,7 @@ public class DefaultChooser extends AbstractCertificateChooser {
   @Override
   protected IChoice doChoose(List<CertificateEntry> options) throws Signer4JException {
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    Optional<ICertificateEntry> ce = CertificateListUI.display((List)options).get();
+    Optional<ICertificateEntry> ce = CertificateListDialog.display((List)options).get();
     if (!ce.isPresent()) {
       return Choice.CANCEL;
     }

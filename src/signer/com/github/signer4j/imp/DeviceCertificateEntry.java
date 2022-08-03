@@ -36,10 +36,13 @@ import java.util.function.Predicate;
 import com.github.signer4j.ICertificate;
 import com.github.signer4j.ICertificateListUI.ICertificateEntry;
 import com.github.signer4j.IDevice;
+import com.github.utils4j.imp.Args;
 
 public class DeviceCertificateEntry extends DefaultCertificateEntry {
   
   public static List<ICertificateEntry> toEntries(List<IDevice> devices, Predicate<ICertificate> filter) {
+    Args.requireNonNull(devices, "devices is null");
+    Args.requireNonNull(filter, "filter is null");
     return devices.stream()
       .map(d -> d.getCertificates().filter(filter).map(c -> new DeviceCertificateEntry(d, c)).collect(toList()))
       .flatMap(Collection::stream)
