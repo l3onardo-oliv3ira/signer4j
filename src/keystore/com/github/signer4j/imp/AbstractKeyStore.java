@@ -30,7 +30,6 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
-import static java.util.Optional.ofNullable;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -38,6 +37,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ abstract class AbstractKeyStore implements IKeyStore {
   
   protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractKeyStore.class);
   
-  private boolean closed = false;
+  private boolean closed = false, initKey = false;
   
   protected final KeyStore keyStore;
   
@@ -149,11 +149,19 @@ abstract class AbstractKeyStore implements IKeyStore {
   @Override
   public final PrivateKey getPrivateKey(String alias, char[] password) throws Signer4JException {
     checkIfAvailable();
-    return invoke(() -> ofNullable((PrivateKey)this.keyStore.getKey(alias, password))
-      .orElseThrow(() -> new PrivateKeyNotFound("KeyStore return's null private key for alias: " + alias))
-    );
+    return invoke(() -> {
+      PrivateKey key = Optional.ofNullable((PrivateKey)this.keyStore.getKey(alias, password))
+          .orElseThrow(() -> new PrivateKeyNotFound("KeyStore return's null private key for alias: " + alias));
+      if (!initKey) {
+        onInitKey(key);
+        initKey = true;
+      }
+      return key;
+    });
   }
   
+  protected void onInitKey(PrivateKey key) throws Exception {}
+
   @Override
   public String getProvider() throws Signer4JException {
     checkIfAvailable();
@@ -169,6 +177,7 @@ abstract class AbstractKeyStore implements IKeyStore {
         LOGGER.warn("Unabled to close keystore gracefully", e);
       }finally {
         this.closed = true;
+        this.initKey = false;
       }
     }
   }

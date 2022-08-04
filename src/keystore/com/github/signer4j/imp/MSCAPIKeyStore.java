@@ -28,12 +28,12 @@
 package com.github.signer4j.imp;
 
 import java.security.KeyStore;
+import java.security.PrivateKey;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import javax.crypto.Cipher;
 
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
-import com.github.signer4j.imp.exception.Signer4JException;
 
 class MSCAPIKeyStore extends AbstractKeyStore {
   
@@ -47,8 +47,9 @@ class MSCAPIKeyStore extends AbstractKeyStore {
   }
   
   @Override
-  public String getProvider() throws Signer4JException {
-    checkIfAvailable();
-    return BouncyCastleProvider.PROVIDER_NAME;
+  protected void onInitKey(PrivateKey key) throws Exception {
+//    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+//    cipher.init(Cipher.ENCRYPT_MODE, key);
+//    cipher.doFinal("unlock".getBytes());
   }
 }

@@ -149,7 +149,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m -> 
         m.contains("unable to perform password callback") ||
-        m.contains("a operação foi cancelada pelo usuário")
+        m.contains("a operação foi cancelada pelo usuário") ||
+        m.contains("ação cancelada pelo usuário")
       );
   }
 

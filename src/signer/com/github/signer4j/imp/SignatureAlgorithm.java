@@ -32,6 +32,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IAlgorithm;
+import com.github.signer4j.IHashAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
 import com.github.utils4j.imp.ProviderInstaller;
 
@@ -96,8 +97,8 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   }
   
   @Override
-  public final String getHashName() {
-    return hash.getStandardName();
+  public final IHashAlgorithm getHashAlgorithm() {
+    return hash;
   }
   
   public static SignatureAlgorithm getDefault() {

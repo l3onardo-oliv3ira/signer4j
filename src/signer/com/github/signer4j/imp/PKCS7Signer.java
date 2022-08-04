@@ -222,7 +222,7 @@ class PKCS7Signer extends SecurityObject implements IPKCS7Signer {
         () -> Signature.getInstance(signatureAlgorithm), 
         "Algorítimo " + signatureAlgorithm + " é desconhecido"
       );
-      final String hashAlgorithm = this.signatureAlgorithm.getHashName();
+      final String hashAlgorithm = this.signatureAlgorithm.getHashAlgorithm().getStandardName();
       signer.messageDigest = Throwables.tryRuntime(
         () -> MessageDigest.getInstance(hashAlgorithm),
         "Algorítimo " + hashAlgorithm + " é desconhecido"
