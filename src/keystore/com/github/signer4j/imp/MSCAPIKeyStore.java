@@ -30,11 +30,8 @@ package com.github.signer4j.imp;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
-import com.github.signer4j.imp.exception.Signer4JException;
 
 class MSCAPIKeyStore extends AbstractKeyStore {
   
