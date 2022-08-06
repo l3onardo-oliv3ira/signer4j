@@ -137,7 +137,7 @@ class ForWindowsLockDettector implements IWindowLockDettector {
       case Wtsapi32.WTS_SESSION_LOGOFF:
       case  Wtsapi32.WTS_SESSION_LOCK:
         synchronized(listeners) {
-          Throwables.tryRun(() -> listeners.forEach(l -> l.onMachineLocked(lParam.intValue())));
+          Throwables.runQuietly(() -> listeners.forEach(l -> l.onMachineLocked(lParam.intValue())));
         }
         break;
       case Wtsapi32.WTS_REMOTE_CONNECT:
@@ -145,7 +145,7 @@ class ForWindowsLockDettector implements IWindowLockDettector {
       case Wtsapi32.WTS_SESSION_LOGON:
       case Wtsapi32.WTS_SESSION_UNLOCK:
         synchronized(listeners) {
-          Throwables.tryRun(() -> listeners.forEach(l -> l.onMachineUnlocked(lParam.intValue())));
+          Throwables.runQuietly(() -> listeners.forEach(l -> l.onMachineUnlocked(lParam.intValue())));
         }
         break;
       } 
