@@ -75,6 +75,8 @@ public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
 
   @Override
   public ResponseCallback doHandle(final PasswordCallback callback) {
+    if (Thread.currentThread().isInterrupted())
+      return ResponseCallback.CANCEL;
     JPasswordField passwordField = new JPasswordField();
     JComponent[] components = new JComponent[5];
     components[0] = new JLabel(format("Token: %s - Modelo: %s", 
@@ -90,15 +92,15 @@ public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
       JOptionPane.OK_CANCEL_OPTION
     );
     JDialog dialog = panel.createDialog(title);
-    dialog.setIconImage(Config.getIcon());
-    dialog.setAlwaysOnTop(true);
-    dialog.addComponentListener(new ComponentAdapter() {
-      public void componentShown(ComponentEvent e) {
-        passwordField.requestFocusInWindow();
-      }
-    });
-    
     try {
+      dialog.setIconImage(Config.getIcon());
+      dialog.setAlwaysOnTop(true);
+      dialog.addComponentListener(new ComponentAdapter() {
+        public void componentShown(ComponentEvent e) {
+          passwordField.requestFocusInWindow();
+        }
+      });
+    
       mouseTracker(dialog);
       for(final Integer ok = JOptionPane.OK_OPTION;;) {
         GuiTools.showOnMousePointer(dialog);

@@ -38,17 +38,31 @@ import com.github.signer4j.imp.Config;
 
 public final class CancelAlert {
 
-  public static String CANCELED_OPERATION_MESSAGE = "Operação em cancelamento...";
+  public static String CANCELED_OPERATION_MESSAGE = "Operação em cancelada!";
+
+  public static String CANCELING_OPERATION_MESSAGE = "Operação em cancelamento! Aguarde...";
   
-  private static final AtomicBoolean showed = new AtomicBoolean(false);
+  private static final AtomicBoolean visible = new AtomicBoolean(false);
   
   public static void show() {
     invokeLater(() -> display());
   }
   
+  public static void showWaiting() {
+    invokeLater(() -> displayWaiting());
+  }
+
   public static boolean display() {
-    if (!showed.getAndSet(true)) {
-      return new CancelAlert(CANCELED_OPERATION_MESSAGE).reveal();
+    return display(CANCELED_OPERATION_MESSAGE);
+  }
+  
+  public static boolean displayWaiting() {
+    return display(CANCELING_OPERATION_MESSAGE);
+  }
+  
+  private static boolean display(String message) {
+    if (!visible.getAndSet(true)) {
+      return new CancelAlert(message).reveal();
     }
     return false;
   }
@@ -75,7 +89,7 @@ public final class CancelAlert {
     dialog.setIconImage(Config.getIcon());
     dialog.setVisible(true);
     dialog.dispose();
-    showed.set(false);
+    visible.set(false);
     Object selectedValue = jop.getValue();
     return OPTIONS[0].equals(selectedValue);
   }
