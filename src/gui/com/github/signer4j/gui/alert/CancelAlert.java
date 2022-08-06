@@ -38,7 +38,7 @@ import com.github.signer4j.imp.Config;
 
 public final class CancelAlert {
 
-  public static String CANCELED_OPERATION_MESSAGE = "Operação cancelada!";
+  public static String CANCELED_OPERATION_MESSAGE = "Operação em cancelamento...";
   
   private static final AtomicBoolean showed = new AtomicBoolean(false);
   
