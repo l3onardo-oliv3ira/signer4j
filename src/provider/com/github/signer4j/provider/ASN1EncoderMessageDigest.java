@@ -25,12 +25,33 @@
 */
 
 
-package com.github.signer4j;
+package com.github.signer4j.provider;
 
-import org.apache.log4j.Logger;
+import java.io.IOException;
 
-public interface IExceptionHandler {
-  Logger LOGGER = Logger.getLogger(IExceptionHandler.class);
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.DigestInfo;
+
+import com.github.utils4j.imp.Args;
+
+public abstract class ASN1EncoderMessageDigest extends EncoderMessageDigest {
+
+  private final ASN1ObjectIdentifier hashId;
   
-  void handleException(Throwable e);
+  protected ASN1EncoderMessageDigest(String name, ASN1ObjectIdentifier hashId) {
+    super(name);
+    this.hashId = Args.requireNonNull(hashId, "hashId is null");
+  }
+
+  //Encode To PKCS1 By BounceCastle
+  protected byte[] encode(byte[] digest) {
+    try {
+      return new DigestInfo(new AlgorithmIdentifier(hashId, DERNull.INSTANCE), digest).getEncoded(ASN1Encoding.DER);
+    } catch (IOException e) {
+      throw new RuntimeException("Unabled to encode bytes to ASN1Encoding.DER", e);
+    }
+  }
 }

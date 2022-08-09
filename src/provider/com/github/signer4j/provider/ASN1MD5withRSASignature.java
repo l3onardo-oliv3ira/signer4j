@@ -25,10 +25,24 @@
 */
 
 
-package com.github.signer4j;
+package com.github.signer4j.provider;
 
-public interface ISignatureAlgorithm extends IAlgorithm {
-  IHashAlgorithm getHashAlgorithm();
+import java.security.InvalidAlgorithmParameterException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class ASN1MD5withRSASignature extends ANYwithRSASignature {
   
-  boolean supportsTwoSteps();
+  private final MessageDigest digester;
+  
+  public ASN1MD5withRSASignature() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    super("ASN1MD5withRSA");
+    System.out.println(Thread.currentThread().getName());
+    this.digester = MessageDigest.getInstance("ASN1MD5");
+  }
+
+  @Override
+  protected final MessageDigest getDigester() {
+    return digester;
+  }
 }

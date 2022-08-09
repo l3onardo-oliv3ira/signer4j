@@ -435,7 +435,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     private static final long serialVersionUID = 1L;
 
     A1PathModel(){
-      super("Certificado");
+      super("Arquivo (pkcs12)");
     }
   }
   
@@ -443,7 +443,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     private static final long serialVersionUID = 1L;
 
     A3PathModel(){
-      super("Driver");
+      super("Biblioteca (pkcs11)");
     }
   }
 

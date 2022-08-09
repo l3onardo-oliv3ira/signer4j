@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
+
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.IChoice;
 import com.github.signer4j.IPKCS7Signer;
@@ -111,7 +113,6 @@ class PKCS7Signer extends SecurityObject implements IPKCS7Signer {
       final PrivateKey privateKey = choice.getPrivateKey();
       signature.initSign(privateKey);
       signature.update(attributes.getDerEncoding());
-      
       final AlgorithmId hashAlgorithm = AlgorithmId.get(messageDigest.getAlgorithm());
       final SignerInfo signerInfo = new SignerInfo(
         new X500Name(certificate.getIssuerX500Principal().getName()),

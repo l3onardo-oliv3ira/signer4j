@@ -25,17 +25,46 @@
 */
 
 
-package com.github.signer4j.imp;
+package com.github.signer4j.provider;
 
-import com.github.signer4j.IExceptionHandler;
+import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
 
-public enum ConsoleExceptionHandler implements IExceptionHandler {
-  INSTANCE;
+public abstract class EncoderMessageDigest extends MessageDigest {
+
+  private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+  
+  protected EncoderMessageDigest(String name) {
+    super(name);
+  }
 
   @Override
-  public void handleException(Throwable e) {
-    if (e != null) {
-      LOGGER.error("Exceção", e);
+  protected final void engineUpdate(byte input) {
+    output.write(input);
+  }
+
+  @Override
+  protected final void engineUpdate(byte[] input, int offset, int len) {
+    output.write(input, offset, len);
+  }
+
+  @Override
+  protected final byte[] engineDigest() {
+    try {
+      return encode(doDigest(output.toByteArray()));
+    } finally {
+      reset();
     }
   }
+
+  @Override
+  protected void engineReset() {
+    output.reset();
+  }
+  
+  protected byte[] doDigest(byte[] rawDigest) {
+    return rawDigest;
+  }
+  
+  protected abstract byte[] encode(byte[] input);
 }

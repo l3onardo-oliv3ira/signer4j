@@ -30,8 +30,8 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
-import static com.github.utils4j.imp.ProviderInstaller.SUNPKCS11;
-import static com.github.utils4j.imp.ProviderInstaller.uninstall;
+import static com.github.signer4j.provider.ProviderInstaller.SUNPKCS11;
+import static com.github.signer4j.provider.ProviderInstaller.uninstall;
 import static java.lang.String.format;
 
 import java.security.AuthProvider;
@@ -90,7 +90,12 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
     return getKeyStore(
       providerName,
       format(//TODO we have to go back here for aditional parameters
-        "name = %s\r\nlibrary = %s\r\nslot = %s\rattributes = compatibility", 
+        "name = %s\n\r" + 
+        "library = %s\n\r" + 
+        "slot = %s\n\r" +
+        "insertionCheckInterval = 1500\n\r" +
+        "destroyTokenAfterLogout = true\n\r" +
+        "attributes = compatibility", 
         providerName,
         libraryPath,
         slot
@@ -120,6 +125,6 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
   }
   
   private static String providerName(String fileName, long slot) {
-    return format("%s-slot%s", fileName, slot);
+    return format("%s-slot:%s", fileName, slot);
   }
 }

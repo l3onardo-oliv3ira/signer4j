@@ -25,10 +25,23 @@
 */
 
 
-package com.github.signer4j;
+package com.github.signer4j.provider;
 
-public interface ISignatureAlgorithm extends IAlgorithm {
-  IHashAlgorithm getHashAlgorithm();
+
+import java.security.Provider;
+
+public class Signer4JProvider extends Provider {
+
+  private static final long serialVersionUID = 1L;
+
+  public Signer4JProvider() {
+    this("Signer4J", 1.0, "Signer4J Security Provider v1.0");
+  }
   
-  boolean supportsTwoSteps();
+  protected Signer4JProvider(String name, double version, String info) {
+    super(name, version, info);
+    put("Signature.ASN1MD5withRSA", "com.github.signer4j.provider.ASN1MD5withRSASignature");
+    put("MessageDigest.ASN1MD5", "com.github.signer4j.provider.ASN1MD5MessageDigest");
+    put("Signature.TWOSTEPSwithRSA", "com.github.signer4j.provider.TWOSTEPSwithRSASignature");
+  }
 }

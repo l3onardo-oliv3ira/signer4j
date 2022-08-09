@@ -25,10 +25,13 @@
 */
 
 
-package com.github.signer4j;
+package com.github.signer4j.provider;
 
-public interface ISignatureAlgorithm extends IAlgorithm {
-  IHashAlgorithm getHashAlgorithm();
-  
-  boolean supportsTwoSteps();
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+
+public class ASN1MD5MessageDigest extends ASN1EncoderMessageDigest {
+
+  public ASN1MD5MessageDigest() {
+    super("ASN1MD5", PKCSObjectIdentifiers.md5);
+  }
 }

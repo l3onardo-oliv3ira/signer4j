@@ -35,5 +35,7 @@ public interface ICMSSignerBuilder extends IFileSignerBuilder<ICMSSignerBuilder>
   
   ICMSSignerBuilder usingAttributes(boolean hasSignedAttributes);
   
+  ICMSSignerBuilder usingProvider(String provider);
+
   ICMSSigner build();
 }

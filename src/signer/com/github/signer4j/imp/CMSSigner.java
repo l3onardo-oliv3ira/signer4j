@@ -54,6 +54,7 @@ import com.github.signer4j.ISignatureType;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Directory;
 
 class CMSSigner extends SecurityObject implements ICMSSigner {
   
@@ -66,6 +67,8 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   private ICMSConfigSetup config;
   
   private boolean hasNoSignedAttributes;
+  
+  private String provider;
   
   private CMSSigner(ICertificateChooser chooser, Runnable dispose) {
     super(chooser, dispose);
@@ -100,17 +103,19 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
   private ISignedData process(CMSTypedData content, long length) throws Signer4JException {
     return invoke(() -> {
       final IChoice choice = choose();
+
+      JcaSimpleSignerInfoGeneratorBuilder builder = new JcaSimpleSignerInfoGeneratorBuilder()
+        .setDirectSignature(hasNoSignedAttributes);
+      
+      if (provider != null)
+        builder.setProvider(provider);
+      
       CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-      generator.addSignerInfoGenerator(
-        new JcaSimpleSignerInfoGeneratorBuilder()
-          .setDirectSignature(hasNoSignedAttributes)
-          .setProvider(choice.getProvider())
-          .build(
-            algorithm.getName(), 
-            choice.getPrivateKey(), 
-            (X509Certificate)choice.getCertificate() 
-          )
-      );
+      generator.addSignerInfoGenerator(builder.build(
+        algorithm.getName(), 
+        choice.getPrivateKey(), 
+        (X509Certificate)choice.getCertificate() 
+      ));
       generator.addCertificates(new JcaCertStore(choice.getCertificateChain()));
 
       CMSSignedData data = generator.generate(
@@ -122,9 +127,10 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
        * Nesta instância 'data' acima pode ter pendurado um byte[]/ContentInfo bem grande. Se invocado data.getEncoded(), um segundo
        * volume de byte[] será criado, duplicando o consumo de espaço no Heap da JVM ainda que por um período 
        * curto de tempo. A idéia básica aqui é que se escrevermos no disco o que já se tem em memmória seguido da liberação 
-       * da referencia 'data' para a coleta de lixo, poderemos usar a memória em um único volume ao invés de dois, o que 
-       * diminuirá as chances de se alcançar OutOfMemoryError. Neste cenário um OutOfMemory só será alcançado se um 
-       * ÚNICO arquivo (e NÃO um lote deles) já for maior do que o todo o Heap da JVM. 
+       * da referencia 'data' para a coleta de lixo (não há outras referências na memória então a JVM vai acabar coletando cedo ou tarde), 
+       * poderemos usar a memória em um único volume ao invés de dois, o que diminuirá as chances de se alcançar 
+       * OutOfMemoryError. Neste cenário um OutOfMemoryError só será alcançado se um ÚNICO arquivo (e NÃO um lote deles) já for 
+       * maior do que o todo o Heap da JVM. 
        */
 
       /**
@@ -132,7 +138,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
        */
       if (length <= memoryLimit) { 
         return SignedData.from(
-          data.getEncoded(ASN1Encoding.DER),
+          data.getEncoded(ASN1Encoding.DER), //ou seria sem o parâmetro?
           choice
         );
       }
@@ -143,7 +149,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
        * 2. livra-se dos recursos que estão sendo consumidos
        * 3. Lê do disco usando apenas um único volume de memória ao invés de dois
        */
-      File tmp = Files.createTempFile("pje_office_tmp", ".pjeoffice").toFile();
+      File tmp = Directory.createTempFile("pje_office_tmp", ".pjeoffice");
       try {
         try(OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp), 32 * 1024)) {
           data.toASN1Structure().encodeTo(out, ASN1Encoding.DER);
@@ -170,7 +176,9 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     private ISignatureAlgorithm algorithm = SignatureAlgorithm.SHA1withRSA;
     
     private final ICertificateChooser chooser;
-    
+
+    private String provider = null;
+
     private ICMSConfigSetup config = (p, o) -> {};
     
     private boolean hasNoSignedAttributes = false;
@@ -207,6 +215,12 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
       this.signatureType = Args.requireNonNull(signatureType, "signatureType is null");
       return this;
     }
+
+    @Override
+    public final ICMSSignerBuilder usingProvider(String provider) {
+      this.provider = Args.requireText(provider, "provider is empty");
+      return this;
+    }
     
     @Override
     public final ICMSSignerBuilder usingAttributes(boolean hasSignedAttributes) {
@@ -217,6 +231,7 @@ class CMSSigner extends SecurityObject implements ICMSSigner {
     @Override
     public final ICMSSigner build() {
       CMSSigner signer = new CMSSigner(chooser, dispose);
+      signer.provider = provider;
       signer.config = config;
       signer.memoryLimit = memoryLimit;
       signer.algorithm = this.algorithm;

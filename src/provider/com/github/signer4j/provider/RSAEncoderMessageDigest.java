@@ -25,10 +25,40 @@
 */
 
 
-package com.github.signer4j;
+package com.github.signer4j.provider;
 
-public interface ISignatureAlgorithm extends IAlgorithm {
-  IHashAlgorithm getHashAlgorithm();
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import sun.security.rsa.RSASignature;
+import sun.security.x509.AlgorithmId;
+
+@SuppressWarnings("restriction")
+public class RSAEncoderMessageDigest extends EncoderMessageDigest {
+
+  private final MessageDigest digester;
+
+  private final AlgorithmId hashId;
   
-  boolean supportsTwoSteps();
+  public RSAEncoderMessageDigest(String hashId) throws NoSuchAlgorithmException {
+    super("RSAEncoder");
+    this.digester = MessageDigest.getInstance(hashId);
+    this.hashId = AlgorithmId.get(hashId);
+  }
+  
+  @Override
+  protected byte[] doDigest(byte[] input) {
+    return digester.digest(input);
+  }
+
+  //Encode To PKCS1 By SunJCE
+  @Override
+  protected byte[] encode(byte[] digest) {
+    try {
+      return RSASignature.encodeSignature(hashId.getOID(), digest);
+    } catch (IOException e) {
+      throw new RuntimeException("Unabled to encode bytes to sun.security.util.DerValue", e);
+    }
+  }
 }

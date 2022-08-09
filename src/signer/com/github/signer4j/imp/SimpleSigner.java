@@ -25,7 +25,10 @@
 */
 
 
+
 package com.github.signer4j.imp;
+
+import static com.github.utils4j.imp.Throwables.tryRuntime;
 
 import java.security.Signature;
 
@@ -36,9 +39,8 @@ import com.github.signer4j.ISignedData;
 import com.github.signer4j.ISignerBuilder;
 import com.github.signer4j.ISimpleSigner;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.signer4j.provider.ANYwithRSASignature;
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.ProviderInstaller;
-import com.github.utils4j.imp.Throwables;
 
 class SimpleSigner extends SecurityObject implements ISimpleSigner {
 
@@ -63,12 +65,12 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
   
   public static class Builder implements ISignerBuilder {
     
-    private ISignatureAlgorithm algorithm = SignatureAlgorithm.SHA1withRSA;
-    
     private final Runnable dispose;
     
     private final ICertificateChooser chooser;
     
+    private ISignatureAlgorithm algorithm = SignatureAlgorithm.SHA1withRSA;
+
     public Builder(ICertificateChooser chooser, Runnable dispose) {
       this.chooser = Args.requireNonNull(chooser, "chooser is null");
       this.dispose = Args.requireNonNull(dispose, "dispose is null");
@@ -82,13 +84,17 @@ class SimpleSigner extends SecurityObject implements ISimpleSigner {
     
     @Override
     public final ISimpleSigner build() {
-      ProviderInstaller.BC.install();
       SimpleSigner signer = new SimpleSigner(chooser, dispose);
-      String aName = algorithm.getName();
-      signer.signature = Throwables.tryRuntime(
-        () -> Signature.getInstance(aName), 
-        "Algorítimo " + aName + " é desconhecido"
-      );
+      signer.signature = tryRuntime(() -> {
+        if (!algorithm.supportsTwoSteps()) {
+          return Signature.getInstance(algorithm.getName());
+        } else {
+          Signature sig = Signature.getInstance("TWOSTEPSwithRSA");
+          ANYwithRSASignature.HashName hash = () -> algorithm.getHashAlgorithm().getStandardName();
+          sig.setParameter(hash);
+          return sig;
+        }
+      });
       return signer;
     }
   }

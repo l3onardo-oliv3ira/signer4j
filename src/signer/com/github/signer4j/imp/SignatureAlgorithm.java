@@ -27,6 +27,9 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.provider.ProviderInstaller.SIGNER4J;
+import static com.github.signer4j.provider.ProviderInstaller.BC;
+
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -34,7 +37,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IAlgorithm;
 import com.github.signer4j.IHashAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
-import com.github.utils4j.imp.ProviderInstaller;
 
 public enum SignatureAlgorithm implements ISignatureAlgorithm {
   ASN1MD5withRSA("ASN1MD5withRSA", HashAlgorithm.ASN1MD5),
@@ -66,7 +68,8 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   SHA512withRSA("SHA512WITHRSA", HashAlgorithm.SHA_512);
   
   static {
-    ProviderInstaller.BC.install();
+    BC.install();
+    SIGNER4J.install();
   }
   
   //do not create new array's instances for each call
@@ -95,7 +98,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   public final String getName() {
     return name;
   }
-  
+
   @Override
   public final IHashAlgorithm getHashAlgorithm() {
     return hash;
@@ -127,5 +130,10 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
         return Optional.of(a);
     }
     return Optional.empty();
+  }
+
+  @Override
+  public boolean supportsTwoSteps() {
+    return this != ASN1MD5withRSA && getKey().endsWith("RSA");
   }
 }

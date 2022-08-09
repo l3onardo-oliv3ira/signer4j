@@ -132,6 +132,7 @@
                         <source>src/signer</source>
                         <source>src/gui</source>
                         <source>src/workstation</source>
+                        <source>src/provider</source>
                      </sources>
                   </configuration>
                </execution>
