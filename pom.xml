@@ -84,7 +84,22 @@
             </plugin>
             <plugin>
                <artifactId>maven-compiler-plugin</artifactId>
-               <version>3.8.0</version>
+               <version>3.8.0</version>               
+               <configuration>
+                  <optimize>true</optimize>
+                  <showWarnings>true</showWarnings>
+                  <showDeprecation>true</showDeprecation>
+                  <compilerArguments>
+                     <!-- bostrapclasspath FOR MACOS/UNIX (comment WINDOWS version up) -->
+                     <bootclasspath>
+                        ${java.home}/jre/lib/rt.jar:${java.home}/lib/rt.jar:${java.home}/jre/lib/jce.jar:${java.home}/lib/jce.jar
+                     </bootclasspath>
+                     <!-- bostrapclasspasth FOR WINDOWS (comment MAC version below) -->
+                     <bootclasspath>
+                        ${java.home}/lib/rt.jar;${java.home}/lib/jce.jar
+                     </bootclasspath>
+                  </compilerArguments>
+               </configuration>
             </plugin>
             <plugin>
                <artifactId>maven-surefire-plugin</artifactId>
