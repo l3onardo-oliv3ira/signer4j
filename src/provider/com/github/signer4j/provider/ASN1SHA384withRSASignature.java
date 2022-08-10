@@ -25,16 +25,14 @@
 */
 
 
-package com.github.signer4j.imp;
+package com.github.signer4j.provider;
 
-import java.nio.file.Path;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 
-import com.github.signer4j.IDriverLookupStrategy;
-import com.github.signer4j.IDriverVisitor;
-
-public abstract class AbstractStrategy implements IDriverLookupStrategy{
-
-  protected void createAndVisit(Path path, IDriverVisitor visitor) {
-    DriverSetup.create(path).ifPresent(visitor::visit);
+public class ASN1SHA384withRSASignature extends ASN1withRSASignature {
+  
+  public ASN1SHA384withRSASignature() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    super("ASN1SHA384");
   }
 }

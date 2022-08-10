@@ -36,12 +36,16 @@ import com.github.utils4j.imp.States;
 
 /**
  * Esta abordagem de assinatura em duas etapas explícitas (hash + rsa) permite fazer 
- * uso de algoritmos de Hash's que não fazem parte da coleção de algoritimos de um 
- * provider específico. É comum alguns tokens de certificados digitais (A3) não virem 
- * com implementações antigas como MD2, MD5 (mas ainda virem com o RSA) e que ainda são 
- * utilizadas por aplicações, então, separando o calculo em duas etapas, deixamos o 
+ * uso de algoritmos de Hash's que não fazem parte da coleção de algoritimos oferecidos
+ * por um provider específico PKCS11. É comum alguns tokens de certificados digitais (GD Burti por exemplo)
+ * não disponibilizarem implementações de hash's antigas como MD5 (mas ainda virem com o RSA) 
+ * e que ainda são utilizadas por aplicações, então, separando o cálculo em duas etapas, deixamos o 
  * uso da chave privada dos tokens A3 para lidar APENAS com a cifra RSA das mensagens, 
- * ou seja, o calculo do hash é feito FORA do token e o RSA feito DENTRO do token
+ * ou seja, o calculo do hash é feito FORA do driver do token e o RSA é feito DENTRO do token, 
+ * maximizando a compatibilidade com tokens de diversos fabricantes. Este é o núcleo do problema que 
+ * faziam as pessoa me encherem o saco por defeitos de alguns assinadores do judiciário que não 
+ * sabem lidar com este problema e ainda pioravam com uso da api de reflexão java como esforço para  
+ * "compatibilizar-se" com a MSCAPI. FINALMENTE essa bagaça foi resolvida e terei paz! ¯\_(ツ)_/¯
  */
 
 public class TWOSTEPSwithRSASignature extends ANYwithRSASignature {

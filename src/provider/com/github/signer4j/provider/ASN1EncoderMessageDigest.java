@@ -39,17 +39,17 @@ import com.github.utils4j.imp.Args;
 
 public abstract class ASN1EncoderMessageDigest extends EncoderMessageDigest {
 
-  private final ASN1ObjectIdentifier hashId;
+  private final ASN1ObjectIdentifier algorithm;
   
   protected ASN1EncoderMessageDigest(String name, ASN1ObjectIdentifier hashId) {
     super(name);
-    this.hashId = Args.requireNonNull(hashId, "hashId is null");
+    this.algorithm = Args.requireNonNull(hashId, "hashId is null");
   }
 
   //Encode To PKCS1 By BounceCastle
   protected byte[] encode(byte[] digest) {
     try {
-      return new DigestInfo(new AlgorithmIdentifier(hashId, DERNull.INSTANCE), digest).getEncoded(ASN1Encoding.DER);
+      return new DigestInfo(new AlgorithmIdentifier(algorithm, DERNull.INSTANCE), digest).getEncoded(ASN1Encoding.DER);
     } catch (IOException e) {
       throw new RuntimeException("Unabled to encode bytes to ASN1Encoding.DER", e);
     }

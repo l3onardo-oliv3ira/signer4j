@@ -27,8 +27,8 @@
 
 package com.github.signer4j.imp;
 
-import static com.github.signer4j.provider.ProviderInstaller.SIGNER4J;
 import static com.github.signer4j.provider.ProviderInstaller.BC;
+import static com.github.signer4j.provider.ProviderInstaller.SIGNER4J;
 
 import java.util.Optional;
 
@@ -39,7 +39,6 @@ import com.github.signer4j.IHashAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
 
 public enum SignatureAlgorithm implements ISignatureAlgorithm {
-  ASN1MD5withRSA("ASN1MD5withRSA", HashAlgorithm.ASN1MD5),
   MD2withRSA("MD2WITHRSA", HashAlgorithm.MD2),
   MD5withRSA("MD5WITHRSA", HashAlgorithm.MD5),
   SHA1withDSA("SHA1withDSA", HashAlgorithm.SHA_1),
@@ -65,8 +64,17 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   SHA512withDSA("SHA512WITHDSA", HashAlgorithm.SHA_512),
   SHA512withECDSA("SHA512WITHECDSA", HashAlgorithm.SHA_512),
   SHA512withPLAIN_ECDSA("SHA512WITHPLAIN-ECDSA", HashAlgorithm.SHA_512),
-  SHA512withRSA("SHA512WITHRSA", HashAlgorithm.SHA_512);
+  SHA512withRSA("SHA512WITHRSA", HashAlgorithm.SHA_512),
   
+  //NOT supported two steps
+  ASN1MD2withRSA("ASN1MD2withRSA", HashAlgorithm.ASN1MD2),
+  ASN1MD5withRSA("ASN1MD5withRSA", HashAlgorithm.ASN1MD5),
+  ASN1SHA1withRSA("ASN1SHA1withRSA", HashAlgorithm.ASN1SHA1),
+  ASN1SHA224withRSA("ASN1SHA224withRSA", HashAlgorithm.ASN1SHA224),
+  ASN1SHA256withRSA("ASN1SHA256withRSA", HashAlgorithm.ASN1SHA256),
+  ASN1SHA384withRSA("ASN1SHA384withRSA", HashAlgorithm.ASN1SHA384),
+  ASN1SHA512withRSA("ASN1SHA512withRSA", HashAlgorithm.ASN1SHA512);
+
   static {
     BC.install();
     SIGNER4J.install();
@@ -134,6 +142,6 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
 
   @Override
   public boolean supportsTwoSteps() {
-    return this != ASN1MD5withRSA && getKey().endsWith("RSA");
+    return hash.supportsTwoSteps() && getKey().endsWith("RSA");
   }
 }

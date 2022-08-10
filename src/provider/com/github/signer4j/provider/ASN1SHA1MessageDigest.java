@@ -25,16 +25,13 @@
 */
 
 
-package com.github.signer4j.imp;
+package com.github.signer4j.provider;
 
-import java.nio.file.Path;
+import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 
-import com.github.signer4j.IDriverLookupStrategy;
-import com.github.signer4j.IDriverVisitor;
+public class ASN1SHA1MessageDigest extends ASN1EncoderMessageDigest {
 
-public abstract class AbstractStrategy implements IDriverLookupStrategy{
-
-  protected void createAndVisit(Path path, IDriverVisitor visitor) {
-    DriverSetup.create(path).ifPresent(visitor::visit);
+  public ASN1SHA1MessageDigest() {
+    super("ASN1SHA1", OIWObjectIdentifiers.idSHA1);
   }
 }

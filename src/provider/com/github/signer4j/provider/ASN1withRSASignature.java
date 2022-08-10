@@ -25,16 +25,23 @@
 */
 
 
-package com.github.signer4j.imp;
+package com.github.signer4j.provider;
 
-import java.nio.file.Path;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-import com.github.signer4j.IDriverLookupStrategy;
-import com.github.signer4j.IDriverVisitor;
+public abstract class ASN1withRSASignature extends ANYwithRSASignature {
+  
+  private final MessageDigest digester;
+  
+  public ASN1withRSASignature(String asn1EncoderName) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    super(asn1EncoderName + "withRSA");
+    this.digester = MessageDigest.getInstance(asn1EncoderName);
+  }
 
-public abstract class AbstractStrategy implements IDriverLookupStrategy{
-
-  protected void createAndVisit(Path path, IDriverVisitor visitor) {
-    DriverSetup.create(path).ifPresent(visitor::visit);
+  @Override
+  protected final MessageDigest getDigester() {
+    return digester;
   }
 }

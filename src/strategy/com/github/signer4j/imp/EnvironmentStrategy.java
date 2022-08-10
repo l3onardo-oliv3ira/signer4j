@@ -27,9 +27,6 @@
 
 package com.github.signer4j.imp;
 
-import java.nio.file.Path;
-import java.util.Optional;
-
 import com.github.signer4j.IDriverVisitor;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Environment;
@@ -50,9 +47,11 @@ public class EnvironmentStrategy extends AbstractStrategy {
 
   @Override
   public void lookup(IDriverVisitor visitor) {
-    Optional<Path> path = Environment.resolveTo(VAR_PKCS11_DRIVER, support.defaultModule(), true, true);
-    if (path.isPresent()) {
-      createAndVisit(path.get(), visitor);
-    }
+    Environment.resolveTo(
+      VAR_PKCS11_DRIVER, 
+      support.defaultModule(), 
+      true, 
+      true
+    ).ifPresent(p -> createAndVisit(p, visitor));
   }
 }

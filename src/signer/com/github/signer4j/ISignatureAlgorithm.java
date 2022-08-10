@@ -29,6 +29,4 @@ package com.github.signer4j;
 
 public interface ISignatureAlgorithm extends IAlgorithm {
   IHashAlgorithm getHashAlgorithm();
-  
-  boolean supportsTwoSteps();
 }

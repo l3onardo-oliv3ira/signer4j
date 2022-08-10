@@ -27,6 +27,8 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.provider.ProviderInstaller.BC;
+
 import java.util.Optional;
 
 import org.bouncycastle.cms.CMSSignedDataStreamGenerator;
@@ -34,10 +36,8 @@ import org.bouncycastle.cms.CMSSignedDataStreamGenerator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IHashAlgorithm;
-import com.github.signer4j.provider.ProviderInstaller;
 
 public enum HashAlgorithm implements IHashAlgorithm {
-  ASN1MD5("ASN1MD5"),
   MD2("MD2"),
   MD5("MD5") {
     @Override
@@ -76,11 +76,17 @@ public enum HashAlgorithm implements IHashAlgorithm {
     }
   },
   SHA_512_224("SHA-512/224"),
-  SHA_512_256("SHA-512/256");
- 
+  SHA_512_256("SHA-512/256"),
+  ASN1MD5("ASN1MD5", false),
+  ASN1MD2("ASN1MD2", false), 
+  ASN1SHA1("ASN1SHA1", false), 
+  ASN1SHA224("ASN1SHA224", false), 
+  ASN1SHA256("ASN1SHA256", false), 
+  ASN1SHA384("ASN1SHA384", false), 
+  ASN1SHA512("ASN1SHA512", false);
   
   static {
-    ProviderInstaller.BC.install();
+    BC.install();
   }
 
   @JsonCreator
@@ -89,9 +95,15 @@ public enum HashAlgorithm implements IHashAlgorithm {
   }
   
   private final String name;
+  private boolean twoSteps;
 
-  HashAlgorithm(String name) {
+  private HashAlgorithm(String name) {
+    this(name, true);
+  }
+  
+  private HashAlgorithm(String name, boolean twoSteps) {
     this.name = name;
+    this.twoSteps = twoSteps;
   }
   
   @JsonValue
@@ -138,5 +150,10 @@ public enum HashAlgorithm implements IHashAlgorithm {
         return Optional.of(a);
     }
     return Optional.empty();
+  }
+
+  @Override
+  public boolean supportsTwoSteps() {
+    return twoSteps;
   }
 }
