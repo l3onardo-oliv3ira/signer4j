@@ -25,25 +25,15 @@
 */
 
 
-package com.github.signer4j.imp.exception;
+package com.github.signer4j;
 
-import com.github.utils4j.gui.imp.CancelAlert;
+import com.github.signer4j.imp.exception.Signer4JException;
 
-public class LoginCanceledException extends Signer4JException {
-
-  private static final String DEFAULT_MESSAGE = CancelAlert.CANCELED_OPERATION_MESSAGE;
+public interface IAuthStrategy {
   
-  private static final long serialVersionUID = 1L;
-
-  public LoginCanceledException() {
-    this(DEFAULT_MESSAGE);
-  } 
+  String name();
   
-  public LoginCanceledException(String message) {
-    super(message);
-  }
+  void login(IToken token, boolean hasUse) throws Signer4JException ;
 
-  public LoginCanceledException(Throwable e) {
-    super(DEFAULT_MESSAGE, e);
-  }
+  void logout(IToken token);
 }

@@ -94,7 +94,6 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
         "library = %s\n\r" + 
         "slot = %s\n\r" +
         "insertionCheckInterval = 1500\n\r" +
-        "destroyTokenAfterLogout = true\n\r" +
         "attributes = compatibility", 
         providerName,
         libraryPath,
