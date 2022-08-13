@@ -33,7 +33,7 @@ public class InterruptedSigner4JRuntimeException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
   
-  public static InterruptedSigner4JRuntimeException of(Exception cause) {
+  public static InterruptedSigner4JRuntimeException of(Throwable cause) {
     return new InterruptedSigner4JRuntimeException(cause);
   }
   
@@ -41,7 +41,7 @@ public class InterruptedSigner4JRuntimeException extends RuntimeException {
     return () -> of(cause.get());
   }
   
-  private InterruptedSigner4JRuntimeException(Exception cause) {
+  private InterruptedSigner4JRuntimeException(Throwable cause) {
     super(cause);
   }
 }

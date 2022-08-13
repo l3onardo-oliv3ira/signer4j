@@ -34,7 +34,6 @@ import static com.github.utils4j.imp.Throwables.traceStream;
 import java.security.UnrecoverableKeyException;
 import java.util.function.Consumer;
 
-import javax.crypto.BadPaddingException;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
@@ -140,8 +139,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       ) ||  
       hasCause(e, FailedLoginException.class)          ||
       //TODO: Estudar se estas duas últimas podem ser mais adequadas no cenário NoTokenPresentException
-      hasCause(e, UnrecoverableKeyException.class)     || 
-      hasCause(e, BadPaddingException.class);
+      hasCause(e, UnrecoverableKeyException.class)/*     || 
+      hasCause(e, BadPaddingException.class)*/;
   }
 
   private static boolean isLoginCanceled(Throwable e) {
@@ -164,7 +163,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         m.contains("ckr_token_not_present")  ||
         //block específico (catch Exception)
         m.contains("exception obtaining signature") ||
-        m.contains("acesso negado")
+        m.contains("acesso negado") ||
+        m.contains("ckr_function_failed")
       );
   }  
   
