@@ -35,7 +35,6 @@ import java.util.Collection;
 
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Containers;
-import com.github.utils4j.imp.Jvms;
 
 enum MscapiFixer implements IKeyStoreBugFixer {
   /**
@@ -43,14 +42,9 @@ enum MscapiFixer implements IKeyStoreBugFixer {
    * https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6483657
    */
   BUG_6483657() {
-    private boolean affectedVersion() {
-      return Jvms.JAVA_MAJOR_VERSION < 8 || (Jvms.JAVA_MAJOR_VERSION == 8 && Jvms.JAVA_UPDATE_VERSION < 101);
-    }
     
     @Override
     public void fix(KeyStore keyStore) throws Signer4JException {
-      if (!affectedVersion())
-        return;
       try {
         Field field = keyStore.getClass().getDeclaredField("keyStoreSpi");
         field.setAccessible(true);

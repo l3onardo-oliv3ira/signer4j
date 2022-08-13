@@ -39,14 +39,14 @@ import com.github.signer4j.imp.Config;
 
 public final class PermissionDeniedAlert {
 
-  private static final AtomicBoolean showed = new AtomicBoolean(false);
+  private static final AtomicBoolean VISIBLE = new AtomicBoolean(false);
   
   public static void showInfo(String message) {
     invokeLater(() -> display(message));
   }
   
   public static boolean display(String message) {
-    if (!showed.getAndSet(true)) {
+    if (!VISIBLE.getAndSet(true)) {
       return new PermissionDeniedAlert(message).show();
     }
     return false;
@@ -74,7 +74,7 @@ public final class PermissionDeniedAlert {
     dialog.setIconImage(Config.getIcon());
     dialog.setVisible(true);
     dialog.dispose();
-    showed.set(false);
+    VISIBLE.set(false);
     Object selectedValue = jop.getValue();
     return OPTIONS[0].equals(selectedValue);
   }

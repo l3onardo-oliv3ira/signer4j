@@ -99,7 +99,7 @@ public abstract class ANYwithRSASignature extends Signature {
 
   @Override
   protected final Object engineGetParameter(String param) throws InvalidParameterException {
-    throw new NotImplementedException("Deprecated method, please use engineSetParameter");
+    throw new NotImplementedException("Deprecated method, please use engineGetParameter");
   }
   
   @Override

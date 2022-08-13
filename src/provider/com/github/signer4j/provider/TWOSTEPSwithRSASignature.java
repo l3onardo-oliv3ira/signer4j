@@ -42,8 +42,8 @@ import com.github.utils4j.imp.States;
  * e que ainda são utilizadas por aplicações, então, separando o cálculo em duas etapas, deixamos o 
  * uso da chave privada dos tokens A3 para lidar APENAS com a cifra RSA das mensagens, 
  * ou seja, o calculo do hash é feito FORA do driver do token e o RSA é feito DENTRO do token, 
- * maximizando a compatibilidade com tokens de diversos fabricantes. Este é o núcleo do problema que 
- * faziam as pessoa me encherem o saco por defeitos de alguns assinadores do judiciário que não 
+ * maximizando a compatibilidade com tokens de diversos fabricantes. Este é o núcleo do problemas que 
+ * faziam as pessoa me "encherem o saco" por defeitos de alguns assinadores do judiciário que não 
  * sabem lidar com este problema e ainda pioravam com uso da api de reflexão java como esforço para  
  * "compatibilizar-se" com a MSCAPI. FINALMENTE essa bagaça foi resolvida e terei paz! ¯\_(ツ)_/¯
  */

@@ -80,7 +80,7 @@ class ForWindowsStrategy extends PreloadedStrategy {
     load("C:/Program Files (x86)/Gemalto/IDGo 800 PKCS11/IDPrimePKCS11.dll");
     load("C:/Program Files (x86)/Oberthur Technologies/AWP/DLLs/OcsCryptoki.dll");
     load("C:/Program Files (x86)/CSP Banrisul Multiplo/PKCS11.dll");
-    //64BITS: 
+    //64BITS:
     load("C:/Program Files/Gemplus/GemSafe Libraries/BIN/gclib.dll");
     load("C:/Program Files/Gemalto/IDGo 800 PKCS11/IDPrimePKCS1164.dll");
     load("C:/Program Files/Assistente Desktop birdID/resources/extraResources/windows/x64/vault-pkcs11.dll");

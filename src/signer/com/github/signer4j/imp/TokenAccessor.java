@@ -249,10 +249,10 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
   
   protected abstract void doDispose(T token);
 
+  protected abstract T createToken(IToken token, Object lock);
+
   protected abstract void doSaveStrategy(IAuthStrategy strategy);
   
   protected abstract Predicate<ICertificate> getCertificateFilter();
-
-  protected abstract T createToken(IToken token, Object lock);
 
 }

@@ -80,13 +80,13 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
   
   private final String defaultAlias;
   
-  private final IA1A3ConfigSavedCallback savedCallback;
+  private final IConfigSavedCallback savedCallback;
   
   private Optional<ICertificateEntry> selectedEntry = Optional.empty();
   
   private IChoice choice = UNDEFINED_CHOICE;
 
-  private CertificateListDialog(String defaultAlias, IA1A3ConfigSavedCallback savedCallback) {
+  private CertificateListDialog(String defaultAlias, IConfigSavedCallback savedCallback) {
     super("Seleção de certificado", Config.getIcon(), true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.savedCallback = Args.requireNonNull(savedCallback, "onSaved is null");
@@ -142,7 +142,7 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
         refresh();
       }
     });
-    refreshLabel.setVisible(savedCallback != IA1A3ConfigSavedCallback.NOTHING);
+    refreshLabel.setVisible(savedCallback != IConfigSavedCallback.NOTHING);
     return refreshLabel;
   }
 
@@ -158,7 +158,7 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
         clickConfig();
       }
     });
-    instalLabel.setVisible(savedCallback != IA1A3ConfigSavedCallback.NOTHING);
+    instalLabel.setVisible(savedCallback != IConfigSavedCallback.NOTHING);
     return instalLabel;
   }
 
@@ -357,10 +357,10 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
   }
 
   public static IChoice display(List<ICertificateEntry> entries, boolean auto) {
-    return display(entries, auto, IA1A3ConfigSavedCallback.NOTHING);
+    return display(entries, auto, IConfigSavedCallback.NOTHING);
   }
   
-  public static IChoice display(List<ICertificateEntry> entries, boolean auto, IA1A3ConfigSavedCallback saveCallback) {
+  public static IChoice display(List<ICertificateEntry> entries, boolean auto, IConfigSavedCallback saveCallback) {
     Args.requireNonNull(entries, "entries is null");
     Args.requireNonNull(saveCallback, "onSaved is null");
     String defaultAlias = Config.defaultAlias().orElse("$not_found$");

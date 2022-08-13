@@ -35,8 +35,8 @@ import com.github.utils4j.imp.function.IBiProcedure;
 
 public interface ICertificateListUI {
   
-  interface IA1A3ConfigSavedCallback extends IBiProcedure<List<IFilePath>, List<IFilePath>> {
-    IA1A3ConfigSavedCallback NOTHING = (a, b) -> {};
+  interface IConfigSavedCallback extends IBiProcedure<List<IFilePath>, List<IFilePath>> {
+    IConfigSavedCallback NOTHING = (a, b) -> {};
   }
   
   interface IChoice extends Supplier<Optional<ICertificateEntry>>{

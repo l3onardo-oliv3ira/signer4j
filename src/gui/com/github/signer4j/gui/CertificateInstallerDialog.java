@@ -40,6 +40,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -56,7 +57,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import com.github.signer4j.AllowedExtensions;
-import com.github.signer4j.ICertificateListUI.IA1A3ConfigSavedCallback;
+import com.github.signer4j.ICertificateListUI.IConfigSavedCallback;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
@@ -72,25 +73,26 @@ class CertificateInstallerDialog extends SimpleDialog {
 
   private static final long serialVersionUID = 1L;
   
-  private static final Dimension MININUM_SIZE = new Dimension(474, 249);
+  private static final int MININUM_WIDTH = 474;
+  
+  private static final int MININUM_HEIGHT = 510;
   
   private static final Color SELECTED = new Color(234, 248, 229);
   
-  private JPanel contentPane;
   private JTable table;
   private JButton a1Button;
   private JButton a3Button;
-  private CertType current = null;
+  private JPanel contentPane;
+  private Optional<CertType> current = Optional.empty();
   private List<IFilePath> a1List = new ArrayList<>();
   private List<IFilePath> a3List = new ArrayList<>();
-  
-  private final IA1A3ConfigSavedCallback savedCallback;
+  private final IConfigSavedCallback savedCallback;
 
   CertificateInstallerDialog() {
-    this(IA1A3ConfigSavedCallback.NOTHING);
+    this(IConfigSavedCallback.NOTHING);
   }
 
-  CertificateInstallerDialog(IA1A3ConfigSavedCallback savedCallback) {
+  CertificateInstallerDialog(IConfigSavedCallback savedCallback) {
     super("Configuração de certificado", Config.getIcon(), true);
     this.savedCallback = Args.requireNonNull(savedCallback, "onSaved is null");
     Config.loadA3Paths(a3List::add);
@@ -105,7 +107,7 @@ class CertificateInstallerDialog extends SimpleDialog {
 
   private void setupFrame() {
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    setFixedMinimumSize(MININUM_SIZE);
+    setFixedMinimumSize(new Dimension(MININUM_WIDTH, 249));
     toCenter();
   }
 
@@ -143,7 +145,7 @@ class CertificateInstallerDialog extends SimpleDialog {
   private JPanel createStep1_A1A3Pane() {
     JPanel step1_a1a3_Pane = new JPanel();
     step1_a1a3_Pane.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-    step1_a1a3_Pane.setLayout(new GridLayout(0, 2, 10, 10));
+    step1_a1a3_Pane.setLayout(new GridLayout(1, 2, 10, 10));
     step1_a1a3_Pane.add(createStep1_A1Button());
     step1_a1a3_Pane.add(createStep1_A3Button());
     return step1_a1a3_Pane;
@@ -157,6 +159,7 @@ class CertificateInstallerDialog extends SimpleDialog {
 
   private JButton createStep1_A3Button() {
     a3Button = new JButton("A3");
+    a3Button.setToolTipText("Certificado A3 (pkcs11)");
     a3Button.addActionListener(e -> onClickA3());
     a3Button.setIcon(new ImageIcon(Images.ICON_A3.asImage()));
     a3Button.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -165,9 +168,10 @@ class CertificateInstallerDialog extends SimpleDialog {
 
   private JButton createStep1_A1Button() {
     a1Button = new JButton("A1");
-    a1Button.addActionListener(e -> onClickA1());
+    a1Button.setToolTipText("Certificado A1 (pkcs12)");
     a1Button.setIcon(new ImageIcon(Images.ICON_A1.asImage()));
     a1Button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    a1Button.addActionListener(e -> onClickA1());
     return a1Button;
   }
   
@@ -192,7 +196,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     table.setModel(type.model);
     table.getColumnModel().getColumn(0).setPreferredWidth(340);
     table.getColumnModel().getColumn(1).setPreferredWidth(60);
-    ButtonRenderer bc = new ButtonRenderer((arg) -> current.remove(table.getSelectedRow()));
+    ButtonRenderer bc = new ButtonRenderer((arg) -> current.ifPresent(c -> c.remove(table.getSelectedRow())));
     table.getColumnModel().getColumn(1).setCellRenderer(bc);
     table.getColumnModel().getColumn(1).setCellEditor(bc);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -209,9 +213,9 @@ class CertificateInstallerDialog extends SimpleDialog {
 
   private JPanel createStep2_NorthPane(CertType type) {
     JPanel step2NorthPane = new JPanel();
-    step2NorthPane.setLayout(new GridLayout(2, 0, 0, 0));
-    step2NorthPane.add(createStep2_Title());
-    step2NorthPane.add(createStep2_FinderPane(type));
+    step2NorthPane.setLayout(new BorderLayout(0, 0));
+    step2NorthPane.add(createStep2_Title(), BorderLayout.NORTH);
+    step2NorthPane.add(createStep2_FinderPane(type), BorderLayout.CENTER);
     return step2NorthPane;
   }
 
@@ -231,9 +235,9 @@ class CertificateInstallerDialog extends SimpleDialog {
 
   private JPanel createStep2_FinderPane(CertType type) {
     JPanel finderPane = new JPanel();
-    finderPane.setLayout(new GridLayout(0, 2, 0, 0));
+    finderPane.setLayout(new GridLayout(2, 1, 0, 0));
     finderPane.add(createStep2_Title(type));
-    finderPane.add(createStep2_A1LocateButton());
+    finderPane.add(createStep2_LocateButton());
     return finderPane;
   }
 
@@ -243,10 +247,10 @@ class CertificateInstallerDialog extends SimpleDialog {
     return step2Label;
   }
 
-  private JButton createStep2_A1LocateButton() {
-    JButton a1LocateButton = new JButton("Localizar");
-    a1LocateButton.addActionListener(e -> onLocate());
-    return a1LocateButton;
+  private JButton createStep2_LocateButton() {
+    JButton locateButton = new JButton("Localizar...");
+    locateButton.addActionListener(e -> onLocate());
+    return locateButton;
   }
 
   private JLabel createStep2_Title(CertType type) {
@@ -256,28 +260,30 @@ class CertificateInstallerDialog extends SimpleDialog {
   }
   
   private void onLocate() {
-    DefaultFileChooser chooser = new DefaultFileChooser();
-    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    chooser.setMultiSelectionEnabled(true);
-    chooser.setDialogTitle(current.chooseTitle());
-    FileNameExtensionFilter filter = current.fileFilter();
-    chooser.setFileFilter(filter);
-    chooser.addChoosableFileFilter(filter);
-    
-    if (JFileChooser.CANCEL_OPTION == chooser.showOpenDialog(null))
-      return;
-    final File[] files = chooser.getSelectedFiles();
-    if (files == null || files.length == 0)
-      return;
-    for(File file: files) {
-      current.load(file);
-    }
+    current.ifPresent(c -> {
+      DefaultFileChooser chooser = new DefaultFileChooser();
+      chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      chooser.setMultiSelectionEnabled(true);
+      chooser.setDialogTitle(c.chooseTitle());
+      FileNameExtensionFilter filter = c.fileFilter();
+      chooser.setFileFilter(filter);
+      chooser.addChoosableFileFilter(filter);
+      
+      if (JFileChooser.CANCEL_OPTION == chooser.showOpenDialog(null))
+        return;
+      final File[] files = chooser.getSelectedFiles();
+      if (files == null || files.length == 0)
+        return;
+      for(File file: files) {
+        c.load(file);
+      }
+    });
   }
 
   private void onSave() {
-    if (current != null) { 
-      current.save(a1List, a3List);
-    }
+    current.ifPresent(c -> {
+      c.save(a1List, a3List);
+    });
     this.close();
     this.savedCallback.call(
       unmodifiableList(a1List), 
@@ -286,44 +292,49 @@ class CertificateInstallerDialog extends SimpleDialog {
   }
 
   private void onClickA1() {
-    if (CertType.A1.equals(current))
-      return;
-    a1Button.setBackground(SELECTED);
-    a3Button.setBackground(null);
-    if (current != null)
-      a3List = new ArrayList<>(current.model.entries);
-    setComponent(CertType.A1, a1List);
+    if (!CertType.A1.equals(current.orElse(CertType.A3))) {
+      a1Button.setBackground(SELECTED);
+      a3Button.setBackground(null);
+      current.ifPresent(c -> {
+        a3List = new ArrayList<>(c.model.entries);
+      });
+      setComponent(CertType.A1, a1List);
+    }
   }
 
   private void onClickA3() {
-    if (CertType.A3.equals(current))
-      return;
-    a3Button.setBackground(SELECTED);
-    a1Button.setBackground(null);
-    if (current != null)
-      a1List = new ArrayList<>(current.model.entries);
-    setComponent(CertType.A3, a3List);
+    if (!CertType.A3.equals(current.orElse(CertType.A1))) {
+      a3Button.setBackground(SELECTED);
+      a1Button.setBackground(null); //not selected!
+      current.ifPresent(c -> {
+        a1List = new ArrayList<>(c.model.entries);
+      });
+      setComponent(CertType.A3, a3List);
+    }
   }
   
   private void setComponent(CertType type, List<IFilePath> actual) {
-    GridLayout layout = (GridLayout)contentPane.getLayout();
-    if (current != null)
-      contentPane.remove(contentPane.getComponentCount() - 1);
+    frameRefit(!current.isPresent());
+    renderStep2(type);
+    type.load(actual);
+    current = Optional.of(type);
+  }
+
+  private void frameRefit(boolean center) {
+    setFixedMinimumSize(new Dimension(MININUM_WIDTH, MININUM_HEIGHT));
+    setBounds(getX(), getY(), MININUM_WIDTH,  MININUM_HEIGHT);
+    if (center) toCenter();
+  }
+
+  private void renderStep2(CertType type) {
     JPanel step2Pane = createStep2(type);
-    layout.setRows(2);
+    current.ifPresent(c -> contentPane.remove(contentPane.getComponentCount() - 1));
+    ((GridLayout)contentPane.getLayout()).setRows(2);
     contentPane.add(step2Pane);
     contentPane.revalidate();
     contentPane.updateUI();
-    boolean center = current == null;
-    loadData(current = type, actual);
-    setBounds(getX(), getY(), getWidth(),  510);
-    if (center) toCenter();
   }
   
-  private void loadData(CertType type, List<IFilePath> actual) {
-    type.load(actual);
-  }
-
   public static enum Action {
     REMOVER;
     
@@ -435,7 +446,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     private static final long serialVersionUID = 1L;
 
     A1PathModel(){
-      super("Arquivo (pkcs12)");
+      super("Arquivo");
     }
   }
   
@@ -443,7 +454,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     private static final long serialVersionUID = 1L;
 
     A3PathModel(){
-      super("Biblioteca (pkcs11)");
+      super("Biblioteca");
     }
   }
 

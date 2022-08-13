@@ -28,6 +28,8 @@
 package com.github.signer4j;
 
 public interface IAlgorithm {
+  
   String getName();
+  
   boolean supportsTwoSteps();
 }
