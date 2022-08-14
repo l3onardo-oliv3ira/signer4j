@@ -112,7 +112,7 @@ final class SunPKCS11Creator {
   private static AuthProvider createProvider(String configString, ICreator<String, AuthProvider, ?> creator) 
     throws UnavailableProviderException {
     String[] configAttempts = new String[] {
-      configString + "\n\rdestroyTokenAfterLogout = true\n\r",
+      configString + "\n\rdestroyTokenAfterLogout = true\n\r", //JDK >= 9 this is very good
       configString
     };
     Throwable fail = null;
