@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
-
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.IChoice;
 import com.github.signer4j.IPKCS7Signer;

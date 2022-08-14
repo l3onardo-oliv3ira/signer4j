@@ -103,7 +103,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         throw new TokenLockedException(e);
 
       /**
-       * O provider SunPKCS11 do JAVA tem um bug em alguns driver's rodando em MSCAPI que lança 
+       * O provider SunPKCS11 do JAVA tem um bug em alguns driver's rodando que lança 
        * NullPointerException e corrompe a instância quando se remove o token após exibir a 
        * tela para digitação da senha (mas antes de informá-la).
        * Embora uma ação atípica e não recomendada (remover o token enquanto o driver aguarda a informação da senha),  
@@ -138,9 +138,8 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         m.contains("ckr_pin_len_range")
       ) ||  
       hasCause(e, FailedLoginException.class)          ||
-      //TODO: Estudar se estas duas últimas podem ser mais adequadas no cenário NoTokenPresentException
-      hasCause(e, UnrecoverableKeyException.class)/*     || 
-      hasCause(e, BadPaddingException.class)*/;
+      //TODO: Estudar se esta última pode ser mais adequada no cenário NoTokenPresentException
+      hasCause(e, UnrecoverableKeyException.class);
   }
 
   private static boolean isLoginCanceled(Throwable e) {
@@ -164,7 +163,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         //block específico (catch Exception)
         m.contains("exception obtaining signature") ||
         m.contains("acesso negado") ||
-        m.contains("ckr_function_failed")
+        m.contains("ckr_function_failed") //TODO estudar se esta última não seria mais adequada noutro tipo de exceção
       );
   }  
   
@@ -173,7 +172,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
       .map(t -> trim(t.getMessage()).toLowerCase())
       .anyMatch(m ->
         m.contains("ckr_pin_locked") || //pkcs11
-        m.contains("número máximo de tentativas para digitar o pin") //mscapi               
+        m.contains("número máximo de tentativas para digitar o pin") //pkcs11 rodando em mscapi               
       );
   }
 }
