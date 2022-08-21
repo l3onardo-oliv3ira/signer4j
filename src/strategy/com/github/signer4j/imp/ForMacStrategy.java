@@ -35,6 +35,7 @@ class ForMacStrategy extends UnixStrategy {
     add("libwdpkcs.dylib");
     add("libsfntpkcs11.dylib"); 
     add("libeTPkcs11.dylib");
+    add("libeTPkcss11.dylib");
     add("libetpkcs11.dylib");
     add("libaetpkss.dylib");
     add("libbanrisulpkcs11.so");
