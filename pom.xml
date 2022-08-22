@@ -6,7 +6,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>com.github</groupId>
    <artifactId>signer4j</artifactId>
-   <version>SNAPSHOT-2.2.0</version>
+   <version>SNAPSHOT-2.2.1</version>
    <name>signer4j</name>
    <!-- powered by -->
    <url>https://github.com/l3onardo-oliv3ira</url>
@@ -65,7 +65,7 @@
       <dependency>
          <groupId>com.github</groupId>
          <artifactId>progress4j</artifactId>
-         <version>SNAPSHOT-2.2.0</version>
+         <version>SNAPSHOT-2.2.1</version>
       </dependency>
    </dependencies>
    <build>
