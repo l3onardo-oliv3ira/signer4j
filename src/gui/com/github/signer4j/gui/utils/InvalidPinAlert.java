@@ -67,7 +67,7 @@ public final class InvalidPinAlert {
   private InvalidPinAlert(int times, Image icon) {
     this.icon = icon;
     this.jop = new JOptionPane(
-      format(times <= 2 ? MESSAGE_FORMAT : MESSAGE_FORMAT_ALERT, times),
+      format(times < 2 ? MESSAGE_FORMAT : MESSAGE_FORMAT_ALERT, times),
       JOptionPane.QUESTION_MESSAGE, 
       JOptionPane.YES_NO_OPTION, 
       Images.LOCK.asIcon(), 

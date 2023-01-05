@@ -34,6 +34,7 @@ import com.github.signer4j.IToken;
 import com.github.signer4j.gui.alert.TokenUseAlert;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.BooleanTimeout;
 
 public enum AuthStrategy implements IAuthStrategy{
   AWAYS("Sempre solicitar senha") {
@@ -72,14 +73,26 @@ public enum AuthStrategy implements IAuthStrategy{
     }
   },
   CONFIRM("Apenas confirmar uso do dispositivo"){
+    private final BooleanTimeout discard = new BooleanTimeout(2000);
+    
     @Override
     public void login(IToken token, boolean hasUse) throws Signer4JException {
+      if (discard.isTrue())
+        throw new LoginCanceledException();
+        
       if (!hasUse && !isTrue(TokenUseAlert::display)) {
+        discard.setTrue();
         token.logout();
         throw new LoginCanceledException();
       }
+      
       if (!token.isAuthenticated()) { 
-        token.login();
+        try {
+          token.login();
+        }catch(Signer4JException e) {
+          discard.setTrue();
+          throw e;
+        }
       }
     }
   

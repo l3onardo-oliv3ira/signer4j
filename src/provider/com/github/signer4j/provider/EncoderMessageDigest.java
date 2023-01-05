@@ -58,7 +58,7 @@ public abstract class EncoderMessageDigest extends MessageDigest {
   }
 
   @Override
-  protected void engineReset() {
+  protected final void engineReset() {
     output.reset();
   }
   

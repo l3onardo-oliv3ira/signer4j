@@ -51,7 +51,7 @@ class DriverSetup implements IDriverSetup {
   
   private DriverSetup(Path library) throws IOException {
     this.library = Args.requireNonNull(library, "Unabled to create driversupport with null library");
-    this.md5 = Streams.checkMd5Sum(library.toFile());
+    this.md5 = Streams.md5(library.toFile());
   }
   
   @Override

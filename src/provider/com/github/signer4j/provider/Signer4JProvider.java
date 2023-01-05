@@ -56,7 +56,6 @@ public class Signer4JProvider extends Provider {
     put("MessageDigest.ASN1SHA384", "com.github.signer4j.provider.ASN1SHA384MessageDigest");
     put("MessageDigest.ASN1SHA512", "com.github.signer4j.provider.ASN1SHA512MessageDigest");
 
-
     put("Signature.TWOSTEPSwithRSA", "com.github.signer4j.provider.TWOSTEPSwithRSASignature");
   }
 }

@@ -27,6 +27,8 @@
 
 package com.github.signer4j.gui;
 
+import static java.util.stream.IntStream.range;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -39,6 +41,7 @@ import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -203,7 +206,6 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
   }
 
   private JPanel createSouth() {
-    JPanel southPane = new JPanel();   
     rememberMeCheckbox = new JCheckBox("Memorizar este certificado como padrão e não perguntar novamente.");    
     rememberMeCheckbox.setEnabled(false);
     rememberMeCheckbox.setSelected(false);
@@ -213,6 +215,7 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     okButton.setPreferredSize(cancelButton.getPreferredSize());
     okButton.setEnabled(false);
     okButton.addActionListener(arg -> close());
+    JPanel southPane = new JPanel();
     southPane.setLayout(new MigLayout("fillx", "push[][][]", "[][][]"));
     southPane.add(rememberMeCheckbox);
     southPane.add(okButton);
@@ -300,6 +303,13 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
       }
       return this;
     }
+
+    public void preselect(JTable table) {
+      AtomicReference<Integer> idx = new AtomicReference<>();
+      if (range(0, entries.size()).filter(i -> !entries.get(i).isExpired()).peek(idx::set).count() == 1) {
+        table.setRowSelectionInterval(idx.get(), idx.get());
+      }
+    }
   }
   
   private void clickConfig() {
@@ -332,10 +342,9 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     this.rememberMeCheckbox.setSelected(false);
     this.rememberMeCheckbox.setEnabled(false);
     
-    CertificateModel model = (CertificateModel)table.getModel();
-    if (model.load(entries).getRowCount() == 1) { //auto select unique entry
-      this.table.setRowSelectionInterval(0, 0);
-    }
+    CertificateModel model = (CertificateModel)this.table.getModel();
+    model.load(entries);
+    model.preselect(this.table);
     
     this.showToFront();
     

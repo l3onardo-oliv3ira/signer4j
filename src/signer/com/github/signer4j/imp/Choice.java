@@ -34,10 +34,10 @@ import java.util.List;
 
 import com.github.signer4j.IChoice;
 
-public class Choice extends CertificateAware implements IChoice {
-  public static final IChoice CANCEL = new Choice();
+class Choice extends CertificateAware implements IChoice {
+  static final IChoice CANCEL = new Choice();
  
-  public static IChoice from(PrivateKey privateKey, Certificate certificate, List<Certificate> chain, String provider) {
+  static IChoice from(PrivateKey privateKey, Certificate certificate, List<Certificate> chain, String provider) {
     return new Choice(false, privateKey, certificate, chain, provider);
   }
   

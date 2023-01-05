@@ -156,7 +156,7 @@ public class GetStarted {
       
       ISignedData data = cmsSigner.process(new File("./input.pdf"));
       
-      try(OutputStream out = new FileOutputStream(new File("D:/input.pdf.p7s"))) {
+      try(OutputStream out = new FileOutputStream(new File("./input.pdf.p7s"))) {
         data.writeTo(out);
       }
     } catch (TokenLockedException e) {

@@ -281,9 +281,7 @@ class CertificateInstallerDialog extends SimpleDialog {
   }
 
   private void onSave() {
-    current.ifPresent(c -> {
-      c.save(a1List, a3List);
-    });
+    current.ifPresent(c -> c.save(a1List, a3List));
     this.close();
     this.savedCallback.call(
       unmodifiableList(a1List), 
@@ -295,9 +293,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     if (!CertType.A1.equals(current.orElse(CertType.A3))) {
       a1Button.setBackground(SELECTED);
       a3Button.setBackground(null);
-      current.ifPresent(c -> {
-        a3List = new ArrayList<>(c.model.entries);
-      });
+      current.ifPresent(c -> a3List = new ArrayList<>(c.model.entries));
       setComponent(CertType.A1, a1List);
     }
   }
@@ -306,9 +302,7 @@ class CertificateInstallerDialog extends SimpleDialog {
     if (!CertType.A3.equals(current.orElse(CertType.A1))) {
       a3Button.setBackground(SELECTED);
       a1Button.setBackground(null); //not selected!
-      current.ifPresent(c -> {
-        a1List = new ArrayList<>(c.model.entries);
-      });
+      current.ifPresent(c -> a1List = new ArrayList<>(c.model.entries));
       setComponent(CertType.A3, a3List);
     }
   }

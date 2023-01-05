@@ -50,22 +50,22 @@
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
          <artifactId>jackson-databind</artifactId>
-         <version>2.13.3</version>
+         <version>2.13.4.2</version>
       </dependency>
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
          <artifactId>jackson-core</artifactId>
-         <version>2.13.3</version>
+         <version>2.13.4</version>
       </dependency>
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
          <artifactId>jackson-annotations</artifactId>
-         <version>2.13.3</version>
+         <version>2.13.4</version>
       </dependency>
       <dependency>
          <groupId>com.github</groupId>
          <artifactId>progress4j</artifactId>
-         <version>SNAPSHOT-2.2.1</version>
+         <version>SNAPSHOT-2.3.7</version>
       </dependency>
    </dependencies>
    <build>
@@ -90,15 +90,13 @@
                   <showWarnings>true</showWarnings>
                   <showDeprecation>true</showDeprecation>
                   <compilerArguments>
-                     <!-- bostrapclasspath FOR MACOS/UNIX (comment WINDOWS version up)
-                     <bootclasspath>
-                        ${java.home}/jre/lib/rt.jar:${java.home}/lib/rt.jar:${java.home}/jre/lib/jce.jar:${java.home}/lib/jce.jar
-                     </bootclasspath>
-                      -->
-                     <!-- bostrapclasspasth FOR WINDOWS (comment MAC version below) -->
-                     <bootclasspath>
-                        ${java.home}/lib/rt.jar;${java.home}/lib/jce.jar
-                     </bootclasspath>
+                     <!-- bootclasspath for WINDOWS
+                     	${java.home}/lib/rt.jar;${java.home}/lib/jce.jar
+                     -->
+                     <!-- bootclasspath for MAC/UNIX
+                     	${java.home}/jre/lib/rt.jar:${java.home}/lib/rt.jar:${java.home}/jre/lib/jce.jar:${java.home}/lib/jce.jar
+                 	 -->
+                     <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
                   </compilerArguments>
                </configuration>
             </plugin>

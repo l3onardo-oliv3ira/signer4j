@@ -43,14 +43,20 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   
   private static long LOGOUT_BATCH_TIMEOUT = 2000;
   
+  private static boolean hasTimeout(long startTime) {
+    return System.currentTimeMillis() - startTime > LOGOUT_BATCH_TIMEOUT;
+  }
+
   private final Object lock;
 
   private final Disposable ticket;
   
   private final IAuthStrategy strategy;
   
+  private volatile long effectiveLogoutTime = -1;
+
   private final AtomicInteger refCount = new AtomicInteger(0);
-  
+
   public TokenCycle(IToken token, IAuthStrategy strategy, Object lock) {
     super(token);
     this.strategy = Args.requireNonNull(strategy, "strategy is null");
@@ -64,12 +70,13 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     }
   }
   
-  private static boolean hasTimeout(long startTime) {
-    return System.currentTimeMillis() - startTime > LOGOUT_BATCH_TIMEOUT;
-  }
-  
   private boolean hasUse() {
-    return refCount.get() > 0;
+    return refCount.get() > 0 || (effectiveLogoutTime > 0 && !hasTimeout(effectiveLogoutTime));
+  }
+
+  public final void dispose() {
+    logout(true);
+    ticket.dispose();
   }
 
   @Override
@@ -77,19 +84,36 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     synchronized(lock) {
       strategy.login(super.token, hasUse());
       refCount.incrementAndGet();
+      effectiveLogoutTime = -1;
     }
     return this;
   }
 
   @Override
   public final void logout() {
-    if (hasUse() && refCount.decrementAndGet() == 0) {
-      logoutAsync();
+    if (refCount.get() > 0) {
+      if (refCount.decrementAndGet() == 0) {
+        logoutAsync();
+      }
     }
   }
 
+  @Override
+  public final void logout(boolean force) {
+    if (force) {
+      synchronized(lock) {
+        super.logout();
+        refCount.set(0);
+        effectiveLogoutTime = -1;
+      }
+      return;
+    }
+    logout();
+  }
+  
   private void logoutAsync() {
-    long logoutTime = System.currentTimeMillis();
+
+    long logoutRequestTime = effectiveLogoutTime = System.currentTimeMillis();
     /**
      * Um logout efetivamente assíncrono permite que os ciclos de autenticação funcionem 
      * de forma transparente tanto com lotes originados de múltiplas requisições simultâneas
@@ -98,9 +122,11 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     startDaemon(() -> { 
       do {
         synchronized(lock) {
-          if (hasUse())
-            return;
-          if (hasTimeout(logoutTime)) {
+          if (refCount.get() > 0) {
+            return; //abort logout!
+          }
+          if (hasTimeout(logoutRequestTime)) {
+            effectiveLogoutTime = System.currentTimeMillis();
             strategy.logout(super.token);
             return;
           }
@@ -108,21 +134,5 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
         Threads.sleep(LOGOUT_BATCH_TIMEOUT);
       }while(true);
     }, LOGOUT_BATCH_TIMEOUT);
-  }
-
-  public final void dispose() {
-    ticket.dispose();
-  }
-  
-  @Override
-  public final void logout(boolean force) {
-    if (force) {
-      synchronized(lock) {
-        super.logout();
-        refCount.set(0);
-      }
-      return;
-    }
-    logout();
   }
 }

@@ -64,7 +64,7 @@ class PKCS12Slot extends VirtualSlot implements ILibraryAware {
   private void setup() throws DriverException {
     String md5;
     try {
-      md5 = Streams.checkMd5Sum(certPath.toFile());
+      md5 = Streams.md5(certPath.toFile());
     } catch (IOException e) {
       throw new DriverFailException("can't access " + certPath, e);
     }

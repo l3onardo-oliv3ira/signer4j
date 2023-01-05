@@ -27,6 +27,8 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.utils4j.imp.Strings.optional;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -121,7 +123,7 @@ public class ConfigPersister implements IConfigPersister {
     Properties properties = new Properties();
     if (!open(properties))
       return Optional.empty();
-    return Optional.ofNullable(properties.getProperty(DEFAULT_CERTIFICATE));
+    return optional(properties.getProperty(DEFAULT_CERTIFICATE));
   }
   
   @Override
