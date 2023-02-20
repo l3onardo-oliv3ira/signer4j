@@ -27,6 +27,8 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.utils4j.imp.Objects.iso2utf8;
+
 import com.github.signer4j.IDevice;
 import com.github.signer4j.ILibraryAware;
 import com.github.signer4j.IToken;
@@ -110,11 +112,11 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
     try {
       slotInfo = pk.C_GetSlotInfo(getNumber());
     }catch(PKCS11Exception e) {
-      throw new DriverFailException("Unabled to get slot information from number " + getNumber() + " driver: " + driver, e);
+      throw new DriverFailException("Unabled to get SLOT information from number " + getNumber() + " - driver: " + driver, e);
     }
 
-    this.description = Objects.toString(slotInfo.slotDescription, UNKNOWN_INFORMATION).trim();
-    this.manufacturerId = Objects.toString(slotInfo.manufacturerID, UNKNOWN_INFORMATION).trim();
+    this.description = iso2utf8(slotInfo.slotDescription, UNKNOWN_INFORMATION).trim();
+    this.manufacturerId = iso2utf8(slotInfo.manufacturerID, UNKNOWN_INFORMATION).trim();
     this.firmwareVersion = Objects.toString(slotInfo.firmwareVersion, UNKNOWN_INFORMATION).trim();
     this.hardwareVersion = Objects.toString(slotInfo.hardwareVersion, UNKNOWN_INFORMATION).trim();
     
@@ -122,18 +124,17 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
     try {
       tokenInfo = pk.C_GetTokenInfo(getNumber());
     } catch (PKCS11Exception e) {
-      throw new DriverFailException("Unabled to get token information on " + this, e);
+      throw new DriverFailException("Unabled to get token information on SLOT " + getNumber() + " and " + this, e);
     }
-
+    
     this.token = new PKCS11Token.Builder(this)
       .withMinPinLen(tokenInfo.ulMinPinLen)
       .withMaxPinLen(tokenInfo.ulMaxPinLen)
-      .withLabel(new String(tokenInfo.label))
-      .withModel(new String(tokenInfo.model))
-      .withSerial(new String(tokenInfo.serialNumber))
-      .withManufacture(new String(tokenInfo.manufacturerID))
+      .withLabel(iso2utf8(tokenInfo.label, UNKNOWN_INFORMATION).trim())
+      .withModel(iso2utf8(tokenInfo.model, UNKNOWN_INFORMATION).trim())
+      .withSerial(iso2utf8(tokenInfo.serialNumber, UNKNOWN_INFORMATION).trim())
+      .withManufacture(iso2utf8(tokenInfo.manufacturerID, UNKNOWN_INFORMATION).trim())
       .build();
-    
     this.device = new DefaultDevice.Builder(IDevice.Type.A3)
       .withDriver(this.getLibrary())
       .withSlot(this)

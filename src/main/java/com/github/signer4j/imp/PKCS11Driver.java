@@ -87,7 +87,7 @@ class PKCS11Driver extends AbstractDriver implements ILibraryAware {
       throw new DriverFailException("Unabled to create PKCS11 instance", e);
     }
     
-    long[] slots = new long[0];
+    long[] slots = {};
     
     try {
       slots = pk.C_GetSlotList(true);

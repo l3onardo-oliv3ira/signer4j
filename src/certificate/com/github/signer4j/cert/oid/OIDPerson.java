@@ -49,7 +49,7 @@ abstract class OIDPerson extends OIDBasic {
       return length;
     }
   }
-  
+
   protected OIDPerson(String oid, String content) {
     super(oid, content);
   }

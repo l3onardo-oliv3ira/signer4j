@@ -33,8 +33,8 @@ import static java.security.Security.removeProvider;
 import java.security.AuthProvider;
 import java.security.Provider;
 import java.security.Security;
+import java.util.function.Supplier;
 
-import org.apache.hc.core5.function.Supplier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
 

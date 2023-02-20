@@ -28,7 +28,7 @@
 package com.github.signer4j.imp;
 
 import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
-import static java.util.Arrays.asList;
+import static com.github.utils4j.imp.Containers.arrayList;
 import static java.util.Collections.unmodifiableList;
 
 import java.security.KeyStore;
@@ -137,7 +137,7 @@ abstract class AbstractKeyStore implements IKeyStore {
   @Override
   public final List<Certificate> getCertificateChain(String alias) throws Signer4JException {
     checkIfAvailable();
-    return unmodifiableList(asList(invoke(() -> this.keyStore.getCertificateChain(alias))));
+    return unmodifiableList(arrayList(invoke(() -> this.keyStore.getCertificateChain(alias))));
   }
 
   @Override

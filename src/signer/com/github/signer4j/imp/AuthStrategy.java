@@ -77,9 +77,10 @@ public enum AuthStrategy implements IAuthStrategy{
     
     @Override
     public void login(IToken token, boolean hasUse) throws Signer4JException {
+      
       if (discard.isTrue())
         throw new LoginCanceledException();
-        
+      
       if (!hasUse && !isTrue(TokenUseAlert::display)) {
         discard.setTrue();
         token.logout();

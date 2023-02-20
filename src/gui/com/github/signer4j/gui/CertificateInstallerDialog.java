@@ -263,9 +263,11 @@ class CertificateInstallerDialog extends SimpleDialog {
     current.ifPresent(c -> {
       DefaultFileChooser chooser = new DefaultFileChooser();
       chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      chooser.setAcceptAllFileFilterUsed(false);
       chooser.setMultiSelectionEnabled(true);
       chooser.setDialogTitle(c.chooseTitle());
       FileNameExtensionFilter filter = c.fileFilter();
+      chooser.resetChoosableFileFilters();
       chooser.setFileFilter(filter);
       chooser.addChoosableFileFilter(filter);
       

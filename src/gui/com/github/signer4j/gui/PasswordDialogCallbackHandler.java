@@ -100,7 +100,7 @@ public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
           passwordField.requestFocusInWindow();
         }
       });
-    
+      
       mouseTracker(dialog);
       for(final Integer ok = JOptionPane.OK_OPTION;;) {
         GuiTools.showOnMousePointer(dialog);

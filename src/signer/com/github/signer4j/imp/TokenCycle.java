@@ -28,8 +28,6 @@ package com.github.signer4j.imp;
 
 import static com.github.utils4j.imp.Threads.startDaemon;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.github.signer4j.IAuthStrategy;
 import com.github.signer4j.IToken;
 import com.github.signer4j.ITokenCycle;
@@ -55,7 +53,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   
   private volatile long effectiveLogoutTime = -1;
 
-  private final AtomicInteger refCount = new AtomicInteger(0);
+  private volatile int refCount = 0;
 
   public TokenCycle(IToken token, IAuthStrategy strategy, Object lock) {
     super(token);
@@ -71,7 +69,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   }
   
   private boolean hasUse() {
-    return refCount.get() > 0 || (effectiveLogoutTime > 0 && !hasTimeout(effectiveLogoutTime));
+    return refCount > 0 || (effectiveLogoutTime > 0 && !hasTimeout(effectiveLogoutTime));
   }
 
   public final void dispose() {
@@ -83,7 +81,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   public IToken login() throws Signer4JException {
     synchronized(lock) {
       strategy.login(super.token, hasUse());
-      refCount.incrementAndGet();
+      ++refCount;
       effectiveLogoutTime = -1;
     }
     return this;
@@ -91,8 +89,8 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
 
   @Override
   public final void logout() {
-    if (refCount.get() > 0) {
-      if (refCount.decrementAndGet() == 0) {
+    synchronized(lock) {
+      if (refCount > 0 && --refCount == 0) {
         logoutAsync();
       }
     }
@@ -103,7 +101,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     if (force) {
       synchronized(lock) {
         super.logout();
-        refCount.set(0);
+        refCount = 0;
         effectiveLogoutTime = -1;
       }
       return;
@@ -122,7 +120,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     startDaemon(() -> { 
       do {
         synchronized(lock) {
-          if (refCount.get() > 0) {
+          if (refCount > 0) {
             return; //abort logout!
           }
           if (hasTimeout(logoutRequestTime)) {

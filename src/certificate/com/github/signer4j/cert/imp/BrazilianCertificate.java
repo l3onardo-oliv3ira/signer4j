@@ -90,7 +90,7 @@ class BrazilianCertificate implements ICertificate {
 
   @Override
   public boolean isExpired() {
-    return new Date().getTime() > getAfterDate().getTime();
+    return System.currentTimeMillis() > getAfterDate().getTime();
   }
 
   @Override
