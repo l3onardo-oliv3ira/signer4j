@@ -32,84 +32,74 @@ import static com.github.utils4j.gui.imp.SwingTools.isTrue;
 import com.github.signer4j.IAuthStrategy;
 import com.github.signer4j.IToken;
 import com.github.signer4j.gui.alert.TokenUseAlert;
+import com.github.signer4j.imp.exception.InvalidPinException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
+import com.github.signer4j.imp.exception.NoTokenPresentException;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.BooleanTimeout;
 
 public enum AuthStrategy implements IAuthStrategy{
-  AWAYS("Sempre solicitar senha") {
-    @Override
-    public void login(IToken token, boolean hasUse) throws Signer4JException {
-      token.login();
-    }
-
-    @Override
-    public void logout(IToken token) {
-      token.logout();
-    }
-  },
-  ONE_TIME("Solicitar senha uma vez") {
-    @Override
-    public void login(IToken token,  boolean hasUse) throws Signer4JException {
-      if (!token.isAuthenticated()) {
-        token.login();
-      }
-    }
-
-    @Override
-    public void logout(IToken token) {
-      ;//do NOT logout yet
-    }
-  },
-  NEVER("Impedir o uso do dispositivo"){
-    @Override
-    public void login(IToken token, boolean hasUse) throws Signer4JException {
-      throw new LoginCanceledException();
-    }
   
+  ONE_TIME("Solicitar senha uma vez"),
+  
+  AWAYS("Sempre solicitar senha") {
+
     @Override
-    public void logout(IToken token) {
+    public final void logout(IToken token) {
       token.logout();
     }
-  },
-  CONFIRM("Apenas confirmar uso do dispositivo"){
-    private final BooleanTimeout discard = new BooleanTimeout(2000);
-    
+  },  
+  
+  CONFIRM("Apenas confirmar uso do dispositivo") {
+
     @Override
-    public void login(IToken token, boolean hasUse) throws Signer4JException {
-      
-      if (discard.isTrue())
-        throw new LoginCanceledException();
-      
+    protected final void preLogin(IToken token, boolean hasUse) throws LoginCanceledException {
       if (!hasUse && !isTrue(TokenUseAlert::display)) {
         discard.setTrue();
         token.logout();
         throw new LoginCanceledException();
       }
-      
-      if (!token.isAuthenticated()) { 
-        try {
-          token.login();
-        }catch(Signer4JException e) {
-          discard.setTrue();
-          throw e;
-        }
-      }
-    }
-  
-    @Override
-    public void logout(IToken token) {
-      ;//do NOT logout yet
-    }
+    }  
   };
+
   
-  private String label;
+  private final String label;
+  
+  protected final BooleanTimeout discard = new BooleanTimeout(2000);
   
   AuthStrategy(String message) {
     this.label = message;
   }
   
-  public String geLabel() {
+  public final String geLabel() {
     return label;
+  }
+  
+  public void logout(IToken token) {
+    ;//default nothing to do
+  }
+  
+  protected void preLogin(IToken token, boolean hasUse) throws LoginCanceledException {
+    ;//default nothing to do
+  }
+
+  @Override
+  public void login(IToken token, boolean hasUse) throws Signer4JException {
+    
+    if (discard.isTrue())
+      throw new LoginCanceledException();
+    
+    preLogin(token, hasUse);
+    
+    if (!token.isAuthenticated()) { 
+      try {
+        token.login();
+      } catch(NoTokenPresentException | InvalidPinException e) {
+        throw e;
+      } catch(Signer4JException e) {
+        discard.setTrue();
+        throw e;
+      }
+    }
   }
 }

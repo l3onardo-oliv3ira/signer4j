@@ -170,6 +170,11 @@ public class TokenWrapper implements IToken {
   public TokenType getType() {
     return token.getType();
   }
+  
+  @Override
+  public String getCategory() {
+    return token.getCategory();
+  }
 
   @Override
   public ICertificateChooser createChooser(ICertificateChooserFactory factory) {

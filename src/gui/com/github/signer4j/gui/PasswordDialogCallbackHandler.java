@@ -79,8 +79,9 @@ public class PasswordDialogCallbackHandler implements IPasswordCallbackHandler {
       return ResponseCallback.CANCEL;
     JPasswordField passwordField = new JPasswordField();
     JComponent[] components = new JComponent[5];
-    components[0] = new JLabel(format("Token: %s - Modelo: %s", 
-      gadget.getLabel(), 
+    components[0] = new JLabel(format("Token: %s - Modelo: %s - %s", 
+      gadget.getLabel(),
+      gadget.getCategory(),
       gadget.getModel()
     ));
     components[1] = new JLabel(format("Fabricante: %s ", gadget.getManufacturer()));

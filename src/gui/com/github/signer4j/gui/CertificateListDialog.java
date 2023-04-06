@@ -38,6 +38,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -98,8 +100,13 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
 
   private void setup() {
     setupLayout();
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);    
     setMinimumSize(MININUM_SIZE);
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent windowEvent) {
+        clickCancel(null);
+      }
+    });
     toCenter();
   }
 
@@ -374,12 +381,24 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     Args.requireNonNull(saveCallback, "onSaved is null");
     String defaultAlias = Config.defaultAlias().orElse("$not_found$");
     if (auto) {
+      
       Optional<ICertificateEntry> defaultEntry = entries
           .stream()
           .filter(c -> c.getId().equals(defaultAlias) && !c.isExpired()) //auto select!
           .findFirst();
+      
       if (defaultEntry.isPresent()) {
         return () -> defaultEntry;
+      }
+      
+      AtomicReference<ICertificateEntry> choosed = new AtomicReference<>();
+      if (
+        entries
+            .stream()
+            .filter(c -> !c.isExpired()) //auto select!
+            .peek(choosed::set)
+            .count() == 1) {
+        return () -> Optional.of(choosed.get());
       }
     }
     return new CertificateListDialog(defaultAlias, saveCallback).choose(entries);

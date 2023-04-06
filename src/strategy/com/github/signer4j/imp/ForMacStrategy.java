@@ -41,7 +41,7 @@ class ForMacStrategy extends UnixStrategy {
     add("libbanrisulpkcs11.so");
     add("libdesktopID_Provider.dylib");
     add("opensc-pkcs11.so");
-    
+    add("libcastle.1.0.0.dylib");
     load("/usr/local/ngsrv/libepsng_p11.so.1.2.2");
     load("/Applications/NeoID Desktop.app/Contents/Java/tools/macos/libneoidp11.dylib");
     load("/Applications/WatchKey USB Token Admin Tool.app/Contents/MacOS/lib/libWDP11_BR_GOV.dylib");

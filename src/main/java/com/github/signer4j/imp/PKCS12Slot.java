@@ -70,7 +70,7 @@ class PKCS12Slot extends VirtualSlot implements ILibraryAware {
     }
     this.token = new PKCS12Token.Builder(this)
       .withLabel(certPath.getFileName().toString())
-      .withModel(IDevice.Type.A1.toString())
+      .withModel("arquivo")
       .withSerial(md5)
       .withManufacture(certPath.getParent().toString())
       .build();

@@ -64,6 +64,7 @@ import com.github.signer4j.imp.exception.NoTokenPresentException;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.signer4j.imp.exception.TokenLockedException;
 import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.BooleanTimeout;
 import com.github.utils4j.imp.function.IBiProcedure;
 
 import io.reactivex.Observable;
@@ -88,8 +89,10 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
 
   private volatile List<IFilePath> a1Files = new ArrayList<>();
   
+  private final BooleanTimeout discard = new BooleanTimeout(1500);
+  
   private volatile List<IFilePath> a3Libraries = new ArrayList<>();
-
+  
   private BehaviorSubject<IStatusMonitor> tokenCycle = BehaviorSubject.create();
   
   protected static interface IFileLoader extends IBiProcedure<List<IFilePath>, List<IFilePath>> {};
@@ -173,17 +176,20 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
   }
   
   private Optional<T> getToken(boolean force, boolean autoSelect) {
-    if (Thread.currentThread().isInterrupted()) {
+    
+    if (Thread.currentThread().isInterrupted() || discard.isTrue())      
       return Optional.empty();
-    }
+    
     synchronized(manager) {
       if (!force && token != null)
         return Optional.of(token);
       
       force |= token == null;
       Optional<ICertificateEntry> selected = showCertificates(force, autoSelect);
-      if (!selected.isPresent()) //usuário cancelou a operação!
+      if (!selected.isPresent()) { //usuário cancelou a operação!
+        discard.setTrue();      
         return Optional.empty();
+      }
   
       DeviceCertificateEntry e = (DeviceCertificateEntry)selected.get();
       this.token = newToken(e.getNative());

@@ -27,6 +27,10 @@
 
 package com.github.signer4j.cert.imp;
 
+import static java.lang.Integer.parseInt;
+import static java.time.LocalDate.of;
+
+import java.time.LocalDate;
 import java.util.Optional;
 
 import com.github.signer4j.cert.ICertificatePJ;
@@ -69,9 +73,16 @@ class BrazilianCertificatePJ implements ICertificatePJ {
   }
 
   @Override
-  public final Optional<String> getBirthDate() {
-    return id_2_16_76_1_3_4.getBirthDate();
-
+  public final Optional<LocalDate> getBirthDate() {
+    Optional<String> date = id_2_16_76_1_3_4.getBirthDate();
+    if (date.isPresent()) {
+      String value = date.get();
+      String day = value.substring(0, 2);
+      String month = value.substring(2, 4);
+      String year = value.substring(4, value.length());
+      return Optional.of(of(parseInt(year), parseInt(month), parseInt(day)));
+    }
+    return Optional.empty();
   }
 
   @Override

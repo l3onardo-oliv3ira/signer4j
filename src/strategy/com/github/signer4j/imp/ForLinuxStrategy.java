@@ -44,7 +44,6 @@ class ForLinuxStrategy extends UnixStrategy {
     add("libeToken.so.4");
     add("libcmP11.so");
     add("libwdpkcs.so");
-    add("libwdpkcs.so");
     add("libaetpkss.so.3");
     add("libaetpkss.so.3.0");
     add("opensc-pkcs11.so");
@@ -54,7 +53,6 @@ class ForLinuxStrategy extends UnixStrategy {
     add("watchdata/lib/libwdpkcs.so");
     add("x86_64-linux-gnu/opensc-pkcs11.so");
     add("x86_64-linux-gnu/pkcs11/opensc-pkcs11.so");
-    
     load("/usr/local/ngsrv/libepsng_p11.so.1.2.2");
     load("/usr/local/ngsrv/libepsng_p11.so.1");
     load("/usr/local/AWP/lib/libOcsCryptoki.so");

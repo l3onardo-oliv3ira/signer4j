@@ -117,6 +117,11 @@ class DefaultDevice implements IDevice {
   }
   
   @Override
+  public final String getCategory() {
+    return getType().toString();
+  }
+  
+  @Override
   public final String getDriver() {
     return this.driver;
   }

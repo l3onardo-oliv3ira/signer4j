@@ -27,6 +27,7 @@
 
 package com.github.signer4j.cert;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface ICertificatePJ {
@@ -37,7 +38,7 @@ public interface ICertificatePJ {
 
   Optional<String> getCNPJ();
 
-  Optional<String> getBirthDate();
+  Optional<LocalDate> getBirthDate();
 
   Optional<String> getBusinessName();
 

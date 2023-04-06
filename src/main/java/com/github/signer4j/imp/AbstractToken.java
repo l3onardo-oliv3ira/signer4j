@@ -99,6 +99,11 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   }
   
   @Override
+  public final String getCategory() {
+    return getType().toString();
+  }
+  
+  @Override
   public final String getLabel() {
     return label;
   }

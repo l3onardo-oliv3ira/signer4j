@@ -32,4 +32,6 @@ public interface IGadget extends ISerialItem {
   String getLabel();
 
   String getModel();
+
+  String getCategory();
 }
