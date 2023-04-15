@@ -29,6 +29,8 @@ package com.github.signer4j.imp;
 
 import static com.github.utils4j.gui.imp.SwingTools.isTrue;
 
+import java.util.Optional;
+
 import com.github.signer4j.IAuthStrategy;
 import com.github.signer4j.IToken;
 import com.github.signer4j.gui.alert.TokenUseAlert;
@@ -53,19 +55,26 @@ public enum AuthStrategy implements IAuthStrategy{
   CONFIRM("Apenas confirmar uso do dispositivo") {
 
     @Override
-    protected final void preLogin(IToken token, boolean hasUse) throws LoginCanceledException {
-      if (!hasUse && !isTrue(TokenUseAlert::display)) {
-        discard.setTrue();
+    protected final void preLogin(IToken token, boolean isInUse) throws LoginCanceledException {
+      if (!isInUse && !isTrue(TokenUseAlert::display)) {
+        ESCAPE_DISCARDING.setTrue();
         token.logout();
         throw new LoginCanceledException();
       }
     }  
   };
 
+  public static Optional<AuthStrategy> forName(String name) {
+    try {
+      return Optional.of(AuthStrategy.valueOf(name));
+    } catch (Exception e) {
+      return Optional.empty();
+    }
+  }
   
   private final String label;
   
-  protected final BooleanTimeout discard = new BooleanTimeout(2000);
+  protected static final BooleanTimeout ESCAPE_DISCARDING = new BooleanTimeout("strategy", 2000);
   
   AuthStrategy(String message) {
     this.label = message;
@@ -79,17 +88,17 @@ public enum AuthStrategy implements IAuthStrategy{
     ;//default nothing to do
   }
   
-  protected void preLogin(IToken token, boolean hasUse) throws LoginCanceledException {
+  protected void preLogin(IToken token, boolean isInUse) throws LoginCanceledException {
     ;//default nothing to do
   }
 
   @Override
-  public void login(IToken token, boolean hasUse) throws Signer4JException {
+  public void login(IToken token, boolean isInUse) throws Signer4JException {
     
-    if (discard.isTrue())
+    if (ESCAPE_DISCARDING.isTrue())
       throw new LoginCanceledException();
     
-    preLogin(token, hasUse);
+    preLogin(token, isInUse);
     
     if (!token.isAuthenticated()) { 
       try {
@@ -97,7 +106,7 @@ public enum AuthStrategy implements IAuthStrategy{
       } catch(NoTokenPresentException | InvalidPinException e) {
         throw e;
       } catch(Signer4JException e) {
-        discard.setTrue();
+        ESCAPE_DISCARDING.setTrue();
         throw e;
       }
     }

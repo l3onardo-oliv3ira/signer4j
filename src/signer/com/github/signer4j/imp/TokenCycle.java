@@ -41,17 +41,13 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   
   private static long LOGOUT_BATCH_TIMEOUT = 2000;
   
-  private static boolean hasTimeout(long startTime) {
-    return System.currentTimeMillis() - startTime > LOGOUT_BATCH_TIMEOUT;
-  }
-
   private final Object lock;
 
   private final Disposable ticket;
   
   private final IAuthStrategy strategy;
   
-  private volatile long effectiveLogoutTime = -1;
+  private volatile long deadline = -1;
 
   private volatile int refCount = 0;
 
@@ -68,8 +64,24 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     }
   }
   
-  private boolean hasUse() {
-    return refCount > 0 || (effectiveLogoutTime > 0 && !hasTimeout(effectiveLogoutTime));
+  private boolean hasDeadline() {
+    return deadline > 0;
+  }
+  
+  private boolean isBeforeDeadline() {
+    return hasDeadline() && System.currentTimeMillis() < deadline;
+  }
+  
+  private boolean isPastDeadline() {
+    return hasDeadline() && System.currentTimeMillis() >= deadline;
+  }
+  
+  private boolean hasTimeout() {
+    return isPastDeadline();
+  }
+
+  private boolean isInUse() {
+    return refCount > 0 || isBeforeDeadline();
   }
 
   public final void dispose() {
@@ -80,9 +92,8 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   @Override
   public IToken login() throws Signer4JException {
     synchronized(lock) {
-      strategy.login(super.token, hasUse());
+      strategy.login(super.token, isInUse());
       ++refCount;
-      effectiveLogoutTime = -1;
     }
     return this;
   }
@@ -102,7 +113,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
       synchronized(lock) {
         super.logout();
         refCount = 0;
-        effectiveLogoutTime = -1;
+        deadline = -1;
       }
       return;
     }
@@ -111,26 +122,34 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   
   private void logoutAsync() {
 
-    long logoutRequestTime = effectiveLogoutTime = System.currentTimeMillis();
+    deadline = System.currentTimeMillis() + LOGOUT_BATCH_TIMEOUT;
+    
     /**
      * Um logout efetivamente assíncrono permite que os ciclos de autenticação funcionem 
      * de forma transparente tanto com lotes originados de múltiplas requisições simultâneas
      * quanto por lote em requisição única
      */
-    startDaemon(() -> { 
+    Runnable code = () -> {
       do {
+        long waitingTime;
         synchronized(lock) {
-          if (refCount > 0) {
+          if (refCount > 0 || !hasDeadline()) {
             return; //abort logout!
           }
-          if (hasTimeout(logoutRequestTime)) {
-            effectiveLogoutTime = System.currentTimeMillis();
-            strategy.logout(super.token);
+          if (hasTimeout()) {
+            try {
+              strategy.logout(super.token);
+            }finally {
+              deadline = -1;
+            }
             return;
           }
+          waitingTime = deadline - System.currentTimeMillis();
         }
-        Threads.sleep(LOGOUT_BATCH_TIMEOUT);
+        Threads.sleep(waitingTime + 10); //10 is margin of error
       }while(true);
-    }, LOGOUT_BATCH_TIMEOUT);
+    };
+    
+    startDaemon("batch-logout", code, LOGOUT_BATCH_TIMEOUT + 10); 
   }
 }

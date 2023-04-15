@@ -33,7 +33,7 @@ public interface IAuthStrategy {
   
   String name();
   
-  void login(IToken token, boolean hasUse) throws Signer4JException ;
+  void login(IToken token, boolean isInUse) throws Signer4JException ;
 
   void logout(IToken token);
 }

@@ -89,7 +89,7 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
 
   private volatile List<IFilePath> a1Files = new ArrayList<>();
   
-  private final BooleanTimeout discard = new BooleanTimeout(1500);
+  private final BooleanTimeout discard = new BooleanTimeout("token-accessor", 2000);
   
   private volatile List<IFilePath> a3Libraries = new ArrayList<>();
   
