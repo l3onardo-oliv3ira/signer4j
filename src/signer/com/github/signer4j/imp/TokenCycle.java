@@ -35,16 +35,12 @@ import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Threads;
 
-import io.reactivex.disposables.Disposable;
-
 public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   
   private static long LOGOUT_BATCH_TIMEOUT = 2000;
   
   private final Object lock;
 
-  private final Disposable ticket;
-  
   private final IAuthStrategy strategy;
   
   private volatile long deadline = -1;
@@ -55,15 +51,8 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     super(token);
     this.strategy = Args.requireNonNull(strategy, "strategy is null");
     this.lock = Args.requireNonNull(lock, "lock is null");
-    this.ticket = getStatus().subscribe(this::checkStatus);
   }
 
-  private void checkStatus(Boolean online) {
-    if (!online) {
-      logout(true);
-    }
-  }
-  
   private boolean hasDeadline() {
     return deadline > 0;
   }
@@ -86,7 +75,6 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
 
   public final void dispose() {
     logout(true);
-    ticket.dispose();
   }
 
   @Override

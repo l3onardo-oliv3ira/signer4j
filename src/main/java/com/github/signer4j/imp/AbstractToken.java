@@ -71,7 +71,7 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   
   private final BehaviorSubject<Boolean> status = BehaviorSubject.create();
   
-  private final Runnable disposeAction = () -> logout();
+  private final Runnable disposeAction = this::logout;
   
   protected ICertificates certificates;
   

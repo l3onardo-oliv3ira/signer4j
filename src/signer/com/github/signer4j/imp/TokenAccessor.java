@@ -68,6 +68,7 @@ import com.github.utils4j.imp.BooleanTimeout;
 import com.github.utils4j.imp.function.IBiProcedure;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T> {
@@ -81,6 +82,8 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
   
   private volatile T token;
 
+  private  Disposable ticket;
+
   private IAuthStrategy strategy;
   
   private final IDeviceManager manager;
@@ -89,12 +92,12 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
 
   private volatile List<IFilePath> a1Files = new ArrayList<>();
   
-  private final BooleanTimeout discard = new BooleanTimeout("token-accessor", 2000);
-  
   private volatile List<IFilePath> a3Libraries = new ArrayList<>();
   
   private BehaviorSubject<IStatusMonitor> tokenCycle = BehaviorSubject.create();
   
+  private final BooleanTimeout discard = new BooleanTimeout("token-accessor", 2000);
+
   protected static interface IFileLoader extends IBiProcedure<List<IFilePath>, List<IFilePath>> {};
   
   protected TokenAccessor(AuthStrategy strategy, IFileLoader loader) {
@@ -127,18 +130,21 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
     }
   }
 
-  private void doLogout() {
-    if (token != null) {
-      doDispose(token);
-      token = null;
-    }
-  }
-  
   private void doClose() {
     doLogout();
     manager.close();
   }
 
+  private void doLogout() {
+    if (token != null) {
+      doDispose(token);
+      token = null;
+    }
+    if (ticket != null) {
+      ticket.dispose();
+      ticket = null;
+    }
+  }
   
   @Override
   public final void reset() {
@@ -153,16 +159,23 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
     synchronized(manager) {
       if (strategy != null) {
         doSaveStrategy(this.strategy = strategy);
-        this.close();      
+        close();      
       }
     }
   }
   
   private T newToken(IDevice device) { 
     synchronized(manager) {
-      token = createToken(device.getSlot().getToken(), manager);
+      T token = createToken(device.getSlot().getToken(), manager);
+      ticket = token.getStatus().subscribe(this::checkStatus);
       tokenCycle.onNext(token);
       return token;
+    }
+  }
+  
+  private void checkStatus(Boolean online) {
+    if (!online) {
+      logout();
     }
   }
   
@@ -175,7 +188,7 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
     this.manager.install(toPaths(a1List));
   }
   
-  private Optional<T> getToken(boolean force, boolean autoSelect) {
+  private Optional<T> getToken(boolean force) {
     
     if (Thread.currentThread().isInterrupted() || discard.isTrue())      
       return Optional.empty();
@@ -185,7 +198,7 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
         return Optional.of(token);
       
       force |= token == null;
-      Optional<ICertificateEntry> selected = showCertificates(force, autoSelect);
+      Optional<ICertificateEntry> selected = showCertificates(force, true);
       if (!selected.isPresent()) { //usuário cancelou a operação!
         discard.setTrue();      
         return Optional.empty();
@@ -219,25 +232,28 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
   @SuppressWarnings("unchecked")
   public T get() {
     synchronized(manager) {
-      boolean force = false, autoSelect = true;
+      boolean force = false;
       int times = 0;
       do {
-        T token = getToken(force, autoSelect).orElseThrow(lambda(LoginCanceledException::new));
+        T token = getToken(force).orElseThrow(lambda(LoginCanceledException::new));
         try {
           return (T)token.login();
         } catch (LoginCanceledException e) {
           throw of(e);
         } catch (NoTokenPresentException e) {
-          if (!isTrue(NoTokenPresentAlert::display))
+          if (!isTrue(NoTokenPresentAlert::display)) {
+            discard.setTrue();
             throw of(e);
+          }
           this.close();
           force = true;
-          autoSelect = false;
         } catch (TokenLockedException e) {
           invokeAndWait(TokenLockedAlert::display);
+          discard.setTrue();
           throw of(e);
         } catch (ExpiredCredentialException e) {
           invokeAndWait(ExpiredPasswordAlert::display);
+          discard.setTrue();
           throw of(e);
         } catch (InvalidPinException e) {
           if (TokenType.A3.equals(token.getType()))
@@ -245,6 +261,7 @@ public abstract class TokenAccessor<T extends IToken> implements ITokenAccess<T>
           final int t = times;
           if (isTrue(() -> InvalidPinAlert.display(t)))
             continue;
+          discard.setTrue();
           throw of(e);
         } catch (Signer4JException e) {
           throw of(e);
