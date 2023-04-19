@@ -32,6 +32,6 @@ import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 public class ASN1SHA384MessageDigest extends ASN1EncoderMessageDigest {
 
   public ASN1SHA384MessageDigest() {
-    super("ASN1384", NISTObjectIdentifiers.id_sha384);
+    super("ASN1SHA384", NISTObjectIdentifiers.id_sha384);
   }
 }
