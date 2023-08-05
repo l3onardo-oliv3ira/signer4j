@@ -70,46 +70,59 @@ class BrazilianCertificate implements ICertificate {
 
   private ISubjectAlternativeNames subjectAlternativeNames = null;
 
-  public BrazilianCertificate(InputStream is) throws CertificateException {
-    this(Certificates.create(is));
+  private String aliasName;
+
+  BrazilianCertificate(InputStream is, String aliasName) throws CertificateException {
+    this(Certificates.create(is), aliasName);
   }
 
-  public BrazilianCertificate(X509Certificate certificate) {
+  BrazilianCertificate(X509Certificate certificate, String aliasName) {
     this.certificate = Args.requireNonNull(certificate, "certificate is null");
+    this.aliasName = aliasName;
   } 
 
   @Override
-  public Date getAfterDate() {
+  public final Optional<String> getAlias() {
+    return Optional.ofNullable(aliasName);
+  }
+  
+  @Override
+  public final void setAlias(String aliasName) { //This is danger!
+    this.aliasName = aliasName;
+  }
+  
+  @Override
+  public final Date getAfterDate() {
     return certificate.getNotAfter();
   }
 
   @Override
-  public Date getBeforeDate() {
+  public final Date getBeforeDate() {
     return certificate.getNotBefore();
   }
 
   @Override
-  public boolean isExpired() {
+  public final boolean isExpired() {
     return System.currentTimeMillis() > getAfterDate().getTime();
   }
 
   @Override
-  public String getManufacturer() {
+  public final String getManufacturer() {
     return getCertificateIssuerDN().getFullName();
   }
 
   @Override
-  public String getSerial() {
+  public final String getSerial() {
     return toString(certificate.getSerialNumber());
   }
 
   @Override
-  public X509Certificate toX509() {
+  public final X509Certificate toX509() {
     return certificate; 
   }
 
   @Override
-  public IDistinguishedName getCertificateIssuerDN() {
+  public final IDistinguishedName getCertificateIssuerDN() {
     if (certificateFrom == null) {
       certificateFrom = new DistinguishedName(certificate.getIssuerDN().getName());
     }
@@ -117,7 +130,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public IDistinguishedName getCertificateSubjectDN() {
+  public final IDistinguishedName getCertificateSubjectDN() {
     if (certificateFor == null) {
       certificateFor = new DistinguishedName(certificate.getSubjectDN().getName());
     }
@@ -125,7 +138,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public Optional<ICertificatePF> getCertificatePF() {
+  public final Optional<ICertificatePF> getCertificatePF() {
     if (getSubjectAlternativeNames() == null) {
       return Optional.empty();
     }
@@ -133,7 +146,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public Optional<ICertificatePJ> getCertificatePJ() {
+  public final Optional<ICertificatePJ> getCertificatePJ() {
     if (getSubjectAlternativeNames() == null) {
       return Optional.empty();
     }
@@ -141,7 +154,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public KeyUsage getKeyUsage() {
+  public final KeyUsage getKeyUsage() {
     if (keyUsage == null) {
       keyUsage = new KeyUsage(certificate);
     }
@@ -149,7 +162,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public ISubjectAlternativeNames getSubjectAlternativeNames() {
+  public final ISubjectAlternativeNames getSubjectAlternativeNames() {
     if (this.subjectAlternativeNames == null) {
       this.subjectAlternativeNames = new SubjectAlternativeNames(this.certificate);
     }
@@ -157,7 +170,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public Optional<String> getEmail() {
+  public final Optional<String> getEmail() {
     if (getSubjectAlternativeNames() == null) {
       return Optional.empty();
     }
@@ -165,7 +178,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public boolean hasCertificatePJ() {
+  public final boolean hasCertificatePJ() {
     if (getSubjectAlternativeNames() == null) {
       return false;
     }
@@ -173,7 +186,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public boolean hasCertificatePF() {
+  public final boolean hasCertificatePF() {
     if (getSubjectAlternativeNames() == null) {
       return false;
     }
@@ -191,7 +204,7 @@ class BrazilianCertificate implements ICertificate {
     return out.toUpperCase();
   }
 
-  public ASN1Primitive getExtensionValue(String oid) {
+  public final ASN1Primitive getExtensionValue(String oid) {
     try {
       byte[] extensionValue = certificate.getExtensionValue(oid);
       if (extensionValue == null) {
@@ -209,7 +222,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public String getName() {
+  public final String getName() {
     try {
       String name = this.getCertificateSubjectDN().getProperty("CN").orElse(Strings.empty());
       int pos;
@@ -225,7 +238,7 @@ class BrazilianCertificate implements ICertificate {
   }
 
   @Override
-  public List<String> getCRLDistributionPoint() {
+  public final List<String> getCRLDistributionPoint() {
     ASN1Primitive primitive = getExtensionValue(Extension.cRLDistributionPoints.getId());
     if (primitive == null) {
       return Collections.emptyList();
@@ -256,6 +269,7 @@ class BrazilianCertificate implements ICertificate {
     StringBuilder sb = new StringBuilder(0);
     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     sb.append(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
+    append(sb, "alias", aliasName);
     append(sb, "issuerDN", getCertificateIssuerDN());
     append(sb, "subjectDN", getCertificateSubjectDN());
     append(sb, "serialNumber", getSerial());

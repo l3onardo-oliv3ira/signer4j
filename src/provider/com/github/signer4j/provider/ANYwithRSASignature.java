@@ -50,7 +50,7 @@ public abstract class ANYwithRSASignature extends Signature {
   
   private final Signature signature;
   
-  protected ANYwithRSASignature(String algorithm) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException{
+  protected ANYwithRSASignature(String algorithm) throws Exception {
     super(algorithm);
     this.signature = Signature.getInstance("NONEwithRSA");
   }
@@ -114,5 +114,5 @@ public abstract class ANYwithRSASignature extends Signature {
   
   protected abstract MessageDigest getDigester();
   
-  protected void setupDigester(String name) throws NoSuchAlgorithmException, NoSuchProviderException {}
+  protected void setupDigester(String name) throws NoSuchAlgorithmException, NoSuchProviderException {} 
 }

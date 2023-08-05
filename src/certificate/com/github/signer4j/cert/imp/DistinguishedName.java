@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import com.github.signer4j.cert.IDistinguishedName;
 import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Strings;
 
 class DistinguishedName implements IDistinguishedName {
 
@@ -47,7 +48,7 @@ class DistinguishedName implements IDistinguishedName {
   }
   
   private void setup() {
-    try(ByteArrayInputStream s = new ByteArrayInputStream(fullName.replaceAll(",", "\n").getBytes())){
+    try(ByteArrayInputStream s = new ByteArrayInputStream(fullName.replaceAll(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", "\n").getBytes())){
         properties.load(s);
     } catch (IOException e) {
       e.printStackTrace(); //we have to go back here!
@@ -61,11 +62,11 @@ class DistinguishedName implements IDistinguishedName {
 
   @Override
   public final Optional<String> getProperty(String key) {
-    return Optional.ofNullable(properties.getProperty(key));
+    return Strings.optional(properties.getProperty(key));
   }
   
   @Override
   public String toString() {
     return fullName;
-  }
+  }  
 }

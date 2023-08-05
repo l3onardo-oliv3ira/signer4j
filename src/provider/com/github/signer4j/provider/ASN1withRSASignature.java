@@ -27,17 +27,17 @@
 
 package com.github.signer4j.provider;
 
-import java.security.InvalidAlgorithmParameterException;
+import static com.github.signer4j.provider.ProviderInstaller.SIGNER4J;
+
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public abstract class ASN1withRSASignature extends ANYwithRSASignature {
   
   private final MessageDigest digester;
   
-  public ASN1withRSASignature(String asn1EncoderName) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+  public ASN1withRSASignature(String asn1EncoderName)  throws Exception {
     super(asn1EncoderName + "withRSA");
-    this.digester = MessageDigest.getInstance(asn1EncoderName);
+    this.digester = MessageDigest.getInstance(asn1EncoderName, SIGNER4J.defaultName());
   }
 
   @Override

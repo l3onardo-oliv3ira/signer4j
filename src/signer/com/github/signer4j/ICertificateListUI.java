@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.github.signer4j.imp.SwitchRepositoryException;
 import com.github.utils4j.imp.function.IBiProcedure;
 
 public interface ICertificateListUI {
@@ -49,10 +50,11 @@ public interface ICertificateListUI {
     String getIssuer();
     String getDate();
     String getId();
+    ICertificate getCertificate();
     boolean isRemembered();
     boolean isExpired();
     void setRemembered(boolean value);
   }
 
-  IChoice choose(List<ICertificateEntry> entries);
+  IChoice choose(List<ICertificateEntry> entries) throws SwitchRepositoryException;
 }

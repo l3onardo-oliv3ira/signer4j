@@ -24,9 +24,12 @@
 * SOFTWARE.
 */
 
-
 package com.github.signer4j;
+
+import java.security.Signature;
 
 public interface ISignatureAlgorithm extends IAlgorithm {
   IHashAlgorithm getHashAlgorithm();
+
+  Signature toSignature() throws Exception;
 }

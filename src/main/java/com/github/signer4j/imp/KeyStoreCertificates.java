@@ -41,7 +41,7 @@ class KeyStoreCertificates extends AbstractCertificates {
   private final transient IToken token;
   
   KeyStoreCertificates(IToken token, IKeyStore keyStore, ICertificateFactory factory) throws Signer4JException {
-    super(factory);
+    super();
     this.token = Args.requireNonNull(token, "token is null");
     this.setup(keyStore, factory);
   }
@@ -58,7 +58,7 @@ class KeyStoreCertificates extends AbstractCertificates {
       String aliasName = aliases.nextElement();
       ICertificate certificate;
       try {
-        certificate = factory.create(keyStore.getCertificate(aliasName));
+        certificate = factory.create(keyStore.getCertificate(aliasName), aliasName);
       } catch (CertificateException e) {
         reset();
         throw new Signer4JException(e);
@@ -68,6 +68,8 @@ class KeyStoreCertificates extends AbstractCertificates {
       }
       super.certificates.add(certificate);
     }
+
+    super.certificates.sort((a, b) -> b.getAfterDate().compareTo(a.getAfterDate()));
   }
 
   private void reset() {

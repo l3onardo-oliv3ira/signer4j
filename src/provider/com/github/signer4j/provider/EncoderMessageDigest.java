@@ -62,9 +62,7 @@ public abstract class EncoderMessageDigest extends MessageDigest {
     output.reset();
   }
   
-  protected byte[] doDigest(byte[] rawDigest) {
-    return rawDigest;
-  }
+  protected abstract byte[] doDigest(byte[] rawDigest);
   
   protected abstract byte[] encode(byte[] input);
 }

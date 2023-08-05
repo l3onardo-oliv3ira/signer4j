@@ -32,6 +32,15 @@ class ForLinuxStrategy extends UnixStrategy {
   //TODO revisar libraries de 64bits?
   
   public ForLinuxStrategy() {
+    //
+    add("libcoolkeypk11.so");
+    add("libbit4opki.so");
+    add("libbit4ipki.so");
+    add("libbit4xpki.so");
+    add("libASEP11.so");
+    add("stPKCS11.so");
+    add("libsiecap11.so");
+    //
     add("libaetpkss.so");
     add("libgpkcs11.so");
     add("libgpkcs11.so.2");

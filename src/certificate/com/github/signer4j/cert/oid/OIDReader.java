@@ -37,12 +37,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.utils4j.imp.Args;
 
 public class OIDReader {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(OIDReader.class);
 
-  static final Integer HEADER = 0;
-  static final Integer CONTENT = 1;
+  static final Integer HEADER   = 0;
+  static final Integer CONTENT  = 1;
+  
+  private static final Integer OID_TYPE   = 0;
+  private static final Integer EMAIL_TYPE = 1;
+  //private static final Integer DNS_TYPE = 2;
 
   private final Map<String, OIDBasic> oidPool = new HashMap<>();
 
@@ -115,36 +124,36 @@ public class OIDReader {
     try {
       alternativeNames = certificate.getSubjectAlternativeNames();
     } catch (CertificateParsingException e1) {
-      e1.printStackTrace();
+      LOGGER.warn("Não foi possível ler 'subjectAlternativeNames' do certificado. Provável certificado não pertencente ao ICPBRASIL", e1);
     }
     if (alternativeNames == null) {
       return;
     }
     for (List<?> nameItem : alternativeNames) {
       if (nameItem.size() != 2) {
-        System.out.println("Subject alternative list must have at least 2 entries (keystore bug?)");
+        LOGGER.warn("Subject alternative list must have at least 2 entries (keystore bug?)");
         continue;
       }
 
-      Object header = nameItem.get(HEADER.intValue());
+      Object typeHeader = nameItem.get(HEADER.intValue());
       Object content = nameItem.get(CONTENT.intValue());
 
-      if (!(header instanceof Number)) {
-        System.out.println("Type is not a number (keystore bug?)");
+      if (!(typeHeader instanceof Number)) {
+        LOGGER.warn("typeHeader is not a number (keystore bug?)");
         continue;
       }
 
-      Integer type = ((Number)header).intValue();
+      Integer type = ((Number)typeHeader).intValue();
 
-      if (CONTENT.equals(type)) {
+      if (EMAIL_TYPE.equals(type)) {
         email = content.toString();
-      } else if (HEADER.equals(type)) {
+      } else if (OID_TYPE.equals(type)) {
         OIDBasic oid;
         try {
           oid = OIDFactory.create((byte[])content);
           oidPool.put(oid.getOid(), oid);
         } catch (Exception e) {
-          e.printStackTrace();
+          LOGGER.warn("Não foi possível criar OID a partir do array de bytes", e);
         }
       }
     }

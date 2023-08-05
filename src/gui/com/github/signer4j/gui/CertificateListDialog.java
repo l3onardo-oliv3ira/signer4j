@@ -28,6 +28,7 @@
 package com.github.signer4j.gui;
 
 import static java.util.stream.IntStream.range;
+import static javax.swing.BorderFactory.createEmptyBorder;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -54,6 +56,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
@@ -64,8 +67,11 @@ import com.github.signer4j.ICertificateListUI;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
+import com.github.signer4j.imp.Repository;
+import com.github.signer4j.imp.SwitchRepositoryException;
 import com.github.utils4j.gui.imp.SimpleDialog;
 import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Jvms;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -75,7 +81,7 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
 
   private static IChoice UNDEFINED_CHOICE  = () -> Optional.empty();
   
-  private static final Dimension MININUM_SIZE = new Dimension(740, 287);
+  private static final Dimension MININUM_SIZE = new Dimension(740, 302);
 
   private JTable table;
   
@@ -91,11 +97,15 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
   
   private IChoice choice = UNDEFINED_CHOICE;
 
-  private CertificateListDialog(String defaultAlias, IConfigSavedCallback savedCallback) {
+  protected CertificateListDialog(String defaultAlias, IConfigSavedCallback savedCallback) {
     super("Seleção de certificado", Config.getIcon(), true);
     this.defaultAlias = Args.requireNonNull(defaultAlias, "defaultAlias is null");
     this.savedCallback = Args.requireNonNull(savedCallback, "onSaved is null");
     setup();    
+  }
+  
+  protected final boolean hasSavedCallback() {
+    return savedCallback != IConfigSavedCallback.NOTHING;
   }
 
   private void setup() {
@@ -123,15 +133,26 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
   private JPanel createNorth() {
     JPanel pnlNorth = new JPanel();    
     pnlNorth.setLayout(new BorderLayout(0, 0)); 
-    pnlNorth.add(createCertListLabel());    
-    JPanel pnlNorthEast = new JPanel();
-    pnlNorthEast.setLayout(new BorderLayout(0, 0));
-    pnlNorthEast.add(createConfigInstall(), BorderLayout.CENTER);
-    pnlNorthEast.add(createRefresh(), BorderLayout.EAST);
-    pnlNorth.add(pnlNorthEast, BorderLayout.EAST);
+    pnlNorth.add(createCertListLabel());
+    pnlNorth.add(createSetup(), BorderLayout.EAST);
     return pnlNorth;
   }
 
+  protected JPanel createSetup() {
+    JPanel pnlNorthEast = new JPanel();
+    pnlNorthEast.setLayout(new BorderLayout(0, 0));
+    pnlNorthEast.add(createHeaderConfig(), BorderLayout.NORTH);
+    return pnlNorthEast;
+  }
+
+  private JPanel createHeaderConfig() {
+    JPanel headerPanel = new JPanel();
+    headerPanel.setLayout(new BorderLayout());
+    headerPanel.add(createConfigInstall(), BorderLayout.CENTER);
+    headerPanel.add(createRefresh(createEmptyBorder(15,  2,  0,  4)), BorderLayout.EAST);
+    return headerPanel;
+  }
+  
   private JLabel createCertListLabel() {
     JLabel lblCertificateList = new JLabel("Certificados Disponíveis");
     lblCertificateList.setIcon(Images.CERTIFICATE.asIcon());
@@ -140,36 +161,38 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     return lblCertificateList;
   }
 
-  private JLabel createRefresh() {
+  protected final JLabel createRefresh(Border border) {
     JLabel refreshLabel = new JLabel("");
     refreshLabel.setVerticalAlignment(SwingConstants.BOTTOM);    
     refreshLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     refreshLabel.setIcon(Images.REFRESH.asIcon());
+    refreshLabel.setBorder(border);
     refreshLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    refreshLabel.setToolTipText("Atualiza a lista de certificados abaixo");
+    refreshLabel.setToolTipText("Atualiza a lista de certificados abaixo.");
     refreshLabel.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         refresh();
       }
     });
-    refreshLabel.setVisible(savedCallback != IConfigSavedCallback.NOTHING);
+    refreshLabel.setVisible(hasSavedCallback());
     return refreshLabel;
   }
 
   private JLabel createConfigInstall() {
-    JLabel instalLabel = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;&nbsp;</html>");
-    instalLabel.setVerticalAlignment(SwingConstants.BOTTOM);
-    instalLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    instalLabel.setForeground(Color.BLUE);
-    instalLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
-    instalLabel.setHorizontalAlignment(SwingConstants.LEFT);
-    instalLabel.addMouseListener(new MouseAdapter() {
+    JLabel configLabel = new JLabel("<html><u>Configurar um novo certificado</u>&nbsp;</html>");
+    configLabel.setBorder(BorderFactory.createEmptyBorder(0,  0,  0,  4));
+    configLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+    configLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    configLabel.setForeground(Color.BLUE);
+    configLabel.setFont(new Font("Tahoma", Font.ITALIC, 12));
+    configLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    configLabel.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         clickConfig();
       }
     });
-    instalLabel.setVisible(savedCallback != IConfigSavedCallback.NOTHING);
-    return instalLabel;
+    configLabel.setVisible(hasSavedCallback());
+    return configLabel;
   }
 
   private JPanel createCenter() {
@@ -319,8 +342,16 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     }
   }
   
-  private void clickConfig() {
+  protected final void clickConfig() {
     new CertificateInstallerDialog(this::saveCallback).showToFront(); //wait user interaction
+    onAfterConfig();
+  }
+  
+  protected final boolean isNeedReload() {
+    return this.choice == IChoice.NEED_RELOAD;
+  }
+  
+  protected void onAfterConfig() {
     if (this.choice == IChoice.NEED_RELOAD) {
       this.close();
     }
@@ -332,7 +363,7 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     this.savedCallback.call(a1list, a3List); //response callback
   }
   
-  private void refresh() {
+  protected final void refresh() {
     this.choice = IChoice.NEED_RELOAD;
     this.close();
   }
@@ -344,16 +375,18 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
   }
 
   @Override
-  public IChoice choose(List<ICertificateEntry> entries) {
+  public final IChoice choose(List<ICertificateEntry> entries) throws SwitchRepositoryException {
     Args.requireNonNull(entries, "entries is null");
     this.rememberMeCheckbox.setSelected(false);
     this.rememberMeCheckbox.setEnabled(false);
     
     CertificateModel model = (CertificateModel)this.table.getModel();
     model.load(entries);
-    model.preselect(this.table);
+    model.preselect(this.table); 
     
     this.showToFront();
+    
+    this.beforeChoice();
     
     this.selectedEntry.ifPresent(entry -> {
       if (this.defaultAlias.equals(entry.getId())) {
@@ -368,15 +401,25 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
     return this.choice == IChoice.NEED_RELOAD ? this.choice : () -> this.selectedEntry;
   }
   
-  public static IChoice display(List<ICertificateEntry> entries) {
-    return display(entries, true);
-  }
+  protected void beforeChoice() throws SwitchRepositoryException {}
 
-  public static IChoice display(List<ICertificateEntry> entries, boolean auto) {
-    return display(entries, auto, IConfigSavedCallback.NOTHING);
+  public static IChoice display(List<ICertificateEntry> entries) throws SwitchRepositoryException{
+    return display(entries, false);
   }
   
-  public static IChoice display(List<ICertificateEntry> entries, boolean auto, IConfigSavedCallback saveCallback) {
+  public static IChoice display(List<ICertificateEntry> entries, boolean repoWaiting) throws SwitchRepositoryException{
+    return display(entries, repoWaiting, true);
+  }
+
+  public static IChoice display(List<ICertificateEntry> entries, boolean repoWaiting, boolean auto) throws SwitchRepositoryException{
+    return display(entries, repoWaiting, auto, IConfigSavedCallback.NOTHING);
+  }
+  
+  public static IChoice display(List<ICertificateEntry> entries, boolean repoWaiting, boolean auto, IConfigSavedCallback saveCallback) throws SwitchRepositoryException {
+    return display(entries, repoWaiting, auto, saveCallback, Repository.NATIVE);
+  }
+
+  public static IChoice display(List<ICertificateEntry> entries, boolean repoWaiting, boolean auto, IConfigSavedCallback saveCallback, Repository repository) throws SwitchRepositoryException{
     Args.requireNonNull(entries, "entries is null");
     Args.requireNonNull(saveCallback, "onSaved is null");
     String defaultAlias = Config.defaultAlias().orElse("$not_found$");
@@ -391,16 +434,19 @@ public class CertificateListDialog extends SimpleDialog implements ICertificateL
         return () -> defaultEntry;
       }
       
-      AtomicReference<ICertificateEntry> choosed = new AtomicReference<>();
+      AtomicReference<ICertificateEntry> choosen = new AtomicReference<>();
       if (
         entries
             .stream()
             .filter(c -> !c.isExpired()) //auto select!
-            .peek(choosed::set)
+            .peek(choosen::set)
             .count() == 1) {
-        return () -> Optional.of(choosed.get());
+        return () -> Optional.of(choosen.get());
       }
     }
-    return new CertificateListDialog(defaultAlias, saveCallback).choose(entries);
+    return (Jvms.isWindows() ? 
+      new WindowsCertificateListDialog(defaultAlias, saveCallback, repository, repoWaiting) : 
+      new CertificateListDialog(defaultAlias, saveCallback))
+    .choose(entries);    
   }
 }

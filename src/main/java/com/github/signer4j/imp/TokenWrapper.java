@@ -27,7 +27,10 @@
 
 package com.github.signer4j.imp;
 
+import java.util.Optional;
+
 import com.github.signer4j.ICMSSignerBuilder;
+import com.github.signer4j.ICertificate;
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificateChooserFactory;
 import com.github.signer4j.ICertificates;
@@ -184,5 +187,15 @@ public class TokenWrapper implements IToken {
   @Override
   public ICertificateChooser createChooser() {
     return token.createChooser();
+  }
+
+  @Override
+  public void setDefaultCertificate(ICertificate certificate) {
+    token.setDefaultCertificate(certificate);
+  }
+  
+  @Override
+  public Optional<ICertificate> getDefaultCertificate() {
+    return token.getDefaultCertificate();
   }
 }

@@ -35,7 +35,7 @@ import com.github.signer4j.IDriverSetup;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Streams;
 
-class DriverSetup implements IDriverSetup {
+public class DriverSetup implements IDriverSetup {
   
   public static Optional<DriverSetup> create(Path library) {
     try {

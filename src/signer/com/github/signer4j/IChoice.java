@@ -31,6 +31,5 @@ public interface IChoice extends IPersonalData {
   
   boolean isCanceled();
 
-  String getProvider();
-  
+  ISigner toSigner(ISignatureAlgorithm algorithm) throws Exception;
 }

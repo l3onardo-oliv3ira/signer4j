@@ -29,15 +29,23 @@ package com.github.signer4j.cert.oid;
 
 import java.util.Optional;
 
+import com.github.utils4j.imp.Strings;
+
 public final class OID_2_16_76_1_3_8 extends OIDBasic {
 
   public static final String OID = "2.16.76.1.3.8";
+  
+  public static final OID_2_16_76_1_3_8 EMPTY = new OID_2_16_76_1_3_8();
+
+  private OID_2_16_76_1_3_8() {
+    this("");
+  }
 
   protected OID_2_16_76_1_3_8(String content) {
     super(OID, content);
   }
-  
+
   public Optional<String> getName() {
-    return Optional.of(super.getContent());
+    return Strings.optional(super.getContent());
   }
 }

@@ -32,7 +32,6 @@ import static com.github.utils4j.imp.Containers.toUnmodifiableList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -41,27 +40,18 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IDeviceManager;
-import com.github.utils4j.imp.Args;
+import com.github.signer4j.IDeviceAccessor;
 import com.github.utils4j.imp.Containers;
 
-abstract class AbstractDeviceManager extends LoadCycle implements IDeviceManager {
+abstract class AbstractDeviceAccessor extends LoadCycle implements IDeviceAccessor {
 
-  private List<IDriver> drivers;
+  private List<IDriver> drivers = Collections.emptyList();
 
-  private List<IDriver> defaults;
-  
   private List<IDevice> cache;
   
-  AbstractDeviceManager() {
-    this(Collections.emptyList());
+  protected AbstractDeviceAccessor() {
   }
 
-  AbstractDeviceManager(List<IDriver> defaults) {
-    this.defaults = new ArrayList<>(Args.requireNonNull(defaults, "defaults is null"));
-    this.drivers = Collections.unmodifiableList(defaults);
-  }
-  
   @Override
   public final void close() {
     unload();
@@ -117,14 +107,13 @@ abstract class AbstractDeviceManager extends LoadCycle implements IDeviceManager
   @Override
   protected final void doUnload()  throws Exception{
     this.drivers.forEach(IDriver::unload);
-    this.drivers = Collections.unmodifiableList(defaults);
+    this.drivers = Collections.emptyList();
   }
   
   @Override
   protected final void doLoad() throws Exception {
     Set<IDriver> drivers  = new HashSet<>();
     this.load(drivers);
-    drivers.addAll(defaults); 
     this.drivers = Containers.toUnmodifiableList(drivers);
   }
   

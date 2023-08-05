@@ -27,6 +27,7 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.TokenType.A1;
 import static com.github.utils4j.gui.imp.SwingTools.isTrue;
 
 import java.util.Optional;
@@ -38,16 +39,27 @@ import com.github.signer4j.imp.exception.InvalidPinException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.NoTokenPresentException;
 import com.github.signer4j.imp.exception.Signer4JException;
-import com.github.utils4j.imp.BooleanTimeout;
 
-public enum AuthStrategy implements IAuthStrategy{
+public enum AuthStrategy implements IAuthStrategy {
   
-  ONE_TIME("Solicitar senha uma vez"),
+  ONE_TIME("Solicitar senha uma vez") {
+    
+    @Override
+    protected void doLogin(IToken token) throws Signer4JException {
+      
+      if (!A1.equals(token.getType())) {
+        super.doLogin(token);
+        return;
+      }
+
+      Safe.BOX.authenticate(token.getSerial(), token::login);
+    }
+  },
   
   AWAYS("Sempre solicitar senha") {
 
     @Override
-    public final void logout(IToken token) {
+    protected final void doLogout(IToken token) {
       token.logout();
     }
   },  
@@ -55,13 +67,18 @@ public enum AuthStrategy implements IAuthStrategy{
   CONFIRM("Apenas confirmar uso do dispositivo") {
 
     @Override
-    protected final void preLogin(IToken token, boolean isInUse) throws LoginCanceledException {
-      if (!isInUse && !isTrue(TokenUseAlert::display)) {
-        ESCAPE_DISCARDING.setTrue();
+    protected final void preLogin(IToken token, boolean isUsing) throws Signer4JException {
+      if (!isUsing && !isTrue(TokenUseAlert::display)) {
+        Signer4jContext.discardQuietly();
         token.logout();
         throw new LoginCanceledException();
       }
-    }  
+    }
+    
+    @Override
+    protected void doLogin(IToken token) throws Signer4JException {
+      ONE_TIME.doLogin(token);
+    }
   };
 
   public static Optional<AuthStrategy> forName(String name) {
@@ -72,41 +89,48 @@ public enum AuthStrategy implements IAuthStrategy{
     }
   }
   
-  private final String label;
-  
-  protected static final BooleanTimeout ESCAPE_DISCARDING = new BooleanTimeout("strategy", 2000);
+  private final String label;  
   
   AuthStrategy(String message) {
     this.label = message;
   }
   
-  public final String geLabel() {
+  public final String getLabel() {
     return label;
   }
   
-  public void logout(IToken token) {
-    ;//default nothing to do
+  public final void logout(IToken token) {
+    doLogout(token);
+    Safe.BOX.close();
   }
   
-  protected void preLogin(IToken token, boolean isInUse) throws LoginCanceledException {
+  protected void doLogout(IToken token) {}
+
+  protected void doLogin(IToken token) throws Signer4JException {
+    token.login();
+  }
+
+  protected void preLogin(IToken token, boolean isUsing) throws Signer4JException {
     ;//default nothing to do
   }
 
   @Override
-  public void login(IToken token, boolean isInUse) throws Signer4JException {
+  public final void login(IToken token, boolean isUsing) throws Signer4JException {
     
-    if (ESCAPE_DISCARDING.isTrue())
+    if (Signer4jContext.isDiscarded())
       throw new LoginCanceledException();
     
-    preLogin(token, isInUse);
+    preLogin(token, isUsing);
     
     if (!token.isAuthenticated()) { 
       try {
-        token.login();
+        doLogin(token);
+        Safe.BOX.open();
       } catch(NoTokenPresentException | InvalidPinException e) {
         throw e;
+      
       } catch(Signer4JException e) {
-        ESCAPE_DISCARDING.setTrue();
+        Signer4jContext.discardQuietly();
         throw e;
       }
     }

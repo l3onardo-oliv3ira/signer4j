@@ -27,7 +27,6 @@
 
 package com.github.signer4j.provider;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -52,7 +51,7 @@ public class TWOSTEPSwithRSASignature extends ANYwithRSASignature {
 
   private MessageDigest digester;
   
-  public TWOSTEPSwithRSASignature() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException{
+  public TWOSTEPSwithRSASignature() throws Exception   {
     super("TWOSTEPSwithRSA");
   }
 

@@ -54,32 +54,32 @@ class DefaultDevice implements IDevice {
       return this;
     }
 
-    public Builder withLabel(final String label) {
+    public final Builder withLabel(final String label) {
       this.label = Strings.trim(label);
       return this;
     }
 
-    public Builder withSlot(final ISlot slot) {
+    public final Builder withSlot(final ISlot slot) {
       this.slot = slot;
       return this;
     }
     
-    public Builder withModel(final String model) {
+    public final Builder withModel(final String model) {
       this.model = Strings.trim(model);
       return this;
     }
 
-    public Builder withSerial(final String serial) {
+    public final Builder withSerial(final String serial) {
       this.serial = Strings.trim(serial);
       return this;
     }
     
-    public Builder withCertificates(final ICertificates certificates) {
+    public final Builder withCertificates(final ICertificates certificates) {
       this.certificates = certificates;
       return this;
     }
 
-    DefaultDevice build() {
+    final DefaultDevice build() {
       DefaultDevice device = new DefaultDevice();
       device.driver = driver;
       device.label = label;
@@ -155,7 +155,6 @@ class DefaultDevice implements IDevice {
   public final String getManufacturer() {
     return slot.getManufacturer();
   }
-
   
   final void setCertificates(ICertificates certificates) {
     Args.requireNonNull(certificates, "certificates is null");
@@ -163,13 +162,13 @@ class DefaultDevice implements IDevice {
   }
   
   @Override
-  public String toString() {
+  public final String toString() {
     return String.format("DefaultDevice [driver=%s, label=%s, model=%s, serial=%s, slot=%s, certificates=%s]", driver,
         label, model, serial, slot, certificates);
   }
   
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((serial == null) ? 0 : serial.hashCode());
@@ -177,7 +176,7 @@ class DefaultDevice implements IDevice {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public final boolean equals(Object obj) {
     if (this == obj)
       return true;
     if (obj == null)

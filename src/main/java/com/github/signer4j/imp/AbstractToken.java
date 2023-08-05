@@ -27,12 +27,16 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.ICertificateChooserFactory.fromCertificate;
 import static java.util.Optional.ofNullable;
+
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.ICMSSignerBuilder;
+import com.github.signer4j.ICertificate;
 import com.github.signer4j.ICertificateChooser;
 import com.github.signer4j.ICertificateChooserFactory;
 import com.github.signer4j.ICertificates;
@@ -75,7 +79,9 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   
   protected ICertificates certificates;
   
-  private transient IKeyStore keyStore;
+  private transient volatile IKeyStore keyStore;
+  
+  private Optional<ICertificate> defaultCert = Optional.empty();
   
   protected transient IPasswordCallbackHandler passwordCallback;
 
@@ -141,6 +147,16 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   public final boolean isAuthenticated() {
     return keyStore != null;
   }
+  
+  @Override
+  public final void setDefaultCertificate(ICertificate certificate) {
+    this.defaultCert = Optional.ofNullable(certificate);
+  }
+  
+  @Override
+  public final Optional<ICertificate> getDefaultCertificate() {
+    return this.defaultCert;
+  }
 
   @Override
   public final IToken login(IPasswordCallbackHandler callback) throws Signer4JException {
@@ -169,6 +185,7 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
         LOGGER.warn("Unabled to logout gracefully", e);
       }finally {
         this.keyStore = null;
+        this.defaultCert = Optional.empty();
         this.status.onNext(false);
       }
     }
@@ -176,7 +193,7 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   
   @Override
   public final ISignerBuilder signerBuilder()  {
-    return signerBuilder(ICertificateChooserFactory.DEFAULT);
+    return signerBuilder(fromCertificate(getDefaultCertificate()));
   }
   
   @Override
@@ -194,7 +211,7 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   
   @Override
   public final ICMSSignerBuilder cmsSignerBuilder() {
-    return cmsSignerBuilder(ICertificateChooserFactory.DEFAULT);
+    return cmsSignerBuilder(fromCertificate(getDefaultCertificate()));
   }
 
   @Override
@@ -213,7 +230,7 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
   
   @Override
   public final IPKCS7SignerBuilder pkcs7SignerBuilder() {
-    return pkcs7SignerBuilder(ICertificateChooserFactory.DEFAULT);
+    return pkcs7SignerBuilder(fromCertificate(getDefaultCertificate()));
   }
 
   @Override
@@ -223,7 +240,7 @@ abstract class AbstractToken<S extends ISlot> implements IToken {
     return createPKCS7SignerBuilder(createChooser(factory));
   }
 
-  protected ISignerBuilder createBuilder(ICertificateChooser chooser) {
+  private ISignerBuilder createBuilder(ICertificateChooser chooser) {
     return new SimpleSigner.Builder(chooser, getDispose());
   }
   

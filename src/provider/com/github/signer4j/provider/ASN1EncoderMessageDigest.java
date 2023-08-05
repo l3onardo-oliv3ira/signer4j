@@ -46,6 +46,11 @@ public abstract class ASN1EncoderMessageDigest extends EncoderMessageDigest {
     this.algorithm = Args.requireNonNull(hashId, "hashId is null");
   }
 
+  @Override
+  protected final byte[] doDigest(byte[] rawDigest) {
+    return rawDigest; //ASN1 implementation do NOT digest! Just forward precomputed hash!
+  }
+  
   //Encode To PKCS1 By BounceCastle
   protected byte[] encode(byte[] digest) {
     try {

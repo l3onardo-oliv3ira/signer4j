@@ -30,10 +30,12 @@ package com.github.signer4j;
 import java.util.Optional;
 
 import com.github.signer4j.ICertificateListUI.ICertificateEntry;
+import com.github.signer4j.imp.SwitchRepositoryException;
 
 public interface ICertificateAcessor {
-  Optional<ICertificateEntry> showCertificates(boolean force, boolean autoSelect);
+  Optional<ICertificateEntry> showCertificates(boolean force, boolean autoSelect, boolean repoWaiting) throws SwitchRepositoryException;
   
   void close();
+  
   void reset();
 }

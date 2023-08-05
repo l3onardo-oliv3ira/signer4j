@@ -32,6 +32,8 @@ import java.util.Optional;
 public final class OID_2_16_76_1_3_5 extends OIDBasic {
 
   public static final String OID = "2.16.76.1.3.5";
+  
+  public static final OID_2_16_76_1_3_5 EMPTY = new OID_2_16_76_1_3_5();
 
   private static enum Fields implements IMetadata {
     ELECTORAL_DOCUMENT(12), 
@@ -51,6 +53,10 @@ public final class OID_2_16_76_1_3_5 extends OIDBasic {
     }
   }
   
+  private OID_2_16_76_1_3_5() {
+    this("");
+  }
+
   protected OID_2_16_76_1_3_5(String content) {
     super(OID, content);
   }

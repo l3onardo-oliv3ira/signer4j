@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 import com.github.signer4j.ICMSSigner;
 import com.github.signer4j.ICertificate;
 import com.github.signer4j.IDevice;
-import com.github.signer4j.IDeviceManager;
+import com.github.signer4j.IDeviceAccessor;
 import com.github.signer4j.IPKCS7Signer;
 import com.github.signer4j.ISignedData;
 import com.github.signer4j.ISimpleSigner;
@@ -45,7 +45,7 @@ import com.github.signer4j.ISlot;
 import com.github.signer4j.IToken;
 import com.github.signer4j.cert.ICertificatePF;
 import com.github.signer4j.cert.ICertificatePJ;
-import com.github.signer4j.imp.DeviceManager;
+import com.github.signer4j.imp.PKCS11DeviceAccessor;
 import com.github.signer4j.imp.SignatureAlgorithm;
 import com.github.signer4j.imp.SignatureType;
 import com.github.signer4j.imp.exception.InvalidPinException;
@@ -58,7 +58,7 @@ public class GetStarted {
 
   public static void main(String[] args) {
 
-    IDeviceManager dm = new DeviceManager();
+    IDeviceAccessor dm = new PKCS11DeviceAccessor();
     //Listing all detected devices
 
     System.out.println("**************************");

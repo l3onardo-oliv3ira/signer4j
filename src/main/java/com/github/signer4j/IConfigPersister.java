@@ -30,6 +30,8 @@ package com.github.signer4j;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.github.signer4j.imp.Repository;
+
 public interface IConfigPersister {
 
   Optional<String> defaultCertificate();
@@ -37,6 +39,8 @@ public interface IConfigPersister {
   Optional<String> defaultDevice();
 
   Optional<String> defaultAlias();
+  
+  Repository defaultRepository();
 
   void saveA1Paths(IFilePath... path);
 
@@ -47,6 +51,8 @@ public interface IConfigPersister {
   void loadA3Paths(Consumer<IFilePath> add);
 
   void save(String defaultAlias);
+  
+  void saveRepository(Repository repository);
   
   void reset();
 

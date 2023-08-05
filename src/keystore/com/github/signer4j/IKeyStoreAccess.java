@@ -44,10 +44,10 @@ public interface IKeyStoreAccess {
   
   Certificate getCertificate(String alias) throws Signer4JException;
 
-  List<Certificate> getCertificateChain(String alias) throws Signer4JException;
-
   String getCertificateAlias(Certificate certificate) throws Signer4JException;
-
+  
+  List<Certificate> getCertificateChain(String alias) throws Signer4JException;
+  
   PrivateKey getPrivateKey(String alias, char[] password) throws Signer4JException;
 
   default PrivateKey getPrivateKey(String alias) throws Signer4JException {

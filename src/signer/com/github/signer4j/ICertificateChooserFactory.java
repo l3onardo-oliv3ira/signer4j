@@ -27,12 +27,26 @@
 
 package com.github.signer4j;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import com.github.signer4j.imp.ConsoleChooser;
 import com.github.signer4j.imp.DefaultChooser;
+import com.github.signer4j.imp.SingleCertificateChooserFactory;
+import com.github.signer4j.imp.exception.CertificateAliasNotFoundException;
+import com.github.utils4j.imp.Args;
 
 public interface ICertificateChooserFactory extends BiFunction<IKeyStoreAccess, ICertificates, ICertificateChooser> {
   static ICertificateChooserFactory CONSOLE = (k, c) -> new ConsoleChooser(k, c);
   static ICertificateChooserFactory DEFAULT = (k, c) -> new DefaultChooser(k, c);
+  
+  static ICertificateChooserFactory fromCertificate(Optional<ICertificate> certificate) {
+    return fromCertificate(certificate, DEFAULT);
+  }
+  
+  static ICertificateChooserFactory fromCertificate(Optional<ICertificate> certificate, ICertificateChooserFactory defaultIfNot) {
+    Args.requireNonNull(certificate, "certificate is null");  
+    Args.requireNonNull(defaultIfNot, "factory is null");    
+    return certificate.isPresent() ? SingleCertificateChooserFactory.get(certificate.get().getAlias().orElseThrow(CertificateAliasNotFoundException::new)) : defaultIfNot;
+  }
 }

@@ -67,6 +67,10 @@ public class Config{
   public static Optional<String> defaultAlias() {
     return config().defaultAlias();
   }
+  
+  public static Repository defaultRepository() {
+    return config().defaultRepository();
+  }
 
   public static void saveA1Paths(IFilePath... path) {
     config().saveA1Paths(path);
@@ -86,6 +90,10 @@ public class Config{
 
   public static void save(String defaultAlias) {
     config().save(defaultAlias);
+  }
+  
+  public static void saveRepository(Repository repository) {
+    config().saveRepository(repository);
   }
   
   public static void reset() {

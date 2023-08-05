@@ -30,6 +30,7 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_PATH_PARAM;
 import static com.github.signer4j.imp.PKCS11KeyStoreLoaderParams.DRIVER_SLOT_PARAM;
 
+import com.github.signer4j.ICertificate;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.IToken;
 import com.github.signer4j.TokenType;
@@ -40,7 +41,6 @@ import com.github.signer4j.exception.DriverSessionException;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Params;
 
-import sun.security.pkcs11.wrapper.CK_ATTRIBUTE;
 import sun.security.pkcs11.wrapper.PKCS11;
 import sun.security.pkcs11.wrapper.PKCS11Constants;
 import sun.security.pkcs11.wrapper.PKCS11Exception;
@@ -70,7 +70,14 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   }
   
   @Override
-  protected IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException {
+  protected final void doLogin(IKeyStore keyStore) throws Signer4JException {    
+    for(ICertificate c: certificates) {
+      c.setAlias(keyStore.getCertificateAlias(c.toX509())); //this is very important!
+    }
+  }
+  
+  @Override
+  protected final IKeyStore getKeyStore(IPasswordCallbackHandler callback) throws Signer4JException {
     return new PKCS11KeyStoreLoader(getSlot().toDevice(), callback, getDispose())
       .getKeyStore(
         Params.create()
@@ -80,19 +87,19 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
   }
   
   @Override
-  public String toString() {
+  public final String toString() {
     return "PKCS11Token [label=" + label + ", model=" + model + ", serial=" + serial + ", manufacture=" + manufacturer
         + ", minPinLen=" + minPinLen + ", maxPinLen=" + maxPinLen + ", certificates=" + certificates + "]";
   }
 
   @Override
-  protected IToken loadCertificates(ICertificateFactory factory) throws DriverException {
+  protected final IToken loadCertificates(ICertificateFactory factory) throws DriverException {
     final PKCS11 pk = getPk();
     long session;
     try {
       session = pk.C_OpenSession(
         getSlot().getNumber(),
-        PKCS11Constants.CKF_LOGIN_REQUIRED, 
+        PKCS11Constants.CKF_SERIAL_SESSION,
         null, 
         null
       );
@@ -101,28 +108,11 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
     }
     
     try {
-      try {
-        pk.C_FindObjectsInit(session, new CK_ATTRIBUTE[] { 
-            new CK_ATTRIBUTE(PKCS11Constants.CKA_TOKEN, true) 
-          }
-        );
-      } catch (PKCS11Exception e) {
-        throw new DriverFailException("Unabled to init objects from session token " + this, e);
-      }
-      
-      try {
-        this.certificates = new PKCS11Certificates(
-          this, 
-          session,
-          factory
-        );
-      } finally {
-        try {
-          pk.C_FindObjectsFinal(session);
-        } catch (PKCS11Exception e) {
-          throw new DriverSessionException("Unabled to finalize (findObjects) session token " + this, e);
-        }
-      }     
+      this.certificates = new PKCS11Certificates(
+        this, 
+        session,
+        factory
+      );
     } finally {
       try {
         pk.C_CloseSession(session);
@@ -150,12 +140,12 @@ class PKCS11Token extends AbstractToken<PKCS11Slot> {
       token.maxPinLen = this.maxPinLen;
     }
     
-    public Builder withMinPinLen(long minPinLen) {
+    public final Builder withMinPinLen(long minPinLen) {
       this.minPinLen = minPinLen;
       return this;
     }
     
-    public Builder withMaxPinLen(long maxPinLen) {
+    public final Builder withMaxPinLen(long maxPinLen) {
       this.maxPinLen = maxPinLen;
       return this;
     }

@@ -30,6 +30,7 @@ package com.github.signer4j.imp;
 import static com.github.signer4j.provider.ProviderInstaller.BC;
 import static com.github.signer4j.provider.ProviderInstaller.SIGNER4J;
 
+import java.security.Signature;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.signer4j.IAlgorithm;
 import com.github.signer4j.IHashAlgorithm;
 import com.github.signer4j.ISignatureAlgorithm;
+import com.github.signer4j.provider.ANYwithRSASignature;
 
 public enum SignatureAlgorithm implements ISignatureAlgorithm {
   MD2withRSA("MD2WITHRSA", HashAlgorithm.MD2),
@@ -85,7 +87,7 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   
   @JsonCreator
   public static SignatureAlgorithm fromString(final String key) {
-    return get(key).orElse(null);
+    return from(key).orElse(null);
   }
 
   private String name;
@@ -121,27 +123,38 @@ public enum SignatureAlgorithm implements ISignatureAlgorithm {
   }
   
   public static SignatureAlgorithm getOfDefault(String name, SignatureAlgorithm defaultIfNot) {
-    return get(name).orElse(defaultIfNot);
+    return from(name).orElse(defaultIfNot);
   }
   
   public static boolean isSupported(String algorithm) {
-    return get(algorithm).isPresent();
+    return from(algorithm).isPresent();
   }
   
   public static boolean isSupported(IAlgorithm algorithm) {
-    return algorithm != null && get(algorithm.getName()).isPresent();
+    return algorithm != null && from(algorithm.getName()).isPresent();
   }
   
-  public static Optional<SignatureAlgorithm> get(String name) {
+  @Override
+  public boolean supportsTwoSteps() {
+    return hash.supportsTwoSteps() && getKey().endsWith("RSA");
+  }
+  
+  public static Optional<SignatureAlgorithm> from(String name) {
     for(SignatureAlgorithm a: VALUES) {
       if (a.name.equalsIgnoreCase(name))
         return Optional.of(a);
     }
     return Optional.empty();
   }
-
+  
   @Override
-  public boolean supportsTwoSteps() {
-    return hash.supportsTwoSteps() && getKey().endsWith("RSA");
+  public Signature toSignature() throws Exception {
+    if (!supportsTwoSteps()) //ASN1?withRSA
+      return Signature.getInstance(getName(), SIGNER4J.defaultName());   //O hash já está pronto e apenas encoda
+    //faz o hash usando algoritmo de outro provider e encoda com JCE
+    Signature signature = Signature.getInstance("TWOSTEPSwithRSA", SIGNER4J.defaultName());     
+    ANYwithRSASignature.HashName hashName = hash::getStandardName;
+    signature.setParameter(hashName);
+    return signature;
   }
 }

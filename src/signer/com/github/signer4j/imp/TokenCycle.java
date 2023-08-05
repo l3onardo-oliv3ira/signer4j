@@ -69,7 +69,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
     return isPastDeadline();
   }
 
-  private boolean isInUse() {
+  private boolean isUsing() {
     return refCount > 0 || isBeforeDeadline();
   }
 
@@ -80,7 +80,7 @@ public abstract class TokenCycle extends TokenWrapper implements ITokenCycle {
   @Override
   public IToken login() throws Signer4JException {
     synchronized(lock) {
-      strategy.login(super.token, isInUse());
+      strategy.login(super.token, isUsing());
       ++refCount;
     }
     return this;

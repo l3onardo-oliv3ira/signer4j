@@ -28,13 +28,13 @@
 package com.github.signer4j.cert.oid;
 
 import static java.lang.Math.min;
-import static java.util.Optional.ofNullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Strings;
 
 class OIDBasic {
 
@@ -44,8 +44,8 @@ class OIDBasic {
   private final Map<IMetadata, String> properties = new HashMap<IMetadata, String>();
   
   protected OIDBasic(String id, String content) {
-    this.id = Args.requireText(id, "Unabled to create OID with empty id");
-    this.content = Args.requireNonNull(content, "Unabled to create OID with null data");
+    this.id = Args.requireText(id, "Unabled to create OID with empty id").trim();
+    this.content = Args.requireNonNull(content, "Unabled to create OID with null data").trim();
   }
 
   public final String getOid() {
@@ -53,7 +53,7 @@ class OIDBasic {
   }
   
   protected final Optional<String> get(IMetadata field) {
-    return ofNullable(properties.get(field));
+    return Strings.optional(properties.get(field));
   }
 
   protected final String getContent() {
@@ -67,17 +67,19 @@ class OIDBasic {
     int length();
   }
   
-  protected void setup(IMetadata[] fields) {
+  protected final void setup(IMetadata[] fields) {
+    if (content.isEmpty())
+      return;
     Args.requireNonNull(fields, "fields is null");
     int it = 0;
     for(IMetadata f: fields) {
       int length = f.length();
-      properties.put(f, getNullIfDirty(content.substring(it, min(it + length, content.length()))));
+      properties.put(f, nullIfDirty(content.substring(it, min(it + length, content.length()))));
       it += length;
     }
   }
 
-  protected static String getNullIfDirty(String value) {
+  private static String nullIfDirty(String value) {
     if (value == null)
       return null;
     int length = (value = value.trim()).length();

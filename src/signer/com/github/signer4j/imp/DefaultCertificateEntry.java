@@ -90,4 +90,9 @@ public class DefaultCertificateEntry implements ICertificateListUI.ICertificateE
   public final void setRemembered(boolean remembered) {
     this.remembered = remembered;
   }
+
+  @Override
+  public final ICertificate getCertificate() {
+    return certificate;
+  }
 }

@@ -32,6 +32,12 @@ class ForMacStrategy extends UnixStrategy {
   //TODO revisar libraries 64bits
   
   public ForMacStrategy() {
+    add("libbit4xpki.dylib");
+    add("libbit4ipki.dylib");
+    add("libbit4opki.dylib");
+    add("libASEP11.dylib");
+    add("libOcsCryptoki.dylib");
+    //
     add("libwdpkcs.dylib");
     add("libsfntpkcs11.dylib"); 
     add("libeTPkcs11.dylib");

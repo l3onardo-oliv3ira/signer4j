@@ -27,8 +27,19 @@
 
 package com.github.signer4j;
 
-import java.util.function.Supplier;
+import com.github.signer4j.imp.Repository;
 
-public interface ITokenAccess<T extends IToken> extends Supplier<T>, ICertificateAcessor {  
+import io.reactivex.Observable;
+
+public interface ITokenAccess<T extends IToken> extends ITokenSupplier<T>, ICertificateAcessor {  
+  
+  Observable<IStatusMonitor> newToken();
+  
   void logout();
+
+  IAuthStrategy getAuthStrategy();
+
+  void setAuthStrategy(IAuthStrategy strategy);
+  
+  Repository getRepository();
 }

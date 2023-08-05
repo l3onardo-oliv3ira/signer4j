@@ -40,20 +40,17 @@ import com.github.utils4j.imp.Args;
 
 public class DeviceCertificateEntry extends DefaultCertificateEntry {
   
-  public static List<ICertificateEntry> toEntries(List<IDevice> devices, Predicate<ICertificate> filter) {
-    Args.requireNonNull(devices, "devices is null");
-    Args.requireNonNull(filter, "filter is null");
-    return devices.stream()
-      .map(d -> d.getCertificates().filter(filter).map(c -> new DeviceCertificateEntry(d, c)).collect(toList()))
-      .flatMap(Collection::stream)
-      .collect(toList());
-  }
-
   private DeviceCertificateEntry(IDevice device, ICertificate certificate) {
     super(device, certificate);
   }
 
-  public IDevice getNative() {
+  public final IDevice getNative() {
     return super.device;
   }
+  
+  public static List<ICertificateEntry> from(List<IDevice> devices, Predicate<ICertificate> filter) {
+    Args.requireNonNull(devices, "devices is null");
+    Args.requireNonNull(filter, "filter is null");
+    return devices.stream().map(d -> d.getCertificates().filter(filter).map(c -> new DeviceCertificateEntry(d, c)).collect(toList())).flatMap(Collection::stream).collect(toList());
+  }  
 }

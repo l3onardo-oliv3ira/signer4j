@@ -39,12 +39,12 @@ public enum CertificateFactory implements ICertificateFactory {
   DEFAULT;
   
   @Override
-  public ICertificate create(Object input) throws CertificateException {
+  public ICertificate create(Object input, String aliasName) throws CertificateException {
     Args.requireNonNull(input, "input is null");
     if (input instanceof InputStream)
-      return new BrazilianCertificate((InputStream)input);
+      return new BrazilianCertificate((InputStream)input, aliasName);
     if (input instanceof X509Certificate)
-      return new BrazilianCertificate((X509Certificate)input);
+      return new BrazilianCertificate((X509Certificate)input, aliasName);
     throw new CertificateException("Incapaz de criar instância de 'BrazilianCertificate'. Tipo base desconhecido: " + input.getClass());
   }
 }

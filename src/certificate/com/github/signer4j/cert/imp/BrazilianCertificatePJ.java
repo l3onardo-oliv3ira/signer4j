@@ -43,13 +43,13 @@ import com.github.utils4j.imp.Args;
 
 class BrazilianCertificatePJ implements ICertificatePJ {
 
-  private OID_2_16_76_1_3_2 id_2_16_76_1_3_2 = null;
-  private OID_2_16_76_1_3_3 id_2_16_76_1_3_3 = null;
-  private OID_2_16_76_1_3_4 id_2_16_76_1_3_4 = null;
-  private OID_2_16_76_1_3_7 id_2_16_76_1_3_7 = null;
-  private OID_2_16_76_1_3_8 id_2_16_76_1_3_8 = null;
+  private final OID_2_16_76_1_3_2 id_2_16_76_1_3_2;
+  private final OID_2_16_76_1_3_3 id_2_16_76_1_3_3;
+  private final OID_2_16_76_1_3_4 id_2_16_76_1_3_4;
+  private final OID_2_16_76_1_3_7 id_2_16_76_1_3_7;
+  private final OID_2_16_76_1_3_8 id_2_16_76_1_3_8;
 
-  public BrazilianCertificatePJ(OID_2_16_76_1_3_2 oid1, OID_2_16_76_1_3_3 oid2, OID_2_16_76_1_3_4 oid3, OID_2_16_76_1_3_7 oid4, OID_2_16_76_1_3_8 oid5) {
+  BrazilianCertificatePJ(OID_2_16_76_1_3_2 oid1, OID_2_16_76_1_3_3 oid2, OID_2_16_76_1_3_4 oid3, OID_2_16_76_1_3_7 oid4, OID_2_16_76_1_3_8 oid5) {
     this.id_2_16_76_1_3_2 = Args.requireNonNull(oid1, "oid1 is null");
     this.id_2_16_76_1_3_3 = Args.requireNonNull(oid2, "oid2 is null");
     this.id_2_16_76_1_3_4 = Args.requireNonNull(oid3, "oid3 is null");
@@ -70,19 +70,6 @@ class BrazilianCertificatePJ implements ICertificatePJ {
   @Override
   public final Optional<String> getCNPJ() {
     return id_2_16_76_1_3_3.getCNPJ();
-  }
-
-  @Override
-  public final Optional<LocalDate> getBirthDate() {
-    Optional<String> date = id_2_16_76_1_3_4.getBirthDate();
-    if (date.isPresent()) {
-      String value = date.get();
-      String day = value.substring(0, 2);
-      String month = value.substring(2, 4);
-      String year = value.substring(4, value.length());
-      return Optional.of(of(parseInt(year), parseInt(month), parseInt(day)));
-    }
-    return Optional.empty();
   }
 
   @Override
@@ -113,5 +100,18 @@ class BrazilianCertificatePJ implements ICertificatePJ {
   @Override
   public final Optional<String> getCEI() {
     return id_2_16_76_1_3_7.getCEI();
+  }
+  
+  @Override
+  public final Optional<LocalDate> getBirthDate() {
+    Optional<String> date = id_2_16_76_1_3_4.getBirthDate();
+    if (date.isPresent()) {
+      String value = date.get();
+      String day = value.substring(0, 2);
+      String month = value.substring(2, 4);
+      String year = value.substring(4, value.length());
+      return Optional.of(of(parseInt(year), parseInt(month), parseInt(day)));
+    }
+    return Optional.empty();
   }
 }

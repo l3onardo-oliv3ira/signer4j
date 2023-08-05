@@ -28,7 +28,6 @@
 package com.github.signer4j.imp;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
@@ -45,7 +44,7 @@ import com.github.signer4j.exception.DriverException;
 
 abstract class AbstractDriver extends LoadCycle implements IDriver {
 
-  private List<ISlot> slots = unmodifiableList(emptyList());
+  private List<ISlot> slots = emptyList();
 
   private final List<IDevice> devices = new ArrayList<>();
   
@@ -114,7 +113,7 @@ abstract class AbstractDriver extends LoadCycle implements IDriver {
       this.slots.stream().map(ISlot::getToken).forEach(IToken::logout);
     }finally {
       this.devices.clear();
-      this.slots = unmodifiableList(emptyList()); 
+      this.slots = emptyList(); 
     }
   }
 

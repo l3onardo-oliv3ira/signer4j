@@ -49,10 +49,22 @@ public abstract class SecurityObject {
     return SIGNER4J.invoke(tryBlock, (e) -> dispose.run());
   }
   
-  protected final IChoice choose() throws Signer4JException {
+  protected final IChoice choose() throws Signer4JException, SwitchRepositoryException {
+    return doChoose();
+  }
+  
+  protected final IChoice choose(Object lock) {
+    return NoTokenPresent.HANDLER.handle(this::choose, lock);
+  }
+
+  private IChoice doChoose() throws Signer4JException, SwitchRepositoryException {
     IChoice choice = chooser.choose();
-    if (choice.isCanceled())
+
+    if (choice.isCanceled()) {
+      Signer4jContext.discardQuietly();
       throw new CanceledOperationException();
+    }
+    
     return choice;
   }
 }

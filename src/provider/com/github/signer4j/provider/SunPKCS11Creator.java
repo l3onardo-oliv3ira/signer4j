@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.utils4j.imp.Args;
-import com.github.utils4j.imp.function.ICreator;
+import com.github.utils4j.imp.Throwables;
 
 final class SunPKCS11Creator {
   
@@ -52,6 +52,11 @@ final class SunPKCS11Creator {
   
   private SunPKCS11Creator() {}
   
+  static String providerName(String providerNameSuffix) {
+    Args.requireText(providerNameSuffix, "suffix is empty");
+    return SUN_PKCS11_PROVIDERNAME + "-" + providerNameSuffix;
+  }
+
   public static AuthProvider create(String configuration) throws UnavailableProviderException {
     Args.requireText(configuration, "configuration is empty");
     Method configure;
@@ -60,36 +65,10 @@ final class SunPKCS11Creator {
     return createProviderJavaLowerThan9(configuration);
   }
   
-  private static AuthProvider createProviderJavaLowerThan9(String configuration) throws UnavailableProviderException {
-    return createProvider(configuration, (config) -> {
-      try (ByteArrayInputStream bais = new ByteArrayInputStream(config.getBytes())) {
-        return (AuthProvider)getProviderClass().getConstructor(InputStream.class).newInstance(bais);
-      } catch(Exception e) {
-        LOGGER.warn("Incapaz de instanciar PKCS11 (JDK < 9): " + SUN_PKCS11_PROVIDERNAME + " config: " + config, e);
-        throw e;
-      }
-    });
-  }
-  
-  private static AuthProvider createProviderJavaGreaterOrEquals9(Method configureMethod, String configuration)
-    throws UnavailableProviderException {
-    return createProvider(configuration, (config) -> {
-      try {
-        Provider provider = Security.getProvider(SUN_PKCS11_PROVIDERNAME);
-        if (provider == null) {
-          throw new UnavailableProviderException(
-            "JRE aparentemente corrompida porque não foi publicada instância " + 
-            SUN_PKCS11_PROVIDERNAME + " em java.security.Security. O sistema " + 
-            "exige a dependência sunpkcs11.jar"
-          );
-        }
-        // "--" is permitted in the constructor sun.security.pkcs11.Config
-        return (AuthProvider)configureMethod.invoke(provider, "--" + config); 
-      } catch (Exception e) {
-        LOGGER.warn("Unable to instantiate PKCS11 (JDK >= 9): " + SUN_PKCS11_PROVIDERNAME + " config: " + config, e);
-        throw e;
-      }
-    });
+  private static Class<?> getProviderClass() throws ClassNotFoundException {
+    if (SUN_PKCS11_PROVIDER_CLASS == null)
+      SUN_PKCS11_PROVIDER_CLASS = Class.forName(SUN_PKCS11_CLASS_NAME);
+    return SUN_PKCS11_PROVIDER_CLASS;
   }
 
   private static Method isJavaGreaterOrEquals9() throws UnavailableProviderException {
@@ -103,22 +82,34 @@ final class SunPKCS11Creator {
     }
   }
 
-  private static Class<?> getProviderClass() throws ClassNotFoundException {
-    if (SUN_PKCS11_PROVIDER_CLASS == null)
-      SUN_PKCS11_PROVIDER_CLASS = Class.forName(SUN_PKCS11_CLASS_NAME);
-    return SUN_PKCS11_PROVIDER_CLASS;
+  private static AuthProvider createProviderJavaLowerThan9(String configuration) throws UnavailableProviderException {
+    try (ByteArrayInputStream bais = new ByteArrayInputStream(configuration.getBytes())) {
+      return (AuthProvider)getProviderClass().getConstructor(InputStream.class).newInstance(bais);
+    } catch(Exception e) {
+      LOGGER.warn("Incapaz de instanciar PKCS11 (JDK < 9): " + SUN_PKCS11_PROVIDERNAME + " config: " + configuration + 
+        "\nWARNING -> " + Throwables.rootMessage(e));
+      throw new UnavailableProviderException("Unable to instantiate PKCS11 provider", e);
+    }
   }
   
-  private static AuthProvider createProvider(String configString, ICreator<String, AuthProvider, ?> creator) 
-    throws UnavailableProviderException {
-    String[] configAttempts = new String[] {
-      configString + "\n\rdestroyTokenAfterLogout = true\n\r", //JDK >= 9 this is very good
-      configString
+  private static AuthProvider createProviderJavaGreaterOrEquals9(Method configureMethod, String configuration) throws UnavailableProviderException {
+    String[] configAttempts = {
+      configuration + "\ndestroyTokenAfterLogout = true", //JDK >= 9 this is very good (we have to go back here!)
+      configuration
     };
     Throwable fail = null;
     for(String config: configAttempts) {
       try {
-        return creator.create(config);
+        Provider provider = Security.getProvider(SUN_PKCS11_PROVIDERNAME);
+        if (provider == null) {
+          throw new UnavailableProviderException(
+            "JRE aparentemente corrompida porque não foi publicada instância " + 
+            SUN_PKCS11_PROVIDERNAME + " em java.security.Security. O sistema " + 
+            "exige a dependência sunpkcs11.jar"
+          );
+        }
+        // "--" is permitted in the constructor sun.security.pkcs11.Config
+        return (AuthProvider)configureMethod.invoke(provider, "--" + config); 
       } catch (Throwable e) {
         if (fail == null) {
           fail = e;

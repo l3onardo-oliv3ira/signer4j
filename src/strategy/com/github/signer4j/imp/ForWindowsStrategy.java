@@ -31,8 +31,47 @@ import com.github.utils4j.imp.Jvms;
 
 class ForWindowsStrategy extends PreloadedStrategy {
 
+  //https://www.blia.it/firmadigitale/
+  
   public ForWindowsStrategy() {
     final String winRoot = Jvms.SYSTEM_ROOT;
+    //news
+    load(winRoot.concat("/System32/incryptoki2.dll"));
+    load(winRoot.concat("/System32/bit4ipki.dll"));
+    load(winRoot.concat("/System32/bit4opki.dll"));
+    load(winRoot.concat("/System32/bit4xpki.dll"));
+    load(winRoot.concat("/System32/SI_PKCS11.dll"));
+    load(winRoot.concat("/System32/IpmPki32.dll"));
+    load(winRoot.concat("/System32/IPMpkiLC.dll"));
+    load(winRoot.concat("/System32/IpmPkiLU.dll"));
+    load(winRoot.concat("/System32/bit4cpki.dll"));
+    load(winRoot.concat("/System32/bit4tpki.dll"));
+    load(winRoot.concat("/System32/CardOS_PKCS11.dll"));
+    load(winRoot.concat("/System32/bit4p11.dll"));
+    load(winRoot.concat("/System32/SSC_PKCS11.dll"));
+    load(winRoot.concat("/System32/inp11lib.dll"));
+    load(winRoot.concat("/System32/cvP11_M4.dll"));
+    load(winRoot.concat("/System32/stPKCS11.dll"));
+    load(winRoot.concat("/System32/SissP11.dll"));
+    load(winRoot.concat("/System32/aepkcs11.dll"));
+    load(winRoot.concat("/System32/eTokenPKCS11.dll"));
+    load(winRoot.concat("/System32/swsc.dll"));
+    load(winRoot.concat("/System32/aloaha_pkcs11.dll"));
+    load(winRoot.concat("/System32/asignp11.dll"));
+    load(winRoot.concat("/System32/cryst32.dll"));
+    load(winRoot.concat("/System32/EP1PK111.dll"));
+    load(winRoot.concat("/System32/ShuttleCsp11_3003.dll"));
+    load(winRoot.concat("/System32/csspkcs11.dll"));
+    load(winRoot.concat("/System32/ibmpkcss.dll"));
+    load(winRoot.concat("/System32/nxpkcs11.dll"));
+    load(winRoot.concat("/System32/micardoPKCS11.dll"));
+    load(winRoot.concat("/System32/k1pk112.dll"));
+    load(winRoot.concat("/System32/p11card.dll"));
+    load(winRoot.concat("/System32/SpyPK11.dll"));
+    load(winRoot.concat("/System32/acpkcs211.dll"));
+    load(winRoot.concat("/System32/fort32.dll"));
+    load(winRoot.concat("/System32/3gp11csp.dll"));
+    //
     load(winRoot.concat("/System32/ep2pk11.dll"));
     load(winRoot.concat("/System32/ngp11v211.dll"));
     load(winRoot.concat("/System32/aetpkss1.dll"));

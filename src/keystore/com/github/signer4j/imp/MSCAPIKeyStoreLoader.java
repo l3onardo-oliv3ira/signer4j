@@ -27,16 +27,15 @@
 
 package com.github.signer4j.imp;
 
-import java.io.IOException;
+import static com.github.signer4j.imp.Signer4JInvoker.SIGNER4J;
+import static com.github.signer4j.provider.ProviderInstaller.uninstall;
+
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
+import java.security.Provider;
 
 import com.github.signer4j.IDevice;
-import com.github.signer4j.imp.exception.ModuleException;
 import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.signer4j.provider.ProviderInstaller;
 import com.github.utils4j.IParams;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Params;
@@ -44,9 +43,7 @@ import com.github.utils4j.imp.Params;
 class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
 
   private static final String MSCAPI_TYPE = "Windows-MY";
-
-  private static final String MSCAPI_PROVIDER = "SunMSCAPI";
-
+  
   private IDevice device;
   
   private Runnable dispose;
@@ -62,20 +59,26 @@ class MSCAPIKeyStoreLoader implements IKeyStoreLoader{
   
   @Override
   public IKeyStore getKeyStore(IParams params) throws Signer4JException {
-    KeyStore keystore;
-    try {
-      keystore = KeyStore.getInstance(MSCAPI_TYPE, MSCAPI_PROVIDER);
-    } catch (KeyStoreException | NoSuchProviderException e) {
-      throw new ModuleException("Unabled to create MSCAPI KeyStore instance", e); 
-    }
-    try {
-      keystore.load(null, null);
-    } catch (NoSuchAlgorithmException | CertificateException | IOException e) {
-      throw new ModuleException("Unabled to load native mscapi keystore", e);
-    }
+    return SIGNER4J.invoke(
+      () -> {
+        final Provider provider = ProviderInstaller.MSCAPI.install();
 
-    MscapiFixer.BUG_6483657.fix(keystore);
-    
-    return new MSCAPIKeyStore(keystore, device, dispose);
+        provider.put("Signature.ASN1MD2withRSA", "sun.security.mscapi.LITERALwithRSASignature$MD2withRSA");
+        provider.put("Signature.ASN1MD5withRSA", "sun.security.mscapi.LITERALwithRSASignature$MD5withRSA");
+        provider.put("Signature.ASN1SHA1withRSA", "sun.security.mscapi.LITERALwithRSASignature$SHA1withRSA");
+        provider.put("Signature.ASN1SHA256withRSA", "sun.security.mscapi.LITERALwithRSASignature$SHA256withRSA");
+        provider.put("Signature.ASN1SHA384withRSA", "sun.security.mscapi.LITERALwithRSASignature$SHA384withRSA");
+        provider.put("Signature.ASN1SHA512withRSA", "sun.security.mscapi.LITERALwithRSASignature$SHA512withRSA");
+        
+        try {
+          KeyStore keyStore = KeyStore.getInstance(MSCAPI_TYPE, provider);
+          keyStore.load(null, null);
+          return new MSCAPIKeyStore(keyStore, device, dispose);
+        } catch(Throwable e) {
+          uninstall(provider);
+          throw e;
+        }
+      }
+    );
   }
 }

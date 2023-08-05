@@ -27,6 +27,9 @@
 
 package com.github.signer4j.gui.alert;
 
+import static com.github.utils4j.gui.imp.SwingTools.invokeAndWait;
+import static com.github.utils4j.gui.imp.SwingTools.invokeLater;
+
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -44,7 +47,15 @@ public final class TokenLockedAlert {
   private static final String[] OPTIONS = {"ENTENDI"};
   
   public static boolean display() {
-    return new TokenLockedAlert().show();
+    return new TokenLockedAlert().reveal();
+  }
+  
+  public static void show() { 
+    invokeLater(TokenLockedAlert::display);
+  }
+  
+  public static void showAndWait() {
+    invokeAndWait(TokenLockedAlert::display);
   }
   
   private final JOptionPane jop;
@@ -60,7 +71,7 @@ public final class TokenLockedAlert {
     );
   }
 
-  private boolean show() {
+  private boolean reveal() {
     JDialog dialog = jop.createDialog("Dispositivo bloqueado");
     dialog.setAlwaysOnTop(true);
     dialog.setModal(true);

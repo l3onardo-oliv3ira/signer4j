@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.signer4j.IDevice;
+import com.github.signer4j.IDeviceAccessor;
 import com.github.signer4j.IDeviceManager;
 import com.github.signer4j.IPasswordCallbackHandler;
 import com.github.signer4j.ISlot;
@@ -43,11 +44,16 @@ import com.github.signer4j.exception.DriverFailException;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
 
-public class MSCAPIDevManager extends AbstractDeviceManager {
+public class MSCAPIDeviceManager extends AbstractDeviceAccessor implements IDeviceManager {
 
   @Override
   protected void load(Set<IDriver> drivers) {
     drivers.add(new MSCAPIDriver());
+  }
+  
+  @Override
+  public final Repository getRepository() {
+    return Repository.MSCAPI;
   }
   
   private static final class MSCAPIDriver extends AbstractDriver {
@@ -112,12 +118,12 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
     }
 
     @Override
-    public long getMinPinLen() {
+    public final long getMinPinLen() {
       return MIN_PASSWORD_LENGTH;
     }
 
     @Override
-    public long getMaxPinLen() {
+    public final long getMaxPinLen() {
       return MAX_PASSWORD_LENGTH;
     }
     
@@ -159,17 +165,20 @@ public class MSCAPIDevManager extends AbstractDeviceManager {
   }
 
   @Override
-  public IDeviceManager install(Path... pkcs12Files) {
+  public IDeviceAccessor install(Path... pkcs12Files) {
+    //we have to go back here to launch windows cert manager using powershell
     return this;
   }
 
   @Override
-  public IDeviceManager uninstall(Path... pkcs12File) {
+  public IDeviceAccessor uninstall(Path... pkcs12File) {
+    //we have to go back here to launch windows cert manager using powershell
     return this;
   }
 
   @Override
-  public IDeviceManager uninstallPkcs12() {
+  public IDeviceAccessor uninstallPkcs12() {
+    //we have to go back here to launch windows cert manager using powershell
     return this;
   }
 }

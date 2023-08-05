@@ -40,11 +40,14 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
+import com.github.signer4j.imp.exception.CertificateAliasNotFoundException;
 import com.github.signer4j.imp.exception.ExpiredCredentialException;
+import com.github.signer4j.imp.exception.InterruptedSigner4JRuntimeException;
 import com.github.signer4j.imp.exception.InvalidPinException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.ModuleException;
 import com.github.signer4j.imp.exception.NoTokenPresentException;
+import com.github.signer4j.imp.exception.NoTokenPresentExceptionFail;
 import com.github.signer4j.imp.exception.OutOfMemoryException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
@@ -90,7 +93,7 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         throw new NoTokenPresentException(e);
       
       throw new InvalidPinException(e);
-    } catch(Signer4JException e) {
+    } catch(Signer4JException | InterruptedSigner4JRuntimeException | CertificateAliasNotFoundException e) {
       catchBlock.accept(e);
       throw e;
     } catch (Exception e) {
@@ -112,10 +115,10 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
        * automaticamente por DISPOSE_ACTION e um novo login providenciará uma nova
        * instância não corrompida de SunPKCS11, mantendo a estabilidade da aplicação.
        * */
-      
-      boolean noTokenPresent = e instanceof NullPointerException || isNoTokenPresent(e);
-
-      if (noTokenPresent)
+      if (e instanceof NullPointerException)
+        throw new NoTokenPresentExceptionFail(e);
+            
+      if (isNoTokenPresent(e))
         throw new NoTokenPresentException(e);
 
       if (isPasswordIncorrect(e))
@@ -163,6 +166,9 @@ public class Signer4JInvoker extends InvokeHandler<Signer4JException> {
         //block específico (catch Exception)
         m.contains("exception obtaining signature") ||
         m.contains("acesso negado") ||
+        m.contains("o cartão inteligente foi removido") ||
+        m.contains("não é possível a comunicação do leitor") ||
+        m.contains("erro interno") ||
         m.contains("ckr_function_failed") //TODO estudar se esta última não seria mais adequada noutro tipo de exceção
       );
   }  

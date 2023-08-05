@@ -51,6 +51,7 @@ import com.github.signer4j.IConfigPersister;
 import com.github.signer4j.IFilePath;
 import com.github.utils4j.imp.Args;
 import com.github.utils4j.imp.Dates;
+import com.github.utils4j.imp.Jvms;
 import com.github.utils4j.imp.Strings;
 
 public class ConfigPersister implements IConfigPersister {
@@ -64,6 +65,8 @@ public class ConfigPersister implements IConfigPersister {
   private static final String CERTIFICATE_A3_LIST     = "list.a3";
 
   private static final String DEFAULT_CERTIFICATE     = "default.certificate";
+  
+  private static final String DEFAULT_REPOSITORY      = "default.repository";
   
   private final IConfig config;
   
@@ -101,6 +104,13 @@ public class ConfigPersister implements IConfigPersister {
   }
   
   @Override
+  public void saveRepository(Repository repository) {
+    if (!Jvms.isWindows() || repository == null)
+      repository = Repository.NATIVE;
+    put(p -> "", DEFAULT_REPOSITORY, Strings.toArray(repository.getName()));
+  }
+  
+  @Override
   public final void saveA1Paths(IFilePath... path) {
     put(p -> "", CERTIFICATE_A1_LIST, path);
   }
@@ -124,6 +134,16 @@ public class ConfigPersister implements IConfigPersister {
     if (!open(properties))
       return Optional.empty();
     return optional(properties.getProperty(DEFAULT_CERTIFICATE));
+  }
+  
+  @Override
+  public Repository defaultRepository() {
+    if (!Jvms.isWindows())
+      return Repository.NATIVE;
+    Properties properties = new Properties();
+    if (!open(properties))
+      return Repository.NATIVE;
+    return Repository.from(properties.getProperty(DEFAULT_REPOSITORY, Repository.NATIVE.getName()));
   }
   
   @Override

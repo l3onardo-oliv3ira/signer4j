@@ -41,6 +41,12 @@ public enum Images implements IPicture {
   
   REFRESH("/update.png"),
   
+  GEAR("/gear.png"),
+  
+  MSCAPITIP("/mscapi.png"),
+  
+  WINDOWS("/windows.png"),
+  
   CERTIFICATE("/certificate.png");
 
   final String path;

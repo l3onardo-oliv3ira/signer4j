@@ -6,7 +6,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>com.github</groupId>
    <artifactId>signer4j</artifactId>
-   <version>SNAPSHOT-2.5.0</version>
+   <version>SNAPSHOT-2.6.0</version>
    <name>signer4j</name>
    <!-- powered by -->
    <url>https://github.com/l3onardo-oliv3ira</url>
@@ -45,7 +45,7 @@
       <dependency>
          <groupId>commons-codec</groupId>
          <artifactId>commons-codec</artifactId>
-         <version>1.13</version>
+         <version>1.15</version>
       </dependency>
       <dependency>
          <groupId>com.fasterxml.jackson.core</groupId>
@@ -65,8 +65,13 @@
       <dependency>
          <groupId>com.github</groupId>
          <artifactId>progress4j</artifactId>
-         <version>SNAPSHOT-2.5.0</version>
+         <version>SNAPSHOT-2.6.0</version>
       </dependency>
+      <dependency>
+         <groupId>net.java.balloontip</groupId>
+         <artifactId>balloontip</artifactId>
+         <version>1.2.4.1</version>
+      </dependency>      
    </dependencies>
    <build>
       <pluginManagement>

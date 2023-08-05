@@ -27,7 +27,11 @@
 
 package com.github.signer4j.gui;
 
+import static com.github.utils4j.gui.imp.SwingTools.invokeLater;
+import static com.github.utils4j.imp.Threads.sleep;
+import static com.github.utils4j.imp.Threads.startDaemon;
 import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -36,18 +40,28 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -58,15 +72,20 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import com.github.signer4j.AllowedExtensions;
 import com.github.signer4j.ICertificateListUI.IConfigSavedCallback;
+import com.github.signer4j.IDriverSetup;
 import com.github.signer4j.IFilePath;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
+import com.github.signer4j.imp.DriverSetup;
 import com.github.signer4j.imp.FilePath;
+import com.github.signer4j.imp.SystemSupport;
 import com.github.utils4j.gui.imp.ButtonRenderer;
 import com.github.utils4j.gui.imp.DefaultFileChooser;
 import com.github.utils4j.gui.imp.SimpleDialog;
 import com.github.utils4j.imp.Args;
 
+import net.java.balloontip.BalloonTip;
+import net.java.balloontip.styles.EdgedBalloonStyle;
 import net.miginfocom.swing.MigLayout;
 
 class CertificateInstallerDialog extends SimpleDialog {
@@ -75,18 +94,29 @@ class CertificateInstallerDialog extends SimpleDialog {
   
   private static final int MININUM_WIDTH = 474;
   
-  private static final int MININUM_HEIGHT = 510;
+  private static final int MININUM_HEIGHT = 545;
   
   private static final Color SELECTED = new Color(234, 248, 229);
+  
+  private static String SEARCH_TITLE_FORMAT = "<html><u>Busca automática</u>%s</html>";
   
   private JTable table;
   private JButton a1Button;
   private JButton a3Button;
+  private JButton saveButton;
+
   private JPanel contentPane;
+  private JButton locateButton;
+  private ButtonRenderer buttonRenderer;
+
+  private String searchResultCount = "&nbsp;";
+  
   private Optional<CertType> current = Optional.empty();
   private List<IFilePath> a1List = new ArrayList<>();
   private List<IFilePath> a3List = new ArrayList<>();
   private final IConfigSavedCallback savedCallback;
+
+  private final AtomicReference<Thread> searchThread = new AtomicReference<>();
 
   CertificateInstallerDialog() {
     this(IConfigSavedCallback.NOTHING);
@@ -194,11 +224,11 @@ class CertificateInstallerDialog extends SimpleDialog {
   private JScrollPane createStep2_TablePane(CertType type) {
     table = new JTable();    
     table.setModel(type.model);
-    table.getColumnModel().getColumn(0).setPreferredWidth(340);
-    table.getColumnModel().getColumn(1).setPreferredWidth(60);
-    ButtonRenderer bc = new ButtonRenderer((arg) -> current.ifPresent(c -> c.remove(table.getSelectedRow())));
-    table.getColumnModel().getColumn(1).setCellRenderer(bc);
-    table.getColumnModel().getColumn(1).setCellEditor(bc);
+    table.getColumnModel().getColumn(0).setPreferredWidth(330);
+    table.getColumnModel().getColumn(1).setPreferredWidth(70);
+    buttonRenderer = new ButtonRenderer((arg) -> current.ifPresent(c -> c.remove(table.getSelectedRow())));
+    table.getColumnModel().getColumn(1).setCellRenderer(buttonRenderer);
+    table.getColumnModel().getColumn(1).setCellEditor(buttonRenderer);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     table.setFont(new Font("Tahoma", Font.PLAIN, 13));
     table.setFillsViewportHeight(true);
@@ -219,10 +249,16 @@ class CertificateInstallerDialog extends SimpleDialog {
     return step2NorthPane;
   }
 
+  @Override
+  public void close() {
+    interruptSearchThread();
+    super.close();
+  }
+
   private JPanel createStep2_OkCancelPane() {
     JButton cancelButton = new JButton("Cancelar");
     cancelButton.addActionListener(e -> close());    
-    JButton saveButton = new JButton("OK");
+    saveButton = new JButton("OK");
     saveButton.setPreferredSize(cancelButton.getPreferredSize());
     saveButton.addActionListener(e -> onSave());        
 
@@ -236,9 +272,40 @@ class CertificateInstallerDialog extends SimpleDialog {
   private JPanel createStep2_FinderPane(CertType type) {
     JPanel finderPane = new JPanel();
     finderPane.setLayout(new GridLayout(2, 1, 0, 0));
-    finderPane.add(createStep2_Title(type));
+    finderPane.add(createStep2_Headers(type));
     finderPane.add(createStep2_LocateButton());
     return finderPane;
+  }
+
+  private JPanel createStep2_Headers(CertType type) {
+    JPanel titlePanel = new JPanel(new BorderLayout());
+    titlePanel.add(createStep2_Title(type), BorderLayout.CENTER);
+    titlePanel.add(createStep2_AutoSearch(type), BorderLayout.EAST);
+    return titlePanel;
+  }
+
+  private JLabel createStep2_AutoSearch(CertType type) {
+    return type.createAutoSearchLabel(this);
+  }
+  
+  private void beginAutoSearch() {
+    a1Button.setEnabled(false);
+    a3Button.setEnabled(false);
+    locateButton.setEnabled(false);
+    buttonRenderer.setViewEnabled(false);
+    saveButton.setEnabled(false);
+    table.setEnabled(false);
+  }
+  
+  private void endAutoSearch(List<IFilePath> found) {
+    a1Button.setEnabled(true);
+    a3Button.setEnabled(true);
+    locateButton.setEnabled(true);
+    saveButton.setEnabled(true);
+    buttonRenderer.setViewEnabled(true);
+    table.setEnabled(true);
+    searchResultCount = "&nbsp;(" + found.size() + " localizado" + (found.size() == 1 ? "" : "s" ) + ") &nbsp;";
+    setComponent(CertType.A3, found);
   }
 
   private JLabel createStep2_Title() {
@@ -248,15 +315,15 @@ class CertificateInstallerDialog extends SimpleDialog {
   }
 
   private JButton createStep2_LocateButton() {
-    JButton locateButton = new JButton("Localizar...");
+    locateButton = new JButton("Localizar...");
     locateButton.addActionListener(e -> onLocate());
     return locateButton;
   }
 
   private JLabel createStep2_Title(CertType type) {
-    JLabel certificateTile = new JLabel(type.labelTitle());
-    certificateTile.setFont(new Font("Tahoma", Font.PLAIN, 16));
-    return certificateTile;
+    JLabel pathTitle = new JLabel(type.labelTitle());
+    pathTitle.setFont(new Font("Tahoma", Font.PLAIN, 16));
+    return pathTitle;
   }
   
   private void onLocate() {
@@ -484,6 +551,11 @@ class CertificateInstallerDialog extends SimpleDialog {
       protected FileNameExtensionFilter fileFilter() {
         return AllowedExtensions.CERTIFICATES;
       }
+
+      @Override
+      protected JLabel createAutoSearchLabel(CertificateInstallerDialog dialog) {
+        return new JLabel(""); //empty!
+      }
     },
     A3(new A3PathModel()){
       @Override
@@ -515,6 +587,22 @@ class CertificateInstallerDialog extends SimpleDialog {
       protected FileNameExtensionFilter fileFilter() {
         return AllowedExtensions.LIBRARIES;
       }
+
+      @Override
+      protected JLabel createAutoSearchLabel(CertificateInstallerDialog dialog) {
+        JLabel autoSearch = new JLabel(String.format(SEARCH_TITLE_FORMAT, dialog.searchResultCount));
+        autoSearch.setBorder(BorderFactory.createEmptyBorder(0,  0,  0,  2));
+        autoSearch.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        autoSearch.setForeground(Color.BLUE);
+        autoSearch.setFont(new Font("Tahoma", Font.ITALIC, 12));
+        autoSearch.addMouseListener(new MouseAdapter() {
+          public void mouseClicked(MouseEvent e) {
+            autoSearch.setText(String.format(SEARCH_TITLE_FORMAT, "&nbsp;"));
+            dialog.autoSearchA3Library(autoSearch);
+          }
+        });
+        return autoSearch;
+      }
     };
     
     public final PathModel model;
@@ -522,6 +610,8 @@ class CertificateInstallerDialog extends SimpleDialog {
     CertType(PathModel model) {
       this.model = model;
     }
+
+    protected abstract JLabel createAutoSearchLabel(CertificateInstallerDialog dialog);
 
     protected abstract FileNameExtensionFilter fileFilter();
 
@@ -544,5 +634,54 @@ class CertificateInstallerDialog extends SimpleDialog {
     
     abstract String chooseTitle();
     abstract String labelTitle();
+  }
+  
+  private void interruptSearchThread() {
+    Optional.ofNullable(searchThread.getAndSet(null)).ifPresent(Thread::interrupt);
+  }
+  
+  protected void autoSearchA3Library(JLabel autoSearch) {
+    MouseListener[] mls = autoSearch.getMouseListeners();
+    for(MouseListener ml: mls)
+      autoSearch.removeMouseListener(ml);
+    
+    beginAutoSearch();
+    
+    final List<IFilePath> libs = SystemSupport.getDefault().getStrategy().queriedPaths().stream().map(Paths::get).map(FilePath::new).collect(toList());
+    
+    final JProgressBar progressBar = new JProgressBar();
+    progressBar.setMaximum(libs.size());
+    progressBar.setIndeterminate(false);
+    progressBar.setMinimum(0);
+    progressBar.setValue(0);
+    progressBar.setStringPainted(true);
+    progressBar.setString("");
+    
+    final BalloonTip balloonTip = new BalloonTip(autoSearch, progressBar, new EdgedBalloonStyle(Color.WHITE, Color.DARK_GRAY), false);
+    balloonTip.setVisible(true);
+
+    searchThread.set(startDaemon(() -> {
+      final Set<IDriverSetup> found = new HashSet<>(5);
+
+      for(int i = 0; i < libs.size() && !Thread.currentThread().isInterrupted(); i++) {
+        int it = i;
+        IFilePath file = libs.get(it);
+        invokeLater(() -> {
+          Path path = file.toPath();
+          DriverSetup.create(path).ifPresent(found::add); //not duplicated using md5 hash!
+          progressBar.setValue(it);
+          progressBar.setString(path.toFile().getName());
+        });
+        sleep(25);
+      };
+      
+      invokeLater(() -> {
+        List<IFilePath> hits = found.stream().map(ds -> new FilePath(ds.getLibrary())).collect(toList());
+        endAutoSearch(hits);
+        balloonTip.closeBalloon();
+        balloonTip.removeAll();
+        searchThread.set(null);
+      });
+    }));
   }
 }

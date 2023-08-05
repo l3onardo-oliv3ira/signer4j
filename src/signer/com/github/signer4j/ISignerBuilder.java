@@ -30,5 +30,7 @@ package com.github.signer4j;
 public interface ISignerBuilder {
   ISignerBuilder usingAlgorithm(ISignatureAlgorithm algorithm);
 
+  ISignerBuilder usingLock(Object lock);
+
   ISimpleSigner build();
 }

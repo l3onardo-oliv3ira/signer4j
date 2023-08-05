@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.signer4j.IDevice;
+import com.github.signer4j.imp.exception.InterruptedSigner4JRuntimeException;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
 import com.github.signer4j.imp.exception.Signer4JException;
 import com.github.utils4j.imp.Args;
@@ -67,39 +68,17 @@ abstract class AbstractKeyStore implements IKeyStore {
   protected AbstractKeyStore(KeyStore keystore, IDevice device, Runnable dispose) throws PrivateKeyNotFound  {
     this.keyStore = Args.requireNonNull(keystore, "null keystore is not supported");
     this.dispose = Args.requireNonNull(dispose, "dispose is null");
-    this.device =  Args.requireNonNull(device, "device is null");
-    this.setup();
+    this.device = Args.requireNonNull(device, "device is null");
   }
   
   protected final void dispose() {
     dispose.run();
   }
   
-  protected void setup() throws PrivateKeyNotFound {
-    if (!checkIfHasPrivateKey()) {
-      throw new PrivateKeyNotFound("KeyStore don't offer alias access to private key!");
-    }
-  }
-  
   protected void checkIfAvailable() {
     if (isClosed()) {
       throw new IllegalStateException("KeyStore fechado. Possível perda de conexão com dispositivo");
     }
-  }
-  
-  protected boolean checkIfHasPrivateKey() {
-    try {
-      Enumeration<String> e = keyStore.aliases();
-      while (e.hasMoreElements()) {
-        String alias = e.nextElement();
-        if(keyStore.isKeyEntry(alias)) {
-          return true;
-        }
-      }
-    } catch (Exception ex) {
-      LOGGER.warn("Unabled to checkIfHasPrivateKey gracefully. False considered", ex);
-    }
-    return false;
   }
   
   @Override
@@ -135,23 +114,26 @@ abstract class AbstractKeyStore implements IKeyStore {
   }
   
   @Override
-  public final List<Certificate> getCertificateChain(String alias) throws Signer4JException {
-    checkIfAvailable();
-    return unmodifiableList(arrayList(invoke(() -> this.keyStore.getCertificateChain(alias))));
-  }
-
-  @Override
   public final String getCertificateAlias(Certificate certificate) throws Signer4JException {
     checkIfAvailable();
     return invoke(() -> this.keyStore.getCertificateAlias(certificate));
   }
   
   @Override
+  public final List<Certificate> getCertificateChain(String alias) throws Signer4JException {
+    checkIfAvailable();
+    return unmodifiableList(arrayList(invoke(() -> this.keyStore.getCertificateChain(alias))));
+  }
+
+  @Override
   public final PrivateKey getPrivateKey(String alias, char[] password) throws Signer4JException {
     checkIfAvailable();
     return invoke(() -> {
       PrivateKey key = Optional.ofNullable((PrivateKey)this.keyStore.getKey(alias, password))
-          .orElseThrow(() -> new PrivateKeyNotFound("KeyStore return's null private key for alias: " + alias));
+        .orElseThrow(() -> isClosed() ? 
+          new InterruptedSigner4JRuntimeException() : 
+          new PrivateKeyNotFound("KeyStore return's null private key for alias: " + alias)
+        );
       if (!initKey) {
         onInitKey(key);
         initKey = true;
@@ -175,7 +157,7 @@ abstract class AbstractKeyStore implements IKeyStore {
         doClose();
       } catch(Exception e) {
         LOGGER.warn("Unabled to close keystore gracefully", e);
-      }finally {
+      } finally {
         this.closed = true;
         this.initKey = false;
       }

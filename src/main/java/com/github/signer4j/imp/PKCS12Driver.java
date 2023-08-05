@@ -28,12 +28,11 @@
 package com.github.signer4j.imp;
 
 import static com.github.utils4j.gui.imp.SwingTools.isTrue;
+import static com.github.utils4j.imp.Containers.isEmpty;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.signer4j.IPasswordCollector;
@@ -44,7 +43,6 @@ import com.github.signer4j.gui.utils.InvalidPinAlert;
 import com.github.signer4j.imp.exception.InvalidPinException;
 import com.github.signer4j.imp.exception.LoginCanceledException;
 import com.github.signer4j.imp.exception.Signer4JException;
-import com.github.utils4j.imp.Containers;
 import com.github.utils4j.imp.Streams;
 
 class PKCS12Driver extends AbstractDriver {
@@ -57,8 +55,6 @@ class PKCS12Driver extends AbstractDriver {
   
   private final List<Path> certPaths = new ArrayList<>();
   
-  private final Map<String, char[]> passwords = new HashMap<>();
-
   private PKCS12Driver() {}
   
   @Override
@@ -66,9 +62,19 @@ class PKCS12Driver extends AbstractDriver {
     return PKCS12Driver.class.getSimpleName();
   }
   
+  final void uninstall() {
+    certPaths.clear();
+    unload();
+  }
+  
+  final void close() {
+    uninstall();
+    Safe.BOX.clear();
+  }
+
   final boolean install(Path ... paths) {
     boolean refreshed = false;
-    if (!Containers.isEmpty(paths)) {
+    if (!isEmpty(paths)) {
       for(Path path: paths) {
         if (path == null)
           continue;
@@ -82,17 +88,11 @@ class PKCS12Driver extends AbstractDriver {
       }
     }
     return refreshed;
-  }
-  
-  final void uninstall() {
-    passwords.clear();
-    certPaths.clear();
-    unload();
-  }
+  }  
   
   final boolean uninstall(Path... paths) {
     boolean refreshed = false;
-    if (!Containers.isEmpty(paths)) {
+    if (!isEmpty(paths)) {
       for(Path path: paths) {
         if (path == null)
           continue;
@@ -109,13 +109,13 @@ class PKCS12Driver extends AbstractDriver {
   
   @Override
   protected void loadSlots(List<ISlot> output) throws DriverException {
-    for(Path path: certPaths) {
+    certPaths.stream().forEach(path -> {
       try{
         ISlot slot = new PKCS12Slot(path);
         String key = slot.getSerial();
         IToken token = slot.getToken();
         do {
-          char[] password = passwords.get(key);
+          char[] password = Safe.BOX.get(key);
           try {
             LOGGER.info("Logando no DRIVER");
             if (password != null) {
@@ -131,14 +131,14 @@ class PKCS12Driver extends AbstractDriver {
             LOGGER.info("Logado com sucesso: " + token.isAuthenticated());
             token.logout();
             LOGGER.info("Deslogado - Leitura de certificado OK");
-            passwords.put(key, password);
+            Safe.BOX.put(key, password);
             output.add(slot);
             addDevice(slot.toDevice());
             break;
           } catch (LoginCanceledException e) {
             break;
           } catch(InvalidPinException e) {
-            passwords.remove(key);
+            Safe.BOX.remove(key);
             if (!isTrue(InvalidPinAlert::display))
               break;
           } catch (Signer4JException e) {
@@ -148,7 +148,7 @@ class PKCS12Driver extends AbstractDriver {
         }while(true);
       }catch(DriverException e) {
         LOGGER.warn("Unabled to loadSlots gracefully", e);
-      }
-    }
+      }      
+    });
   }
 }

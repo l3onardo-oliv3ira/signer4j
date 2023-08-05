@@ -41,11 +41,11 @@ import com.github.utils4j.imp.Args;
 
 class BrazilianCertificatePF implements ICertificatePF {
   
-  private OID_2_16_76_1_3_1 id_2_16_76_1_3_1 = null;
-  private OID_2_16_76_1_3_5 id_2_16_76_1_3_5 = null;
-  private OID_2_16_76_1_3_6 id_2_16_76_1_3_6 = null;
+  private final OID_2_16_76_1_3_1 id_2_16_76_1_3_1;
+  private final OID_2_16_76_1_3_5 id_2_16_76_1_3_5;
+  private final OID_2_16_76_1_3_6 id_2_16_76_1_3_6;
 
-  public BrazilianCertificatePF(OID_2_16_76_1_3_1 oid1, OID_2_16_76_1_3_5 oid2, OID_2_16_76_1_3_6 oid3) {
+  BrazilianCertificatePF(OID_2_16_76_1_3_1 oid1, OID_2_16_76_1_3_5 oid2, OID_2_16_76_1_3_6 oid3) {
     this.id_2_16_76_1_3_1 = Args.requireNonNull(oid1, "oid1 is null");
     this.id_2_16_76_1_3_5 = Args.requireNonNull(oid2, "oid2 is null");
     this.id_2_16_76_1_3_6 = Args.requireNonNull(oid3, "oid3 is null");

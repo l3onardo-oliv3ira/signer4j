@@ -35,6 +35,14 @@ import com.github.signer4j.cert.ICertificatePJ;
 import com.github.signer4j.cert.ISubjectAlternativeNames;
 import com.github.signer4j.cert.oid.OIDReader;
 import com.github.signer4j.cert.oid.OID_1_3_6_1_4_1_311_20_2_3;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_1;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_2;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_3;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_4;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_5;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_6;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_7;
+import com.github.signer4j.cert.oid.OID_2_16_76_1_3_8;
 import com.github.utils4j.imp.Strings;
 
 class SubjectAlternativeNames implements ISubjectAlternativeNames {
@@ -48,45 +56,45 @@ class SubjectAlternativeNames implements ISubjectAlternativeNames {
   }
 
   @Override
-  public boolean hasCertificatePF() {
+  public final boolean hasCertificatePF() {
     return certificatePF != null;
   }
 
   @Override
-  public Optional<ICertificatePF> getCertificatePF() {
+  public final Optional<ICertificatePF> getCertificatePF() {
     return Optional.ofNullable(certificatePF);
   }
 
   @Override
-  public boolean hasCertificatePJ() {
+  public final boolean hasCertificatePJ() {
     return certificatePJ != null;
   }
 
   @Override
-  public Optional<ICertificatePJ> getCertificatePJ() {
+  public final Optional<ICertificatePJ> getCertificatePJ() {
     return Optional.ofNullable(certificatePJ);
   }
 
   @Override
-  public Optional<String> getEmail() {
-    return Optional.ofNullable(email);
+  public final Optional<String> getEmail() {
+    return Strings.optional(email);
   }
   
   private void setup(X509Certificate certificate) {
     OIDReader reader = new OIDReader(certificate);
     if (reader.isCertificatePF()) {
       certificatePF = new BrazilianCertificatePF(
-        reader.getOID_2_16_76_1_3_1().get(), 
-        reader.getOID_2_16_76_1_3_5().get(), 
-        reader.getOID_2_16_76_1_3_6().get()
+        reader.getOID_2_16_76_1_3_1().orElse(OID_2_16_76_1_3_1.EMPTY), 
+        reader.getOID_2_16_76_1_3_5().orElse(OID_2_16_76_1_3_5.EMPTY), 
+        reader.getOID_2_16_76_1_3_6().orElse(OID_2_16_76_1_3_6.EMPTY)
       );
     } else if (reader.isCertificatePJ()) {
       certificatePJ = new BrazilianCertificatePJ(
-        reader.getOID_2_16_76_1_3_2().get(), 
-        reader.getOID_2_16_76_1_3_3().get(), 
-        reader.getOID_2_16_76_1_3_4().get(), 
-        reader.getOID_2_16_76_1_3_7().get(),
-        reader.getOID_2_16_76_1_3_8().get()
+        reader.getOID_2_16_76_1_3_2().orElse(OID_2_16_76_1_3_2.EMPTY), 
+        reader.getOID_2_16_76_1_3_3().orElse(OID_2_16_76_1_3_3.EMPTY), 
+        reader.getOID_2_16_76_1_3_4().orElse(OID_2_16_76_1_3_4.EMPTY), 
+        reader.getOID_2_16_76_1_3_7().orElse(OID_2_16_76_1_3_7.EMPTY),
+        reader.getOID_2_16_76_1_3_8().orElse(OID_2_16_76_1_3_8.EMPTY)
       );
     }
     Optional<OID_1_3_6_1_4_1_311_20_2_3> oid = reader.getOID_1_3_6_1_4_1_311_20_2_3();

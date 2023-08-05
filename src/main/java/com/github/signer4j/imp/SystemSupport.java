@@ -27,14 +27,14 @@
 
 package com.github.signer4j.imp;
 
-import com.github.signer4j.IDriverLookupStrategy;
+import com.github.signer4j.IPathCollectionStrategy;
 import com.github.signer4j.IWindowLockDettector;
 import com.github.utils4j.imp.Jvms;
 
-enum SystemSupport implements IModuleExtension {
+public enum SystemSupport implements IModuleExtension {
   WINDOWS(".dll") {
     @Override
-    protected IDriverLookupStrategy createDriverLookupStrategy() {
+    protected IPathCollectionStrategy createDriverLookupStrategy() {
       return new ForWindowsStrategy();
     }
 
@@ -46,7 +46,7 @@ enum SystemSupport implements IModuleExtension {
   
   LINUX(".so") {
     @Override
-    protected IDriverLookupStrategy createDriverLookupStrategy() {
+    protected IPathCollectionStrategy createDriverLookupStrategy() {
       return new ForLinuxStrategy();
     }
 
@@ -58,7 +58,7 @@ enum SystemSupport implements IModuleExtension {
   
   MAC(".dylib") {
     @Override
-    protected IDriverLookupStrategy createDriverLookupStrategy() {
+    protected IPathCollectionStrategy createDriverLookupStrategy() {
       return new ForMacStrategy();
     }
     
@@ -71,8 +71,8 @@ enum SystemSupport implements IModuleExtension {
   
   UNKNOWN(".unknown") {
     @Override
-    protected IDriverLookupStrategy createDriverLookupStrategy() {
-      return IDriverLookupStrategy.NOTHING;
+    protected IPathCollectionStrategy createDriverLookupStrategy() {
+      return IPathCollectionStrategy.NOTHING;
     }
     
     @Override
@@ -93,7 +93,7 @@ enum SystemSupport implements IModuleExtension {
 
   private final String extension;
 
-  private IDriverLookupStrategy finder;
+  private IPathCollectionStrategy finder;
   
   SystemSupport(String extension) {
     this.extension = extension;
@@ -104,11 +104,11 @@ enum SystemSupport implements IModuleExtension {
     return extension;
   }
 
-  public final IDriverLookupStrategy getStrategy() {
+  public final IPathCollectionStrategy getStrategy() {
     return finder == null ? finder = createDriverLookupStrategy() : finder;
   }
 
-  protected abstract IDriverLookupStrategy createDriverLookupStrategy();
+  protected abstract IPathCollectionStrategy createDriverLookupStrategy();
 
   protected abstract IWindowLockDettector getWindowLockDettector();
 }

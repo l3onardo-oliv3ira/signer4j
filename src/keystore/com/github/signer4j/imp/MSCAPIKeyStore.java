@@ -27,11 +27,15 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.provider.ProviderInstaller.MSCAPI;
+
 import java.security.KeyStore;
 import java.security.PrivateKey;
 
 import com.github.signer4j.IDevice;
 import com.github.signer4j.imp.exception.PrivateKeyNotFound;
+import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.signer4j.provider.ProviderInstaller;
 
 class MSCAPIKeyStore extends AbstractKeyStore {
   
@@ -40,20 +44,21 @@ class MSCAPIKeyStore extends AbstractKeyStore {
   }
   
   @Override
-  protected boolean checkIfHasPrivateKey() {
-    return true;
+  public String getProvider() throws Signer4JException {
+    checkIfAvailable();
+    return MSCAPI.defaultName();
+  }
+  
+  @Override
+  protected void doClose() throws Exception {
+    ProviderInstaller.uninstall(keyStore.getProvider());
+    super.doClose();
   }
   
   @Override
   protected void onInitKey(PrivateKey key) throws Exception {
-//    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+//    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", getProvider());
 //    cipher.init(Cipher.ENCRYPT_MODE, key);
 //    cipher.doFinal("unlock".getBytes());
   }
-  
-//  @Override
-//  public String getProvider() throws Signer4JException {
-//    checkIfAvailable();
-//    return BouncyCastleProvider.PROVIDER_NAME;
-//  }
 }

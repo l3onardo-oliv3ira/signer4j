@@ -43,7 +43,7 @@ public class ConsoleChooser extends AbstractCertificateChooser {
   }
 
   @Override
-  protected IChoice doChoose(List<CertificateEntry> options) throws Signer4JException {
+  protected IChoice doChoose(List<DefaultCertificateEntry> options) throws Signer4JException {
     @SuppressWarnings("resource")
     Scanner sc = new Scanner(System.in);
     do{
@@ -52,8 +52,8 @@ public class ConsoleChooser extends AbstractCertificateChooser {
       System.out.println("==============================");
 
       int i = 1;
-      for(CertificateEntry e: options) {
-        System.out.println("[" + i++ + "] : " + e.aliasName + " -> " + e.certificate.getName());
+      for(DefaultCertificateEntry e: options) {
+        System.out.println("[" + i++ + "] : " + e.getCertificate().getAlias() + " -> " + e.certificate.getName());
       }
       System.out.println("[" + i++ + "] : Cancell");
      

@@ -27,6 +27,8 @@
 
 package com.github.signer4j;
 
+import java.util.Optional;
+
 import com.github.signer4j.gui.PasswordDialogCallbackHandler;
 import com.github.signer4j.imp.LiteralPasswordCallbackHandler;
 import com.github.signer4j.imp.exception.Signer4JException;
@@ -60,16 +62,20 @@ public interface IToken extends IGadget, IStatusMonitor {
   IPKCS7SignerBuilder pkcs7SignerBuilder();
   
   IPKCS7SignerBuilder pkcs7SignerBuilder(ICertificateChooserFactory factory);
-  
+
   ICertificateChooser createChooser(ICertificateChooserFactory factory);
+
+  void logout();
+
+  void setDefaultCertificate(ICertificate defaultCert);
+  
+  Optional<ICertificate> getDefaultCertificate();
+  
+  IToken login(IPasswordCallbackHandler callback) throws Signer4JException;
 
   default ICertificateChooser createChooser() {
     return createChooser(ICertificateChooserFactory.DEFAULT);
   }
-
-  void logout();
-  
-  IToken login(IPasswordCallbackHandler callback) throws Signer4JException;
 
   default IToken login() throws Signer4JException { 
     return login(IPasswordCollector.NOTHING);
@@ -80,6 +86,6 @@ public interface IToken extends IGadget, IStatusMonitor {
   }
   
   default IToken login(char[] password) throws Signer4JException {
-    return login(new LiteralPasswordCallbackHandler(password));
+    return password == null ? login() : login(new LiteralPasswordCallbackHandler(password));
   }
 }

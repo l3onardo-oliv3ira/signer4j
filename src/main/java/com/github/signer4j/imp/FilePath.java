@@ -48,6 +48,11 @@ public class FilePath implements IFilePath {
   }
   
   @Override
+  public final Path toPath() {
+    return path;
+  }
+  
+  @Override
   public final String toString() {
     return getPath();
   }

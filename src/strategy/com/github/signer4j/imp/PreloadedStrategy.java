@@ -28,23 +28,34 @@
 package com.github.signer4j.imp;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.github.signer4j.IDriverLookupStrategy;
 import com.github.signer4j.IDriverVisitor;
+import com.github.signer4j.IPathCollectionStrategy;
 
-abstract class PreloadedStrategy implements IDriverLookupStrategy {
+abstract class PreloadedStrategy implements IPathCollectionStrategy {
 
+  private final List<String> searchedPaths = new ArrayList<>(60);
+  
   private final Set<DriverSetup> libraries = new HashSet<DriverSetup>();
   
   protected final boolean load(String library) {
+    searchedPaths.add(library);
     Optional<DriverSetup> ds = DriverSetup.create(Paths.get(library));
     if (ds.isPresent()) {
       return libraries.add(ds.get());
     }
     return false;
+  }
+  
+  @Override
+  public final List<String> queriedPaths() {
+    return Collections.unmodifiableList(searchedPaths);
   }
   
   @Override

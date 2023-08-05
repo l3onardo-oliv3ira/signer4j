@@ -27,12 +27,9 @@
 
 package com.github.signer4j.provider;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-
 public class ASN1MD5withRSASignature extends ASN1withRSASignature {
   
-  public ASN1MD5withRSASignature() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+  public ASN1MD5withRSASignature() throws Exception  {
     super("ASN1MD5");
   }
 }

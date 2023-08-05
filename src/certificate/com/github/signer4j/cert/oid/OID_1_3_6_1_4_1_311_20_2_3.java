@@ -29,6 +29,8 @@ package com.github.signer4j.cert.oid;
 
 import java.util.Optional;
 
+import com.github.utils4j.imp.Strings;
+
 public final class OID_1_3_6_1_4_1_311_20_2_3 extends OIDBasic {
 
   public static final String OID = "1.3.6.1.4.1.311.20.2.3";
@@ -38,6 +40,6 @@ public final class OID_1_3_6_1_4_1_311_20_2_3 extends OIDBasic {
   }
   
   public Optional<String> getUPN() {
-    return Optional.ofNullable(super.getContent());
+    return Strings.optional(super.getContent());
   }
 }

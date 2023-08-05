@@ -27,12 +27,9 @@
 
 package com.github.signer4j.provider;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-
 public class ASN1SHA256withRSASignature extends ASN1withRSASignature {
   
-  public ASN1SHA256withRSASignature() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+  public ASN1SHA256withRSASignature()  throws Exception  {
     super("ASN1SHA256");
   }
 }

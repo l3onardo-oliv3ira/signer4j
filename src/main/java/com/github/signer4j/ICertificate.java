@@ -70,4 +70,8 @@ public interface ICertificate extends ISerialItem {
   boolean hasCertificatePF();
 
   boolean hasCertificatePJ();
+
+  Optional<String> getAlias();
+
+  void setAlias(String alias);
 }

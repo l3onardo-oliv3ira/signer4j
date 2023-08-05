@@ -27,7 +27,9 @@
 
 package com.github.signer4j.provider;
 
-import static com.github.utils4j.imp.Throwables.runQuietly;
+import static com.github.utils4j.imp.Throwables.tryRuntime;
+import static java.security.Security.addProvider;
+import static java.security.Security.getProvider;
 import static java.security.Security.removeProvider;
 
 import java.security.AuthProvider;
@@ -39,68 +41,65 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jcp.xml.dsig.internal.dom.XMLDSigRI;
 
 import com.github.utils4j.imp.Args;
+import com.github.utils4j.imp.Strings;
+import com.github.utils4j.imp.Throwables;
 
 @SuppressWarnings("restriction")
 public enum ProviderInstaller {
 
-  JSR105(){
-    private static final String PROVIDER_NAME = "XMLDSig"; //org.jcp.xml.dsig.internal.dom.XMLDSigRI
+  JSR105("XMLDSig"){ //org.jcp.xml.dsig.internal.dom.XMLDSigRI
     @Override
     public Provider install(String providerName, Object config) {
-      return setup(PROVIDER_NAME, () -> new XMLDSigRI());
+      return setup(defaultName(), XMLDSigRI::new);
     }
   },
   
-  BC(){
-    private static final String PROVIDER_NAME = BouncyCastleProvider.PROVIDER_NAME;
-
+  MSCAPI("SunMSCAPI") {
     @Override
     public Provider install(String providerName, Object config) {
-      return setup(PROVIDER_NAME, () -> {
+      return setup(defaultName(), () -> tryRuntime(() -> (Provider)Class.forName("sun.security.mscapi." + defaultName()).newInstance()));
+    }
+  },
+  
+  BC(BouncyCastleProvider.PROVIDER_NAME){
+    @Override
+    public Provider install(String providerName, Object config) {
+      return setup(defaultName(), () -> {
         System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
         return new BouncyCastleProvider();
       });
     }
   },
   
-  SIGNER4J() {
-    private static final String PROVIDER_NAME = "Signer4J";
-    
+  SIGNER4J("Signer4J") {
     @Override
     public Provider install(String providerName, Object config) {
-      return setup(PROVIDER_NAME, () -> {
-        return new Signer4JProvider();
-      });
+      return setup(defaultName(), Signer4JProvider::new);
     }
   },
   
   SUNPKCS11(){
     @Override
     public Provider install(String providerName, Object config) {
-      Args.requireText(providerName, "provider name is empty");
+      Args.requireText(providerName, "provider name is empty"); //provider suffix
       Args.requireNonNull(config, "config is null");
-      final String sunProviderName = "SunPKCS11-" + providerName;
+      final String sunProviderName = SunPKCS11Creator.providerName(providerName);
       return setup(sunProviderName, () -> SunPKCS11Creator.create(config.toString()));
     }
-  };
+  }; 
   
-  protected Provider setup(String providerName, Supplier<Provider> supplier) {
-    Provider provider = Security.getProvider(providerName);
-    if (provider != null)
-      return provider;
-    int code = Security.addProvider(provider = supplier.get());
-    if (code < 0)
-      throw new RuntimeException("Unabled to install provider " + providerName);
-    return provider;
+  private final String name;
+  
+  ProviderInstaller() {
+    this(Strings.empty());
   }
   
-  public static void uninstall(Provider provider) {
-    if (provider != null) {
-      if (provider instanceof AuthProvider)
-        runQuietly(() -> ((AuthProvider)provider).logout());
-      runQuietly(() -> removeProvider(provider.getName()));
-      runQuietly(() -> provider.clear());
-    }
+  ProviderInstaller(String name) {
+    this.name = Args.requireNonNull(name, "name is null");
+  }
+  
+  public String defaultName() {
+    return this.name;
   }
   
   public Provider install() {
@@ -108,4 +107,43 @@ public enum ProviderInstaller {
   }
   
   public abstract Provider install(String providerName, Object config);
+
+  public static void uninstall(Provider provider) {
+    if (provider == null) {
+      return;
+    }
+    
+    if (provider instanceof AuthProvider) {
+      Throwables.runQuietly(((AuthProvider) provider)::logout);
+    }
+    
+    Throwables.runQuietly(() -> removeProvider(provider.getName()));
+  }
+  
+  protected Provider setup(String providerName, Supplier<Provider> supplier) {
+
+    Provider provider = getProvider(providerName);    
+    if (provider != null) {
+      return provider;
+    }
+
+    provider = supplier.get();
+    if (provider == null) {
+      throw new RuntimeException("Unabled to create provider " + providerName);
+    }
+
+    if (provider instanceof AuthProvider) {
+      Throwables.runQuietly(((AuthProvider) provider)::logout);
+    }
+    
+    int code = addProvider(provider);
+    if (code < 0) {
+      throw new RuntimeException("Unabled to install provider " + providerName);
+    }
+    return provider;
+  }  
+  
+  static {
+    Security.removeProvider(MSCAPI.defaultName());
+  }
 }

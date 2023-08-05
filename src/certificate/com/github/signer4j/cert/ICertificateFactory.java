@@ -30,7 +30,7 @@ package com.github.signer4j.cert;
 import java.security.cert.CertificateException;
 
 import com.github.signer4j.ICertificate;
-import com.github.utils4j.imp.function.ICreator;
+import com.github.utils4j.imp.function.IBiCreator;
 
-public interface ICertificateFactory extends ICreator<Object, ICertificate, CertificateException>{
+public interface ICertificateFactory extends IBiCreator<Object, String, ICertificate, CertificateException>{
 }

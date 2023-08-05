@@ -60,5 +60,5 @@ public class RSAEncoderMessageDigest extends EncoderMessageDigest {
     } catch (IOException e) {
       throw new RuntimeException("Unabled to encode bytes to sun.security.util.DerValue", e);
     }
-  }
+  }  
 }

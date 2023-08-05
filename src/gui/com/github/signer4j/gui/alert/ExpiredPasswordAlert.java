@@ -27,6 +27,9 @@
 
 package com.github.signer4j.gui.alert;
 
+import static com.github.utils4j.gui.imp.SwingTools.invokeAndWait;
+import static com.github.utils4j.gui.imp.SwingTools.invokeLater;
+
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -42,7 +45,15 @@ public final class ExpiredPasswordAlert {
   private static final String[] OPTIONS = {"ENTENDI"};
   
   public static boolean display() {
-    return new ExpiredPasswordAlert().show();
+    return new ExpiredPasswordAlert().reveal();
+  }
+  
+  public static void show() {
+    invokeLater(ExpiredPasswordAlert::display);
+  }
+
+  public static void showAndWait() {
+    invokeAndWait(ExpiredPasswordAlert::display);
   }
   
   private final JOptionPane jop;
@@ -58,7 +69,7 @@ public final class ExpiredPasswordAlert {
     );
   }
 
-  private boolean show() {
+  private boolean reveal() {
     JDialog dialog = jop.createDialog("Senha expirada");
     dialog.setAlwaysOnTop(true);
     dialog.setModal(true);

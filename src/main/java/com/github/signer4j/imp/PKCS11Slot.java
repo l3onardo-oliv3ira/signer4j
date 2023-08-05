@@ -135,6 +135,7 @@ class PKCS11Slot extends AbstractSlot implements ILibraryAware {
       .withSerial(iso2utf8(tokenInfo.serialNumber, UNKNOWN_INFORMATION).trim())
       .withManufacture(iso2utf8(tokenInfo.manufacturerID, UNKNOWN_INFORMATION).trim())
       .build();
+    
     this.device = new DefaultDevice.Builder(IDevice.Type.A3)
       .withDriver(this.getLibrary())
       .withSlot(this)

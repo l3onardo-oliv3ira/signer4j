@@ -32,5 +32,6 @@ abstract class UnixStrategy extends PreloadedStrategy {
   protected final void add(String library) {
     load("/usr/lib/" + library);
     load("/usr/local/lib/" + library);
+    load("/usr/lib/pkcs11/" + library);
   }
 }

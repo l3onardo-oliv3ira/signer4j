@@ -29,9 +29,15 @@ package com.github.signer4j.imp.exception;
 
 public class NoTokenPresentException extends Signer4JException {
   
+  protected static final String DEFAULT_CAUSE = "O token não está conectado no dispositivo ou o certificado não possui uma chave privada associada.";
+  
   private static final long serialVersionUID = 1L;
   
   public NoTokenPresentException(Throwable cause) {
-    super("O token/certificado não está presente.", cause);
+    this(DEFAULT_CAUSE, cause);
+  }
+  
+  public NoTokenPresentException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

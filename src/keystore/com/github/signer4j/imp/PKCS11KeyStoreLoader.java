@@ -80,7 +80,7 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
     s = s <= -1 ? 0 : s + 1;
     String fileName = libraryPath.substring(s, libraryPath.length());
     return getKeyStore(
-      providerName(fileName, slot),
+      format("%s-slot:%s", fileName, slot), //provider name suffix!
       libraryPath,
       slot
     );
@@ -89,11 +89,11 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
   private IKeyStore getKeyStore(String providerName, String libraryPath, long slot) throws Signer4JException {
     return getKeyStore(
       providerName,
-      format(//TODO we have to go back here for aditional parameters
-        "name = %s\n\r" + 
-        "library = %s\n\r" + 
-        "slot = %s\n\r" +
-        "insertionCheckInterval = 1500\n\r" +
+      format(//TODO we have to go back here for additional parameters
+        "name = %s\n" + 
+        "library = %s\n" + 
+        "slot = %s\n" +
+        "insertionCheckInterval = 1500\n" +
         "attributes = compatibility", 
         providerName,
         libraryPath,
@@ -108,7 +108,7 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
         final AuthProvider provider = (AuthProvider)SUNPKCS11.install(providerName, configString);
         try {
           provider.login(null, this.handler);
-          KeyStore keyStore = KeyStore.getInstance("PKCS11",  provider);
+          KeyStore keyStore = KeyStore.getInstance("PKCS11", provider);
           keyStore.load(null, null);
           return new PKCS11KeyStore(keyStore, device, dispose);
         } catch(Throwable e) {
@@ -122,8 +122,4 @@ class PKCS11KeyStoreLoader implements IKeyStoreLoader {
   private static Supplier<? extends IllegalArgumentException> validate() {
     return () -> new IllegalArgumentException(DRIVER_PATH_PARAM + " is undefined");
   }
-  
-  private static String providerName(String fileName, long slot) {
-    return format("%s-slot:%s", fileName, slot);
-  }
-}
+}  

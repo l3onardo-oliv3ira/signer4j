@@ -27,20 +27,38 @@
 
 package com.github.signer4j.imp;
 
+import static com.github.signer4j.provider.ProviderInstaller.MSCAPI;
+
 import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
 
 import com.github.signer4j.IChoice;
+import com.github.signer4j.IKeyStoreAccess;
+import com.github.signer4j.ISignatureAlgorithm;
+import com.github.signer4j.ISignedData;
+import com.github.signer4j.ISigner;
+import com.github.signer4j.imp.exception.Signer4JException;
+import com.github.utils4j.imp.Args;
 
 class Choice extends CertificateAware implements IChoice {
   static final IChoice CANCEL = new Choice();
- 
-  static IChoice from(PrivateKey privateKey, Certificate certificate, List<Certificate> chain, String provider) {
+
+  static IChoice from(IKeyStoreAccess keyStore, String choosenAlias) throws Signer4JException {
+    return Choice.from(
+      keyStore.getPrivateKey(choosenAlias),
+      keyStore.getCertificate(choosenAlias),
+      keyStore.getCertificateChain(choosenAlias),
+      keyStore.getProvider()
+    );
+  }
+
+  private static IChoice from(PrivateKey privateKey, Certificate certificate, List<Certificate> chain, String provider) {
     return new Choice(false, privateKey, certificate, chain, provider);
   }
-  
+
   private final boolean canceled;
   private final PrivateKey privateKey;
   private final Certificate certificate;
@@ -85,7 +103,42 @@ class Choice extends CertificateAware implements IChoice {
   }
 
   @Override
-  public final String getProvider() {
-    return this.provider;
+  public final ISigner toSigner(ISignatureAlgorithm algorithm) throws Exception {
+    Args.requireNonNull(algorithm, "algorithm is null");
+    return MSCAPI.defaultName().equals(provider) ?
+      new MSCAPISigner(Signature.getInstance(algorithm.getName(), MSCAPI.defaultName())) :
+      new DefaultSigner(algorithm.toSignature());
   }  
-}
+  
+  private class MSCAPISigner extends DefaultSigner {
+    
+    MSCAPISigner(Signature signature) {
+      super(signature);
+    }
+  
+    @Override
+    protected ISignedData doSign() {
+      return NoTokenPresent.HANDLER.handle(() -> Signer4JInvoker.SIGNER4J.invoke(super::doSign), MSCAPISigner.class);
+    }
+  }
+  
+  private class DefaultSigner implements ISigner {
+    
+    protected final Signature signature;
+    
+    protected DefaultSigner(Signature signature) {
+      this.signature = signature;
+    }
+  
+    @Override
+    public final ISignedData sign(byte[] content, int offset, int length) throws Exception {
+      signature.initSign(Choice.this.getPrivateKey());
+      signature.update(content, offset, length);
+      return doSign();
+    }
+    
+    protected ISignedData doSign() throws Exception {
+      return SignedData.from(signature.sign(), Choice.this);
+    }
+  }
+}  

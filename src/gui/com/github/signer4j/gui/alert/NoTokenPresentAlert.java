@@ -33,15 +33,8 @@ import javax.swing.JOptionPane;
 import com.github.signer4j.gui.utils.Images;
 import com.github.signer4j.imp.Config;
 
-public final class NoTokenPresentAlert {
+public final class NoTokenPresentAlert extends NoTokenPresentMessage {
 
-  private static final String MESSAGE_FORMAT = "Não foi encontrado um certificado disponível.\n\n"
-      + "1) Se seu certificado é do tipo A3, tenha certeza de que\n"
-      + "  esteja conectado no seu computador e funcional.\n"
-      + "2) Se seu certificado é do tipo A1, tenha certeza que tenha\n"
-      + "  sido configurado no PjeOffice Pro.\n\n"
-      + "Tentar identificar o certificado novamente?";
-  
   private static final String[] OPTIONS = {"SIM", "NÃO"};
   
   public static boolean display() {

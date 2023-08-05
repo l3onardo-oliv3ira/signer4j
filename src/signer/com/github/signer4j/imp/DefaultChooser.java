@@ -44,12 +44,12 @@ public class DefaultChooser extends AbstractCertificateChooser {
   }
   
   @Override
-  protected IChoice doChoose(List<CertificateEntry> options) throws Signer4JException {
+  protected IChoice doChoose(List<DefaultCertificateEntry> options) throws Signer4JException, SwitchRepositoryException {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     Optional<ICertificateEntry> ce = CertificateListDialog.display((List)options).get();
     if (!ce.isPresent()) {
       return Choice.CANCEL;
     }
-    return toChoice((CertificateEntry)ce.get());
+    return toChoice((DefaultCertificateEntry)ce.get());
   }
 }
