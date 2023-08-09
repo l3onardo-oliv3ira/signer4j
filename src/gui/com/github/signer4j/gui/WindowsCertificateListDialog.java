@@ -178,7 +178,7 @@ class WindowsCertificateListDialog extends CertificateListDialog implements Acti
     standardButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
     standardButton.setMnemonic(KeyEvent.VK_P);
     standardButton.setActionCommand(RepositoryStrategy.NATIVE.name());
-    standardButton.setToolTipText("Certificados reconhecidos nativamente pelo PJeOffice.");
+    standardButton.setToolTipText("Certificados reconhecidos nativamente pelo assinador.");
     standardButton.addActionListener(this);
     return standardButton;
   }
@@ -230,7 +230,7 @@ class WindowsCertificateListDialog extends CertificateListDialog implements Acti
       }
     },
     
-    NATIVE("PJeOffice", Repository.NATIVE) {      
+    NATIVE("Assinador", Repository.NATIVE) {      
       @Override
       protected void doUpdate(WindowsCertificateListDialog dialog, Optional<ActionEvent> e) {
         dialog.repositoryLabel.setIcon(Images.GEAR.asIcon());
